@@ -1,0 +1,118 @@
+import { useCreateStockLocation } from '@/api/hooks/stock-location';
+import { ProvinceField } from '@/components/form/ProvinceField';
+import { COUNTRIES } from '@/constants/countries';
+import { AdminStockLocation } from '@medusajs/types';
+import React from 'react';
+import { Alert } from 'react-native';
+import * as z from 'zod/v4';
+import Form from './form/Form';
+import FormButton from './form/FormButton';
+import SelectField from './form/SelectField';
+import TextField from './form/TextField';
+
+interface StockLocationCreateFormProps {
+  onStockLocationCreated: (stockLocation: AdminStockLocation) => void;
+  defaultValues?: Partial<StockLocationFormData>;
+}
+
+const stockLocationSchema = z.object({
+  name: z.string().min(1, 'Location name is required'),
+  address_1: z.string().min(1, 'Address is required'),
+  address_2: z.string().optional(),
+  city: z.string().optional(),
+  country_code: z.string().min(1, 'Country is required'),
+  province: z.string().optional(),
+  postal_code: z.string().optional(),
+});
+
+type StockLocationFormData = z.infer<typeof stockLocationSchema>;
+
+const StockLocationCreateForm: React.FC<StockLocationCreateFormProps> = ({
+  onStockLocationCreated,
+  defaultValues = {
+    name: 'Main Store',
+    address_1: '123 Main Street',
+    country_code: 'US',
+  },
+}) => {
+  const createStockLocation = useCreateStockLocation();
+
+  // Prepare country options for SelectField
+  const countryOptions = COUNTRIES.map((country) => ({
+    label: country.name,
+    value: country.alpha2,
+  }));
+
+  const handleCreateStockLocation = async (data: StockLocationFormData) => {
+    try {
+      const result = await createStockLocation.mutateAsync({
+        name: data.name,
+        address: {
+          address_1: data.address_1,
+          address_2: data.address_2 || '',
+          city: data.city || '',
+          country_code: data.country_code,
+          province: data.province || '',
+          postal_code: data.postal_code || '',
+        },
+      });
+      onStockLocationCreated(result.stock_location);
+      return result.stock_location;
+    } catch (error) {
+      Alert.alert('Error', 'Failed to create stock location');
+      throw error;
+    }
+  };
+
+  return (
+    <Form
+      schema={stockLocationSchema}
+      onSubmit={handleCreateStockLocation}
+      defaultValues={{
+        name: defaultValues.name || '',
+        address_1: defaultValues.address_1 || '',
+        address_2: defaultValues.address_2 || '',
+        city: defaultValues.city || '',
+        country_code: defaultValues.country_code || '',
+        province: defaultValues.province || '',
+        postal_code: defaultValues.postal_code || '',
+      }}
+    >
+      <TextField name="name" placeholder="Location Name" />
+
+      <TextField name="address_1" placeholder="Address Line 1" />
+
+      <TextField name="address_2" placeholder="Address Line 2 (optional)" />
+
+      <TextField name="city" placeholder="City (optional)" />
+
+      <TextField name="postal_code" placeholder="Postal Code (optional)" />
+
+      <SelectField
+        name="country_code"
+        placeholder="Country"
+        options={countryOptions}
+        searchable={true}
+        className="mb-4"
+      />
+
+      <ProvinceField
+        name="province"
+        countryFieldName="country_code"
+        placeholder="Province/State (optional)"
+        className="mb-6"
+      />
+
+      <FormButton
+        loading={createStockLocation.isPending}
+        disabled={createStockLocation.isPending}
+        className="mb-4"
+      >
+        Create Stock Location
+      </FormButton>
+    </Form>
+  );
+};
+
+export default StockLocationCreateForm;
+export { StockLocationCreateForm };

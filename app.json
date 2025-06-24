@@ -1,14 +1,15 @@
 {
   "expo": {
-    "name": "medusa-pos",
-    "slug": "medusa-pos",
+    "name": "agilo-pos",
+    "slug": "agilo-pos",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "medusapos",
+    "scheme": "agilopos",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
+      "bundleIdentifier": "com.agilo.pos",
       "supportsTablet": true
     },
     "android": {
@@ -29,9 +30,27 @@
         "expo-splash-screen",
         {
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
+          "imageWidth": 233,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#f4faff"
+        }
+      ],
+      [
+        "expo-secure-store",
+        {
+          "configureAndroidBackup": true,
+          "faceIDPermission": "Allow $(PRODUCT_NAME) to access your Face ID biometric data."
+        }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "node_modules/@expo-google-fonts/noto-sans/400Regular/NotoSans_400Regular.ttf",
+            "node_modules/@expo-google-fonts/noto-sans/400Regular_Italic/NotoSans_400Regular_Italic.ttf",
+            "node_modules/@expo-google-fonts/noto-sans/700Bold/NotoSans_700Bold.ttf",
+            "node_modules/@expo-google-fonts/noto-sans/700Bold_Italic/NotoSans_700Bold_Italic.ttf"
+          ]
         }
       ]
     ],
