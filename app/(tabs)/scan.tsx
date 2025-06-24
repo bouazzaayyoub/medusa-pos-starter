@@ -1,3 +1,4 @@
+import { X } from '@/components/icons/x';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Camera, CameraView, FlashMode } from 'expo-camera';
 import { router } from 'expo-router';
@@ -138,17 +139,17 @@ export default function ScanScreen() {
           style={{ paddingTop: insets.top + 12, paddingBottom: 12 }}
         >
           <TouchableOpacity
-            className="w-12 h-12 bg-black bg-opacity-50 rounded-full justify-center items-center"
+            className="w-12 h-12 justify-center items-center"
             onPress={handleGoBack}
           >
-            <IconSymbol name="xmark" size={24} color="white" />
+            <X size={32} color="white" />
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="w-12 h-12 bg-black bg-opacity-50 rounded-full justify-center items-center"
+            className="w-12 h-12 justify-center items-center"
             onPress={toggleFlashMode}
           >
-            <IconSymbol name={getFlashIcon()} size={24} color="white" />
+            <IconSymbol name={getFlashIcon()} size={26} color="white" />
           </TouchableOpacity>
         </View>
 
