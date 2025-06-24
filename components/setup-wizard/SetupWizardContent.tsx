@@ -141,7 +141,7 @@ export const SetupWizardContent: React.FC<SetupWizardContentProps> = ({
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white dark:bg-gray-900 p-5 gap-10">
+    <SafeAreaView className="flex-1 bg-white p-5 gap-10">
       {renderCurrentStep()}
     </SafeAreaView>
   );

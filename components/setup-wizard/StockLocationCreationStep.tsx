@@ -17,13 +17,13 @@ export const StockLocationCreationStep: React.FC<
 
   return (
     <View className="flex-1">
-      <Text className="text-4xl mb-6 font-semibold text-gray-900 dark:text-white">
+      <Text className="text-4xl mb-6 font-semibold text-gray-900">
         Setting Up
       </Text>
-      <Text className="text-2xl mb-2 text-gray-900 dark:text-white">
+      <Text className="text-2xl mb-2 text-gray-900">
         Create a new stock location
       </Text>
-      <Text className="text-base mb-6 text-gray-400 dark:text-gray-300">
+      <Text className="text-base mb-6 text-gray-400">
         Select where inventory will be sourced from, or add a new location if
         needed.
       </Text>

@@ -17,13 +17,13 @@ export const SalesChannelCreationStep: React.FC<
 
   return (
     <View className="flex-1">
-      <Text className="text-4xl mb-6 font-semibold text-gray-900 dark:text-white">
+      <Text className="text-4xl mb-6 font-semibold text-gray-900">
         Setting Up
       </Text>
-      <Text className="text-2xl mb-2 text-gray-900 dark:text-white">
+      <Text className="text-2xl mb-2 text-gray-900">
         Choose a sales channel
       </Text>
-      <Text className="text-base mb-6 text-gray-400 dark:text-gray-300">
+      <Text className="text-base mb-6 text-gray-400">
         Select an existing sales channel from the list or create a new one to
         proceed.
       </Text>

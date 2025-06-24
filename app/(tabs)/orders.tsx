@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function OrdersScreen() {
   return (
-    <SafeAreaView className="flex-1">
+    <SafeAreaView className="flex-1 bg-white">
       <StatusBar style="auto" />
       <View className="p-5 pt-15">
         <Text className="text-black text-3xl font-semibold">Orders</Text>
