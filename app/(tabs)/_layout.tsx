@@ -3,21 +3,20 @@ import React from 'react';
 import { Platform } from 'react-native';
 
 import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { ScanBarcode } from '@/components/icons/scan-barcode';
+import { Settings } from '@/components/icons/settings';
+import { ShoppingBag } from '@/components/icons/shopping-bag';
+import { ShoppingCart } from '@/components/icons/shopping-cart';
+import { Tag } from '@/components/icons/tag';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: '#000',
         headerShown: false,
         tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
+        // tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
           ios: {
             // Use a transparent background on iOS to show the blur effect
@@ -25,24 +24,21 @@ export default function TabLayout() {
           },
           default: {},
         }),
+        animation: 'shift',
       }}
     >
       <Tabs.Screen
         name="products"
         options={{
           title: 'Products',
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="cube.box.fill" color={color} />
-          ),
+          tabBarIcon: ({ color }) => <Tag size={28} color={color} />,
         }}
       />
       <Tabs.Screen
         name="scan"
         options={{
           title: 'Scan',
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="qrcode.viewfinder" color={color} />
-          ),
+          tabBarIcon: ({ color }) => <ScanBarcode size={28} color={color} />,
           tabBarStyle: { display: 'none' },
         }}
       />
@@ -50,27 +46,21 @@ export default function TabLayout() {
         name="cart"
         options={{
           title: 'Cart',
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="cart.fill" color={color} />
-          ),
+          tabBarIcon: ({ color }) => <ShoppingBag size={28} color={color} />,
         }}
       />
       <Tabs.Screen
         name="orders"
         options={{
           title: 'Orders',
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="list.clipboard.fill" color={color} />
-          ),
+          tabBarIcon: ({ color }) => <ShoppingCart size={28} color={color} />,
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
           title: 'Settings',
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="gear" color={color} />
-          ),
+          tabBarIcon: ({ color }) => <Settings size={28} color={color} />,
         }}
       />
     </Tabs>
