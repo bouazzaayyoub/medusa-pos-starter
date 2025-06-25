@@ -4,6 +4,7 @@ import { Loader } from '@/components/icons/loader';
 import { MapPin } from '@/components/icons/map-pin';
 import { getCountryByAlpha2 } from '@/constants/countries';
 import { findProvinceByCode } from '@/constants/provinces';
+import { clx } from '@/utils/clx';
 import React from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 
@@ -49,21 +50,27 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
         renderItem={({ item, index }) => (
           <>
             <TouchableOpacity
-              className={`
-              py-3 justify-between items-center flex-row px-4
-              ${selectedStockLocationId === item.id && 'bg-black'}
-            `}
+              className={clx(
+                'py-3 justify-between items-center flex-row px-4',
+                {
+                  'bg-black': selectedStockLocationId === item.id,
+                },
+              )}
               onPress={() => onStockLocationSelect(item.id)}
             >
               <View>
                 <Text
-                  className={`${selectedStockLocationId === item.id && 'text-white'}`}
+                  className={clx({
+                    'text-white': selectedStockLocationId === item.id,
+                  })}
                 >
                   {item.name}
                 </Text>
                 {item.address && (
                   <Text
-                    className={`text-sm text-gray-500 ${selectedStockLocationId === item.id && 'text-white'}`}
+                    className={clx('text-sm text-gray-500', {
+                      'text-white': selectedStockLocationId === item.id,
+                    })}
                   >
                     {[
                       item.address.address_1,
@@ -74,7 +81,7 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
                       item.address.province
                         ? findProvinceByCode(
                             item.address.country_code,
-                            item.address.province
+                            item.address.province,
                           )?.name || item.address.province
                         : undefined,
                       getCountryByAlpha2(item.address.country_code)?.name ||
@@ -87,7 +94,9 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
               </View>
               <MapPin
                 size={16}
-                className={`${selectedStockLocationId === item.id && 'text-white'}`}
+                className={clx({
+                  'text-white': selectedStockLocationId === item.id,
+                })}
               />
             </TouchableOpacity>
             {index <
