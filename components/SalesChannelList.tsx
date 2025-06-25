@@ -2,6 +2,7 @@ import { useSalesChannels } from '@/api/hooks/sales-channel';
 import { Antenna } from '@/components/icons/antenna';
 import { CircleAlert } from '@/components/icons/circle-alert';
 import { Loader } from '@/components/icons/loader';
+import { clx } from '@/utils/clx';
 import React from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 
@@ -47,20 +48,24 @@ const SalesChannelList: React.FC<SalesChannelListProps> = ({
         renderItem={({ item, index }) => (
           <>
             <TouchableOpacity
-              className={`
-              py-3 justify-between items-center flex-row px-4
-              ${selectedSalesChannelId === item.id && 'bg-black'}
-            `}
+              className={clx(
+                'py-3 justify-between items-center flex-row px-4',
+                { 'bg-black': selectedSalesChannelId === item.id },
+              )}
               onPress={() => onSalesChannelSelect(item.id)}
             >
               <Text
-                className={`${selectedSalesChannelId === item.id && 'text-white'}`}
+                className={clx({
+                  'text-white': selectedSalesChannelId === item.id,
+                })}
               >
                 {item.name}
               </Text>
               <Antenna
                 size={16}
-                className={`${selectedSalesChannelId === item.id && 'text-white'}`}
+                className={clx({
+                  'text-white': selectedSalesChannelId === item.id,
+                })}
               />
             </TouchableOpacity>
             {index <
