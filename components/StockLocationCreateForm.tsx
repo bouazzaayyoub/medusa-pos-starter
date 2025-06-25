@@ -29,11 +29,7 @@ type StockLocationFormData = z.infer<typeof stockLocationSchema>;
 
 const StockLocationCreateForm: React.FC<StockLocationCreateFormProps> = ({
   onStockLocationCreated,
-  defaultValues = {
-    name: 'Main Store',
-    address_1: '123 Main Street',
-    country_code: 'US',
-  },
+  defaultValues,
 }) => {
   const createStockLocation = useCreateStockLocation();
 
@@ -68,15 +64,19 @@ const StockLocationCreateForm: React.FC<StockLocationCreateFormProps> = ({
     <Form
       schema={stockLocationSchema}
       onSubmit={handleCreateStockLocation}
-      defaultValues={{
-        name: defaultValues.name || '',
-        address_1: defaultValues.address_1 || '',
-        address_2: defaultValues.address_2 || '',
-        city: defaultValues.city || '',
-        country_code: defaultValues.country_code || '',
-        province: defaultValues.province || '',
-        postal_code: defaultValues.postal_code || '',
-      }}
+      defaultValues={
+        defaultValues
+          ? {
+              name: defaultValues.name || '',
+              address_1: defaultValues.address_1 || '',
+              address_2: defaultValues.address_2 || '',
+              city: defaultValues.city || '',
+              country_code: defaultValues.country_code || '',
+              province: defaultValues.province || '',
+              postal_code: defaultValues.postal_code || '',
+            }
+          : undefined
+      }
     >
       <TextField name="name" floatingPlaceholder placeholder="Location Name" />
 
