@@ -1,7 +1,8 @@
 import { CircleAlert } from '@/components/icons/circle-alert';
 import { Eye } from '@/components/icons/eye';
 import { EyeOff } from '@/components/icons/eye-off';
-import React, { useState } from 'react';
+import { clx } from '@/utils/clx';
+import React, { useEffect, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import {
   Text,
@@ -10,6 +11,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 interface TextFieldProps
   extends Omit<TextInputProps, 'value' | 'onChangeText'> {
@@ -41,31 +47,61 @@ export function TextField({
   });
 
   const [isFocused, setIsFocused] = useState(false);
-  const showFloating = isFocused || !!value;
-
   const [showValue, setShowValue] = useState(false);
+
+  const showFloating = isFocused || !!value;
+  const floatingPlaceholderTranslateY = useSharedValue(0);
+  const floatingPlaceholderScale = useSharedValue(1);
+
+  const floatingPlaceholderStyle = useAnimatedStyle(() => {
+    return {
+      transformOrigin: 'top left',
+      transform: [
+        {
+          translateY: floatingPlaceholderTranslateY.value,
+        },
+        {
+          scale: floatingPlaceholderScale.value,
+        },
+      ],
+    };
+  });
+
+  useEffect(() => {
+    if (showFloating) {
+      floatingPlaceholderTranslateY.value = withTiming(-12, { duration: 150 });
+      floatingPlaceholderScale.value = withTiming(0.67, { duration: 150 });
+    } else {
+      floatingPlaceholderTranslateY.value = withTiming(0, { duration: 150 });
+      floatingPlaceholderScale.value = withTiming(1, { duration: 150 });
+    }
+  }, [showFloating]);
 
   return (
     <View className={className}>
       <View className="relative">
         {floatingPlaceholder && (
-          <Text
-            className={`absolute left-4 z-10 transition-all ${
-              showFloating ? 'translate-y-2 text-xs' : 'translate-y-5 text-lg'
-            } ${error ? 'text-red-500' : 'text-[#b5b5b5]'}`}
+          <Animated.Text
+            className={clx(
+              'absolute left-4 z-10 text-lg top-5',
+              error ? 'text-red-500' : 'text-[#b5b5b5]',
+            )}
+            style={floatingPlaceholderStyle}
             pointerEvents="none"
           >
             {placeholder}
-          </Text>
+          </Animated.Text>
         )}
         <TextInput
-          className={`
-            bg-white rounded-xl px-4 py-5 text-lg leading-6 border border-gray-200
-            ${error ? 'border-red-500 bg-red-50' : ''}
-            ${floatingPlaceholder ? 'pt-6 pb-4' : ''}
-            ${inputClassName}
-          `}
-          placeholder={floatingPlaceholder ? '' : placeholder}
+          className={clx(
+            'bg-white rounded-xl px-4 py-5 text-lg leading-6 border border-gray-200',
+            {
+              'border-red-500 bg-red-50': error,
+              'pt-6 pb-4': floatingPlaceholder,
+            },
+            inputClassName,
+          )}
+          placeholder={floatingPlaceholder ? undefined : placeholder}
           placeholderTextColor="#b5b5b5"
           value={value || ''}
           secureTextEntry={secureTextEntry && !showValue}
