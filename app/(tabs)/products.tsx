@@ -36,6 +36,7 @@ export default function ProductsScreen() {
         elevation: 3,
       }}
       onPress={() => handleProductPress(item)}
+      key={item.id}
     >
       <View className="flex-1">
         <Text className="text-base font-semibold mb-1">{item.title}</Text>

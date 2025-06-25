@@ -5,7 +5,7 @@ import { MapPin } from '@/components/icons/map-pin';
 import { getCountryByAlpha2 } from '@/constants/countries';
 import { findProvinceByCode } from '@/constants/provinces';
 import { clx } from '@/utils/clx';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 
 interface StockLocationListProps {
@@ -48,7 +48,7 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
         keyExtractor={(item) => item.id}
         className="border rounded-xl border-b border-[#EDEDED]"
         renderItem={({ item, index }) => (
-          <>
+          <Fragment key={item.id}>
             <TouchableOpacity
               className={clx(
                 'py-3 justify-between items-center flex-row px-4',
@@ -103,7 +103,7 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
               (stockLocationsQuery.data?.pages?.[0]?.stock_locations.length ||
                 0) -
                 1 && <Text className="h-px bg-[#EDEDED] mx-4" />}
-          </>
+          </Fragment>
         )}
       />
     </View>

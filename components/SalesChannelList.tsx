@@ -3,7 +3,7 @@ import { Antenna } from '@/components/icons/antenna';
 import { CircleAlert } from '@/components/icons/circle-alert';
 import { Loader } from '@/components/icons/loader';
 import { clx } from '@/utils/clx';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 
 interface SalesChannelListProps {
@@ -46,7 +46,7 @@ const SalesChannelList: React.FC<SalesChannelListProps> = ({
         keyExtractor={(item) => item.id}
         className="border rounded-xl border-b border-[#EDEDED]"
         renderItem={({ item, index }) => (
-          <>
+          <Fragment key={item.id}>
             <TouchableOpacity
               className={clx(
                 'py-3 justify-between items-center flex-row px-4',
@@ -72,7 +72,7 @@ const SalesChannelList: React.FC<SalesChannelListProps> = ({
               (salesChannelsQuery.data?.pages?.[0]?.sales_channels.length ||
                 0) -
                 1 && <Text className="h-px bg-[#EDEDED] mx-4" />}
-          </>
+          </Fragment>
         )}
       />
     </View>
