@@ -53,21 +53,11 @@ const SalesChannelList: React.FC<SalesChannelListProps> = ({
             `}
               onPress={() => onSalesChannelSelect(item.id)}
             >
-              <View>
-                <Text
-                  className={`${selectedSalesChannelId === item.id && 'text-white'}`}
-                >
-                  {item.name}
-                </Text>
-                {item.description && (
-                  <Text
-                    className={`text-sm text-gray-500 ${selectedSalesChannelId === item.id && 'text-white'}`}
-                  >
-                    {item.description}
-                  </Text>
-                )}
-              </View>
-
+              <Text
+                className={`${selectedSalesChannelId === item.id && 'text-white'}`}
+              >
+                {item.name}
+              </Text>
               <Antenna
                 size={16}
                 className={`${selectedSalesChannelId === item.id && 'text-white'}`}
