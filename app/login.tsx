@@ -1,8 +1,9 @@
 import Form from '@/components/form/Form';
 import FormButton from '@/components/form/FormButton';
 import TextField from '@/components/form/TextField';
+import { CircleAlert } from '@/components/icons/circle-alert';
 import { useAuthCtx } from '@/contexts/auth';
-import React from 'react';
+import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as z from 'zod/v4';
@@ -66,7 +67,7 @@ const loginSchema = z.object({
       },
       {
         message: 'Please enter a valid Medusa shop URL',
-      },
+      }
     ),
   email: z
     .email('Please enter a valid email address')
@@ -79,14 +80,21 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export default function LoginScreen() {
   const auth = useAuthCtx();
 
-  const handleLogin = (data: LoginFormData) => {
+  const [error, setError] = useState<string | null>(null);
+
+  const handleLogin = async (data: LoginFormData) => {
+    setError(null);
     const fullUrl = `https://${data.medusaUrl}`;
-    auth.login(fullUrl, data.email, data.password);
+    try {
+      await auth.login(fullUrl, data.email, data.password);
+    } catch (err: any) {
+      setError(err?.message || 'Login failed. Please try again.');
+    }
   };
 
   const defaultValues: Partial<LoginFormData> = {
     medusaUrl:
-      auth.state.status !== 'loading' ? auth.state.medusaUrl ?? '' : '',
+      auth.state.status !== 'loading' ? (auth.state.medusaUrl ?? '') : '',
     email: '',
     password: '',
   };
@@ -94,7 +102,12 @@ export default function LoginScreen() {
   return (
     <SafeAreaView className="flex-1 p-4 pt-6 bg-white gap-7">
       <Text className="text-4xl font-semibold">Login</Text>
-
+      {error && (
+        <View className="flex-row bg-[##FFDFDF] p-4 rounded-xl items-center gap-3">
+          <CircleAlert size={16} color="#ef4444" />
+          <Text className="text-red-500 text-base">{error}</Text>
+        </View>
+      )}
       <View className="w-full flex-1">
         <Form
           schema={loginSchema}
@@ -104,6 +117,7 @@ export default function LoginScreen() {
         >
           <TextField
             name="medusaUrl"
+            floatingPlaceholder
             placeholder="Shop URL"
             keyboardType="url"
             autoCapitalize="none"
@@ -113,6 +127,7 @@ export default function LoginScreen() {
 
           <TextField
             name="email"
+            floatingPlaceholder
             placeholder="Email Address"
             keyboardType="email-address"
             autoCapitalize="none"
@@ -122,6 +137,7 @@ export default function LoginScreen() {
 
           <TextField
             name="password"
+            floatingPlaceholder
             placeholder="Password"
             secureTextEntry
             autoCapitalize="none"
