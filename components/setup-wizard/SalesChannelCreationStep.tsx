@@ -28,11 +28,9 @@ export const SalesChannelCreationStep: React.FC<
         proceed.
       </Text>
 
-      <View className="mb-4">
-        <SalesChannelCreateForm
-          onSalesChannelCreated={handleSalesChannelCreated}
-        />
-      </View>
+      <SalesChannelCreateForm
+        onSalesChannelCreated={handleSalesChannelCreated}
+      />
 
       {typeof onBackToSelection === 'function' && (
         <TouchableOpacity

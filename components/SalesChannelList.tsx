@@ -1,12 +1,9 @@
 import { useSalesChannels } from '@/api/hooks/sales-channel';
+import { Antenna } from '@/components/icons/antenna';
+import { CircleAlert } from '@/components/icons/circle-alert';
+import { Loader } from '@/components/icons/loader';
 import React from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 
 interface SalesChannelListProps {
   selectedSalesChannelId: string;
@@ -21,11 +18,22 @@ const SalesChannelList: React.FC<SalesChannelListProps> = ({
 
   if (salesChannelsQuery.isLoading) {
     return (
-      <View className="flex-1 justify-center items-center p-5">
-        <ActivityIndicator size="large" color="#007AFF" />
-        <Text className="mt-4 text-base opacity-70">
+      <View className="flex-row mb-auto border rounded-xl border-[#E5E5E5] justify-between items-center p-4">
+        <Text className="text-base text-[#B5B5B5]">
           Loading sales channels...
         </Text>
+        <Loader size={16} className="text-[#B5B5B5] animate-spin" />
+      </View>
+    );
+  }
+
+  if (salesChannelsQuery.isError) {
+    return (
+      <View className="flex-row mb-auto bg-[#F8EC9A] rounded-xl justify-between items-center p-4">
+        <Text className="text-base text-[#9B8435]">
+          Unable to load sales channels.
+        </Text>
+        <CircleAlert size={16} className="text-[#9B8435]" />
       </View>
     );
   }
@@ -35,24 +43,31 @@ const SalesChannelList: React.FC<SalesChannelListProps> = ({
       <FlatList
         data={salesChannelsQuery.data?.pages?.[0]?.sales_channels || []}
         keyExtractor={(item) => item.id}
-        className="flex-1"
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            className={`
-              bg-gray-50 rounded-xl p-4 mb-3 border-2
-              ${
-                selectedSalesChannelId === item.id
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-transparent'
-              }
+        className="border rounded-xl border-b border-[#EDEDED]"
+        renderItem={({ item, index }) => (
+          <>
+            <TouchableOpacity
+              className={`
+              py-3 justify-between flex-row px-4
+              ${selectedSalesChannelId === item.id && 'bg-black'}
             `}
-            onPress={() => onSalesChannelSelect(item.id)}
-          >
-            <Text className="text-lg font-semibold mb-1">{item.name}</Text>
-            {item.description && (
-              <Text className="text-sm opacity-70">{item.description}</Text>
-            )}
-          </TouchableOpacity>
+              onPress={() => onSalesChannelSelect(item.id)}
+            >
+              <Text
+                className={`${selectedSalesChannelId === item.id && 'text-white'}`}
+              >
+                {item.name}
+              </Text>
+              <Antenna
+                size={16}
+                className={`${selectedSalesChannelId === item.id && 'text-white'}`}
+              />
+            </TouchableOpacity>
+            {index <
+              (salesChannelsQuery.data?.pages?.[0]?.sales_channels.length ||
+                0) -
+                1 && <Text className="h-px bg-[#EDEDED] mx-4" />}
+          </>
         )}
       />
     </View>

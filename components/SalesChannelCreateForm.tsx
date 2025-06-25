@@ -44,11 +44,13 @@ const SalesChannelCreateForm: React.FC<SalesChannelCreateFormProps> = ({
       schema={salesChannelSchema}
       onSubmit={handleCreateSalesChannel}
       defaultValues={defaultValues}
+      className="flex-1"
     >
-      <TextField name="name" placeholder="Sales Channel Name" />
+      <TextField name="name" floatingPlaceholder placeholder="Channel Name" />
 
       <TextField
         name="description"
+        floatingPlaceholder
         placeholder="Description (optional)"
         multiline
         numberOfLines={3}
@@ -57,6 +59,7 @@ const SalesChannelCreateForm: React.FC<SalesChannelCreateFormProps> = ({
       <FormButton
         loading={createSalesChannel.isPending}
         disabled={createSalesChannel.isPending}
+        className="mt-auto"
       >
         Create Channel
       </FormButton>
