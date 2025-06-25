@@ -48,16 +48,26 @@ const SalesChannelList: React.FC<SalesChannelListProps> = ({
           <>
             <TouchableOpacity
               className={`
-              py-3 justify-between flex-row px-4
+              py-3 justify-between items-center flex-row px-4
               ${selectedSalesChannelId === item.id && 'bg-black'}
             `}
               onPress={() => onSalesChannelSelect(item.id)}
             >
-              <Text
-                className={`${selectedSalesChannelId === item.id && 'text-white'}`}
-              >
-                {item.name}
-              </Text>
+              <View>
+                <Text
+                  className={`${selectedSalesChannelId === item.id && 'text-white'}`}
+                >
+                  {item.name}
+                </Text>
+                {item.description && (
+                  <Text
+                    className={`text-sm text-gray-500 ${selectedSalesChannelId === item.id && 'text-white'}`}
+                  >
+                    {item.description}
+                  </Text>
+                )}
+              </View>
+
               <Antenna
                 size={16}
                 className={`${selectedSalesChannelId === item.id && 'text-white'}`}
