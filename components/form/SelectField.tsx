@@ -1,3 +1,4 @@
+import { ChevronDown } from '@/components/icons/chevron-down';
 import React, { useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import {
@@ -24,6 +25,7 @@ interface SelectFieldProps {
   modalClassName?: string;
   searchable?: boolean;
   renderOption?: (option: SelectOption, isSelected: boolean) => React.ReactNode;
+  floatingPlaceholder?: boolean;
 }
 
 export function SelectField({
@@ -36,6 +38,7 @@ export function SelectField({
   modalClassName = '',
   searchable = false,
   renderOption,
+  floatingPlaceholder = false,
 }: SelectFieldProps) {
   const { control } = useFormContext();
   const {
@@ -52,9 +55,11 @@ export function SelectField({
   const selectedOption = options.find((option) => option.value === value);
   const filteredOptions = searchable
     ? options.filter((option) =>
-        option.label.toLowerCase().includes(searchQuery.toLowerCase()),
+        option.label.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : options;
+
+  const showFloating = floatingPlaceholder && (isVisible || !!selectedOption);
 
   const handleSelect = (selectedValue: string) => {
     onChange(selectedValue);
@@ -84,24 +89,41 @@ export function SelectField({
 
   return (
     <View className={className}>
-      <TouchableOpacity
-        className={`
-          bg-white rounded-xl px-4 py-5 text-lg leading-6 border border-gray-200 flex-row justify-between items-center
-          ${error ? 'border-red-500 bg-red-50' : ''}
-          ${buttonClassName}
-        `}
-        onPress={() => setIsVisible(true)}
-      >
-        <Text
-          className={`text-base ${
-            selectedOption ? 'text-gray-700' : 'text-[#b5b5b5]'
-          }`}
+      <View className="relative">
+        {floatingPlaceholder && (
+          <Text
+            className={`absolute left-4 z-10 transition-all ${
+              showFloating ? 'translate-y-2 text-xs' : 'translate-y-5 text-lg'
+            } ${error ? 'text-red-500' : 'text-[#b5b5b5]'}`}
+            pointerEvents="none"
+          >
+            {placeholder}
+          </Text>
+        )}
+        <TouchableOpacity
+          className={`
+            bg-white rounded-xl px-4 py-5 text-lg leading-6 border border-gray-200 flex-row justify-between items-center
+            ${error ? 'border-red-500 bg-red-50' : ''}
+            ${buttonClassName}
+            ${floatingPlaceholder ? 'pt-6 pb-4' : ''}
+          `}
+          onPress={() => setIsVisible(true)}
         >
-          {selectedOption ? selectedOption.label : placeholder}
-        </Text>
-        <Text className="text-gray-400 text-lg">▼</Text>
-      </TouchableOpacity>
-
+          <Text
+            className={`text-lg ${
+              selectedOption ? 'text-gray-700' : 'text-[#b5b5b5]'
+            }`}
+          >
+            {selectedOption
+              ? selectedOption.label
+              : !floatingPlaceholder && placeholder}
+          </Text>
+        </TouchableOpacity>
+        <ChevronDown
+          size={24}
+          className="text-[#B5B5B5] absolute top-1/2 -translate-y-1/2 right-4"
+        />
+      </View>
       {error && (
         <Text className={`text-red-500 text-sm mt-1 ${errorClassName}`}>
           {error.message}
