@@ -36,6 +36,7 @@ export function ProvinceField({
   return (
     <SelectField
       name={name}
+      floatingPlaceholder
       placeholder={placeholder}
       options={provinceOptions}
       searchable={true}

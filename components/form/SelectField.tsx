@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import { ChevronDown } from '@/components/icons/chevron-down';
+import { clx } from '@/utils/clx';
+import React, { useEffect, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import {
   FlatList,
@@ -8,6 +10,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 interface SelectOption {
   label: string;
@@ -24,6 +31,7 @@ interface SelectFieldProps {
   modalClassName?: string;
   searchable?: boolean;
   renderOption?: (option: SelectOption, isSelected: boolean) => React.ReactNode;
+  floatingPlaceholder?: boolean;
 }
 
 export function SelectField({
@@ -36,6 +44,7 @@ export function SelectField({
   modalClassName = '',
   searchable = false,
   renderOption,
+  floatingPlaceholder = false,
 }: SelectFieldProps) {
   const { control } = useFormContext();
   const {
@@ -56,6 +65,34 @@ export function SelectField({
       )
     : options;
 
+  const showFloating = floatingPlaceholder && (isVisible || !!selectedOption);
+  const floatingPlaceholderTranslateY = useSharedValue(0);
+  const floatingPlaceholderScale = useSharedValue(1);
+
+  const floatingPlaceholderStyle = useAnimatedStyle(() => {
+    return {
+      transformOrigin: 'top left',
+      transform: [
+        {
+          translateY: floatingPlaceholderTranslateY.value,
+        },
+        {
+          scale: floatingPlaceholderScale.value,
+        },
+      ],
+    };
+  });
+
+  useEffect(() => {
+    if (showFloating) {
+      floatingPlaceholderTranslateY.value = withTiming(-12, { duration: 150 });
+      floatingPlaceholderScale.value = withTiming(0.67, { duration: 150 });
+    } else {
+      floatingPlaceholderTranslateY.value = withTiming(0, { duration: 150 });
+      floatingPlaceholderScale.value = withTiming(1, { duration: 150 });
+    }
+  }, [showFloating]);
+
   const handleSelect = (selectedValue: string) => {
     onChange(selectedValue);
     setIsVisible(false);
@@ -65,16 +102,20 @@ export function SelectField({
   const defaultRenderOption = (option: SelectOption, isSelected: boolean) => (
     <TouchableOpacity
       key={option.value}
-      className={`
-        p-4 border-b border-gray-100 flex-row justify-between items-center
-        ${isSelected ? 'bg-blue-50' : 'bg-white'}
-      `}
+      className={clx(
+        'p-4 border-b border-gray-100 flex-row justify-between items-center',
+        {
+          'bg-blue-50': isSelected,
+          'bg-white': !isSelected,
+        },
+      )}
       onPress={() => handleSelect(option.value)}
     >
       <Text
-        className={`text-base ${
-          isSelected ? 'text-blue-600 font-medium' : 'text-gray-900'
-        }`}
+        className={clx('text-base', {
+          'text-blue-600 font-medium': isSelected,
+          'text-gray-900': !isSelected,
+        })}
       >
         {option.label}
       </Text>
@@ -84,26 +125,50 @@ export function SelectField({
 
   return (
     <View className={className}>
-      <TouchableOpacity
-        className={`
-          bg-white rounded-xl px-4 py-5 text-lg leading-6 border border-gray-200 flex-row justify-between items-center
-          ${error ? 'border-red-500 bg-red-50' : ''}
-          ${buttonClassName}
-        `}
-        onPress={() => setIsVisible(true)}
-      >
-        <Text
-          className={`text-base ${
-            selectedOption ? 'text-gray-700' : 'text-[#b5b5b5]'
-          }`}
+      <View className="relative">
+        {floatingPlaceholder && (
+          <Animated.Text
+            className={clx(
+              'absolute left-4 z-10 text-lg top-5',
+              error ? 'text-red-500' : 'text-[#b5b5b5]',
+            )}
+            style={floatingPlaceholderStyle}
+            pointerEvents="none"
+          >
+            {placeholder}
+          </Animated.Text>
+        )}
+        <TouchableOpacity
+          className={clx(
+            'bg-white rounded-xl px-4 py-5 text-lg leading-6 border border-gray-200 flex-row justify-between items-center',
+            {
+              'border-red-500 bg-red-50': error,
+              [buttonClassName]: buttonClassName,
+              'pt-6 pb-4': floatingPlaceholder,
+            },
+          )}
+          onPress={() => setIsVisible(true)}
         >
-          {selectedOption ? selectedOption.label : placeholder}
-        </Text>
-        <Text className="text-gray-400 text-lg">▼</Text>
-      </TouchableOpacity>
-
+          <Text
+            className={clx('text-lg', {
+              'text-gray-700': selectedOption,
+              'text-[#b5b5b5]': !selectedOption,
+            })}
+          >
+            {selectedOption
+              ? selectedOption.label
+              : !floatingPlaceholder
+              ? placeholder
+              : null}
+          </Text>
+        </TouchableOpacity>
+        <ChevronDown
+          size={24}
+          className="text-[#B5B5B5] absolute top-1/2 -translate-y-1/2 right-4"
+        />
+      </View>
       {error && (
-        <Text className={`text-red-500 text-sm mt-1 ${errorClassName}`}>
+        <Text className={clx('text-red-500 text-sm mt-1', errorClassName)}>
           {error.message}
         </Text>
       )}
@@ -116,7 +181,10 @@ export function SelectField({
       >
         <View className="flex-1 bg-black/50 justify-end">
           <View
-            className={`bg-white rounded-t-3xl max-h-[80%] ${modalClassName}`}
+            className={clx(
+              'bg-white rounded-t-3xl max-h-[80%] pb-safe',
+              modalClassName,
+            )}
           >
             <View className="p-4 border-b border-gray-200 flex-row justify-between items-center">
               <Text className="text-lg font-semibold text-gray-900">

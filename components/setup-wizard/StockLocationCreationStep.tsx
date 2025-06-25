@@ -1,7 +1,7 @@
 import { StockLocationCreateForm } from '@/components/StockLocationCreateForm';
 import { AdminStockLocation } from '@medusajs/types';
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity } from 'react-native';
 
 interface StockLocationCreationStepProps {
   onComplete: (stockLocationId: string) => void;
@@ -16,7 +16,7 @@ export const StockLocationCreationStep: React.FC<
   };
 
   return (
-    <View className="flex-1">
+    <ScrollView showsVerticalScrollIndicator={false}>
       <Text className="text-4xl mb-6 font-semibold text-gray-900">
         Setting Up
       </Text>
@@ -28,21 +28,19 @@ export const StockLocationCreationStep: React.FC<
         needed.
       </Text>
 
-      <View className="mb-4">
-        <StockLocationCreateForm
-          onStockLocationCreated={handleStockLocationCreated}
-        />
-      </View>
+      <StockLocationCreateForm
+        onStockLocationCreated={handleStockLocationCreated}
+      />
 
       {typeof onBackToSelection === 'function' && (
         <TouchableOpacity
-          className="bg-white border border-gray-200 rounded-xl items-center justify-center flex-row p-5
-        disabled:bg-gray-100 disabled:text-gray-400"
+          className="bg-white border mt-4 border-gray-200 rounded-xl items-center justify-center flex-row p-5
+          disabled:bg-gray-100 disabled:text-gray-400"
           onPress={onBackToSelection}
         >
           <Text className="text-black text-xl">Cancel</Text>
         </TouchableOpacity>
       )}
-    </View>
+    </ScrollView>
   );
 };

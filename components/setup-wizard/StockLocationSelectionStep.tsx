@@ -35,7 +35,7 @@ export const StockLocationSelectionStep: React.FC<
       />
 
       <TouchableOpacity
-        className="bg-transparent rounded-xl p-5 items-center border border-gray-200 mt-4"
+        className="bg-transparent rounded-xl p-5 items-center border border-gray-200 mt-6"
         onPress={onCreateNew}
       >
         <Text className="text-black text-xl">Create a new location</Text>
