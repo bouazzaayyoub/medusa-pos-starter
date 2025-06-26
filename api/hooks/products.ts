@@ -37,7 +37,7 @@ export const useProducts = (
   const sdk = useMedusaSdk();
 
   return useInfiniteQuery({
-    queryKey: ['products', query],
+    queryKey: ['products', JSON.stringify(query ?? {})],
     queryFn: async ({ pageParam = 1 }) => {
       return sdk.admin.product.list({
         ...query,
@@ -47,13 +47,13 @@ export const useProducts = (
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
-      const nextPage = lastPage.offset / limit + 1;
+      const nextPage = (lastPage.offset + lastPage.limit) / limit + 1;
       return lastPage.count > lastPage.offset + lastPage.limit
         ? nextPage
         : undefined;
     },
     getPreviousPageParam: (firstPage) => {
-      const prevPage = firstPage.offset / limit - 1;
+      const prevPage = (firstPage.offset + firstPage.limit) / limit - 1;
       return prevPage >= 1 ? prevPage : undefined;
     },
     ...options,

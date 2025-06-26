@@ -17,7 +17,7 @@ export const useStockLocations = (
   const sdk = useMedusaSdk();
 
   return useInfiniteQuery({
-    queryKey: ['stock-locations', query],
+    queryKey: ['stock-locations', JSON.stringify(query)],
     queryFn: async ({ pageParam = 1 }) => {
       return sdk.admin.stockLocation.list({
         ...query,
@@ -27,13 +27,13 @@ export const useStockLocations = (
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
-      const nextPage = lastPage.offset / PER_PAGE + 1;
+      const nextPage = (lastPage.offset + lastPage.limit) / PER_PAGE + 1;
       return lastPage.count > lastPage.offset + lastPage.limit
         ? nextPage
         : undefined;
     },
     getPreviousPageParam: (firstPage) => {
-      const prevPage = firstPage.offset / PER_PAGE - 1;
+      const prevPage = (firstPage.offset + firstPage.limit) / PER_PAGE - 1;
       return prevPage >= 1 ? prevPage : undefined;
     },
   });
