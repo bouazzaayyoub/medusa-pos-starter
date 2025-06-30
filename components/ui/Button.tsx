@@ -1,0 +1,65 @@
+import { Loader } from '@/components/icons/loader';
+import * as React from 'react';
+import { Text, TouchableOpacity, TouchableOpacityProps } from 'react-native';
+
+const BUTTON_SIZES = {
+  sm: 'p-3',
+  md: 'p-4',
+  lg: 'p-5',
+} as const;
+
+const TEXT_SIZES = {
+  sm: 'text-lg',
+  md: 'text-lg',
+  lg: 'text-xl',
+} as const;
+
+const BUTTON_VARIANTS = {
+  solid: 'bg-black disabled:bg-gray-light',
+  outline:
+    'border border-border bg-transparent disabled:bg-gray-light disabled:border-gray-light',
+} as const;
+
+const TEXT_VARIANTS = {
+  solid: 'text-white disabled:text-gray',
+  outline: 'text-black disabled:text-gray',
+} as const;
+
+type ButtonProps = TouchableOpacityProps & {
+  isPending?: boolean;
+  size?: keyof typeof BUTTON_SIZES;
+  variant?: keyof typeof BUTTON_VARIANTS;
+};
+
+export const Button: React.FC<ButtonProps> = ({
+  children,
+  className,
+  isPending = false,
+  size = 'md',
+  variant = 'solid',
+  ...props
+}) => {
+  const buttonSizeClasses = BUTTON_SIZES[size];
+  const textSizeClasses = TEXT_SIZES[size];
+  const buttonVariantClasses = BUTTON_VARIANTS[variant];
+  const textVariantClasses = TEXT_VARIANTS[variant];
+
+  return (
+    <TouchableOpacity
+      accessibilityRole="button"
+      disabled={props.disabled || isPending}
+      className={`${buttonSizeClasses} ${buttonVariantClasses} flex-row items-center justify-center gap-2 rounded-xl ${className}`}
+      {...props}
+    >
+      <Text
+        disabled={props.disabled || isPending}
+        className={`${textSizeClasses} ${textVariantClasses}`}
+      >
+        {children}
+      </Text>
+      {isPending && (
+        <Loader size={16} color="#B5B5B5" className="animate-spin" />
+      )}
+    </TouchableOpacity>
+  );
+};
