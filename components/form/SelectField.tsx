@@ -52,7 +52,7 @@ export function SelectField({
   const selectedOption = options.find((option) => option.value === value);
   const filteredOptions = searchable
     ? options.filter((option) =>
-        option.label.toLowerCase().includes(searchQuery.toLowerCase()),
+        option.label.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : options;
 
@@ -93,9 +93,7 @@ export function SelectField({
         onPress={() => setIsVisible(true)}
       >
         <Text
-          className={`text-base ${
-            selectedOption ? 'text-gray-700' : 'text-[#b5b5b5]'
-          }`}
+          className={`text-base ${selectedOption ? 'text-gray-700' : 'text-gray'}`}
         >
           {selectedOption ? selectedOption.label : placeholder}
         </Text>

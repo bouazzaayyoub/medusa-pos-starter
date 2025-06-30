@@ -55,7 +55,7 @@ export default function ProductsScreen() {
 
     return (
       <TouchableOpacity
-        className={`gap-4 flex-1 ${!isLastRow ? 'mb-6' : 'mb-20'}`}
+        className={`gap-4 flex-1 ${!isLastRow ? 'mb-6' : ''}`}
         onPress={() => handleProductPress(item)}
       >
         <View className="bg-gray-200 aspect-square rounded-lg overflow-hidden">
@@ -85,10 +85,10 @@ export default function ProductsScreen() {
       <View className="m-4 mb-6 relative">
         <Search
           size={16}
-          className="absolute left-4 top-1/2 -translate-y-[50%] text-[#B5B5B5]"
+          className="absolute left-4 top-1/2 -translate-y-[50%] text-gray"
         />
         <TextInput
-          className="rounded-full leading-snug pb-3 pt-2 pr-4 pl-10 text-base border placeholder:text-[#B5B5B5] border-[#E5E5E5]"
+          className="rounded-full leading-snug pb-3 pt-2 pr-4 pl-10 text-base border placeholder:text-gray border-border"
           placeholder="Search products..."
           value={searchQuery}
           onChangeText={setSearchQuery}
@@ -110,6 +110,7 @@ export default function ProductsScreen() {
         numColumns={2}
         columnWrapperStyle={{ gap: 8 }}
         className="flex-1 px-4"
+        contentContainerClassName="pb-20"
         showsVerticalScrollIndicator={false}
       />
     </SafeAreaView>

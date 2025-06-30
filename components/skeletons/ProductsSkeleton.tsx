@@ -26,10 +26,10 @@ export const ProductsSkeleton = () => {
       <View className="m-4 mb-6 relative">
         <Search
           size={16}
-          className="absolute left-4 top-1/2 -translate-y-[50%] text-[#B5B5B5]"
+          className="absolute left-4 top-1/2 -translate-y-[50%] text-gray"
         />
         <TextInput
-          className="rounded-full pb-3 pt-2 pr-4 pl-10 text-base border placeholder:text-[#B5B5B5] border-[#E5E5E5]"
+          className="rounded-full pb-3 pt-2 pr-4 pl-10 text-base border placeholder:text-gray border-border"
           placeholder="Search products..."
           editable={false}
         />
