@@ -44,13 +44,13 @@ const SalesChannelList: React.FC<SalesChannelListProps> = ({
       <FlatList
         data={salesChannelsQuery.data?.pages?.[0]?.sales_channels || []}
         keyExtractor={(item) => item.id}
-        className="border rounded-xl border-b border-[#EDEDED]"
+        contentContainerClassName="border overflow-hidden rounded-xl border-b border-[#EDEDED]"
         renderItem={({ item, index }) => (
           <>
             <TouchableOpacity
               className={clx(
                 'py-3 justify-between items-center flex-row px-4',
-                { 'bg-black': selectedSalesChannelId === item.id },
+                { 'bg-black': selectedSalesChannelId === item.id }
               )}
               onPress={() => onSalesChannelSelect(item.id)}
             >
