@@ -120,6 +120,7 @@ export default function ProductsScreen() {
           data={data}
           numColumns={2}
           renderItem={renderProduct}
+          keyExtractor={(item) => item.id}
           estimatedItemSize={70}
           refreshing={productsQuery.isRefetching}
           ItemSeparatorComponent={() => <View className="w-full h-6" />}
