@@ -36,7 +36,7 @@ export const ProductsSkeleton = () => {
       </View>
 
       <FlatList
-        data={{ length: 10 }}
+        data={Array.from({ length: 10 })}
         renderItem={({ item, index }) => renderProduct({ item, index })}
         numColumns={2}
         columnWrapperStyle={{ gap: 8 }}
