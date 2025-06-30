@@ -1,4 +1,5 @@
 import { ChevronDown } from '@/components/icons/chevron-down';
+import { X } from '@/components/icons/x';
 import { clx } from '@/utils/clx';
 import React, { useEffect, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
@@ -16,58 +17,57 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-interface SelectOption {
+interface MultiSelectOption {
   label: string;
   value: string;
 }
 
-interface SelectFieldProps {
+interface MultiSelectFieldProps {
   name: string;
   placeholder?: string;
-  options: SelectOption[];
+  options: MultiSelectOption[];
   className?: string;
   buttonClassName?: string;
   errorClassName?: string;
   modalClassName?: string;
   searchable?: boolean;
-  renderOption?: (option: SelectOption, isSelected: boolean) => React.ReactNode;
   floatingPlaceholder?: boolean;
-  onEndReached?: () => void;
 }
 
-export function SelectField({
+export function MultiSelectField({
   name,
-  placeholder = 'Select an option',
+  placeholder = 'Select options',
   options,
   className = '',
   buttonClassName = '',
   errorClassName = '',
   modalClassName = '',
   searchable = false,
-  renderOption,
   floatingPlaceholder = false,
-  onEndReached,
-}: SelectFieldProps) {
+}: MultiSelectFieldProps) {
   const { control } = useFormContext();
   const {
-    field: { onChange, value },
+    field: { onChange, value = [] },
     fieldState: { error },
   } = useController({
     name,
     control,
   });
-
   const [isVisible, setIsVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const selectedOption = options.find((option) => option.value === value);
+  const selectedOptions = options.filter((option) =>
+    value.includes(option.value),
+  );
+
   const filteredOptions = searchable
     ? options.filter((option) =>
         option.label.toLowerCase().includes(searchQuery.toLowerCase()),
       )
     : options;
 
-  const showFloating = floatingPlaceholder && (isVisible || !!selectedOption);
+  const showFloating =
+    floatingPlaceholder && (isVisible || selectedOptions.length > 0);
   const floatingPlaceholderTranslateY = useSharedValue(0);
   const floatingPlaceholderScale = useSharedValue(1);
 
@@ -95,13 +95,22 @@ export function SelectField({
     }
   }, [showFloating]);
 
-  const handleSelect = (selectedValue: string) => {
-    onChange(selectedValue);
-    setIsVisible(false);
-    setSearchQuery('');
+  const toggleOption = (optionValue: string) => {
+    const newValue = value.includes(optionValue)
+      ? value.filter((v: string) => v !== optionValue)
+      : [...value, optionValue];
+    onChange(newValue);
   };
 
-  const defaultRenderOption = (option: SelectOption, isSelected: boolean) => (
+  const removeOption = (optionValue: string) => {
+    const newValue = value.filter((v: string) => v !== optionValue);
+    onChange(newValue);
+  };
+
+  const defaultRenderOption = (
+    option: MultiSelectOption,
+    isSelected: boolean,
+  ) => (
     <TouchableOpacity
       key={option.value}
       className={clx(
@@ -111,7 +120,7 @@ export function SelectField({
           'bg-white': !isSelected,
         },
       )}
-      onPress={() => handleSelect(option.value)}
+      onPress={() => toggleOption(option.value)}
     >
       <Text
         className={clx('text-base', {
@@ -126,8 +135,58 @@ export function SelectField({
   );
 
   return (
-    <View className={className}>
+    <View className={`w-full ${className}`}>
       <View className="relative">
+        <TouchableOpacity
+          onPress={() => setIsVisible(true)}
+          className={clx(
+            'bg-white rounded-xl px-4 py-5 text-lg leading-6 border border-gray-200 flex-row justify-between items-center',
+            {
+              'border-red-500 bg-red-50': error,
+              [buttonClassName]: buttonClassName,
+              'pt-6 pb-4': floatingPlaceholder,
+            },
+          )}
+        >
+          <View>
+            {selectedOptions.length > 0 ? (
+              <View className="flex flex-row flex-wrap gap-1">
+                {selectedOptions.map((option) => (
+                  <View
+                    key={option.value}
+                    className="bg-gray-100 rounded-lg px-2 py-1 flex-row items-center mr-1 mb-1"
+                  >
+                    <Text className="text-sm text-gray-700">
+                      {option.label}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        removeOption(option.value);
+                      }}
+                      className="ml-1"
+                    >
+                      <X size={12} className="text-gray-600" />
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </View>
+            ) : (
+              <Text
+                className={clx('text-lg', {
+                  'text-[#b5b5b5]': !selectedOptions.length,
+                })}
+              >
+                {!floatingPlaceholder ? placeholder : null}
+              </Text>
+            )}
+          </View>
+        </TouchableOpacity>
+        <ChevronDown
+          size={24}
+          className="text-[#B5B5B5] absolute top-1/2 -translate-y-1/2 right-4"
+        />
+
         {floatingPlaceholder && (
           <Animated.Text
             className={clx(
@@ -140,35 +199,8 @@ export function SelectField({
             {placeholder}
           </Animated.Text>
         )}
-        <TouchableOpacity
-          className={clx(
-            'bg-white rounded-xl px-4 py-5 text-lg leading-6 border border-gray-200 flex-row justify-between items-center',
-            {
-              'border-red-500 bg-red-50': error,
-              [buttonClassName]: buttonClassName,
-              'pt-6 pb-4': floatingPlaceholder,
-            },
-          )}
-          onPress={() => setIsVisible(true)}
-        >
-          <Text
-            className={clx('text-lg', {
-              'text-gray-700': selectedOption,
-              'text-[#b5b5b5]': !selectedOption,
-            })}
-          >
-            {selectedOption
-              ? selectedOption.label
-              : !floatingPlaceholder
-              ? placeholder
-              : null}
-          </Text>
-        </TouchableOpacity>
-        <ChevronDown
-          size={24}
-          className="text-[#B5B5B5] absolute top-1/2 -translate-y-1/2 right-4"
-        />
       </View>
+
       {error && (
         <Text className={clx('text-red-500 text-sm mt-1', errorClassName)}>
           {error.message}
@@ -190,7 +222,7 @@ export function SelectField({
           >
             <View className="p-4 border-b border-gray-200 flex-row justify-between items-center">
               <Text className="text-lg font-semibold text-gray-900">
-                Select Option
+                Select Options
               </Text>
               <TouchableOpacity
                 className="w-8 h-8 rounded-full bg-gray-100 items-center justify-center"
@@ -219,11 +251,8 @@ export function SelectField({
               keyExtractor={(item) => item.value}
               showsVerticalScrollIndicator={false}
               renderItem={({ item }) => {
-                const isSelected = item.value === value;
-                const renderedOption = renderOption
-                  ? renderOption(item, isSelected)
-                  : defaultRenderOption(item, isSelected);
-                return renderedOption as React.ReactElement;
+                const isSelected = value.includes(item.value);
+                return defaultRenderOption(item, isSelected);
               }}
               ListEmptyComponent={
                 <View className="p-8 items-center">
@@ -234,7 +263,6 @@ export function SelectField({
                   </Text>
                 </View>
               }
-              onEndReached={onEndReached}
             />
           </View>
         </View>
@@ -242,5 +270,3 @@ export function SelectField({
     </View>
   );
 }
-
-export default SelectField;

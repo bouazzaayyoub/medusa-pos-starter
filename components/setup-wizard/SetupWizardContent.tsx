@@ -2,6 +2,8 @@ import { useUpdateSettings } from '@/contexts/settings';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { RegionCreationStep } from './RegionCreationStep';
+import { RegionSelectionStep } from './RegionSelectionStep';
 import { SalesChannelCreationStep } from './SalesChannelCreationStep';
 import { SalesChannelSelectionStep } from './SalesChannelSelectionStep';
 import { StockLocationCreationStep } from './StockLocationCreationStep';
@@ -12,6 +14,8 @@ import { WelcomeStep } from './WelcomeStep';
 type SetupStep =
   | 'sales-channel-selection'
   | 'sales-channel-creation'
+  | 'region-selection'
+  | 'region-creation'
   | 'stock-location-selection'
   | 'stock-location-creation'
   | 'welcome';
@@ -19,21 +23,25 @@ type SetupStep =
 interface SetupWizardContentProps {
   hasSalesChannels: boolean;
   hasStockLocations: boolean;
+  hasRegions: boolean;
 }
 
 export const SetupWizardContent: React.FC<SetupWizardContentProps> = ({
   hasSalesChannels,
   hasStockLocations,
+  hasRegions,
 }) => {
   // Determine initial step based on available data
   const getInitialStep = (): SetupStep => {
     if (!hasSalesChannels) return 'sales-channel-creation';
+    if (!hasRegions) return 'region-creation';
     if (!hasStockLocations) return 'stock-location-creation';
     return 'sales-channel-selection';
   };
 
   const [currentStep, setCurrentStep] = useState<SetupStep>(getInitialStep());
   const [salesChannelId, setSalesChannelId] = useState<string>('');
+  const [regionId, setRegionId] = useState<string>('');
   const [stockLocationId, setStockLocationId] = useState<string>('');
 
   const updateSettings = useUpdateSettings({
@@ -44,10 +52,10 @@ export const SetupWizardContent: React.FC<SetupWizardContentProps> = ({
 
   const handleSalesChannelComplete = (id: string) => {
     setSalesChannelId(id);
-    if (!hasStockLocations) {
-      setCurrentStep('stock-location-creation');
+    if (!hasRegions) {
+      setCurrentStep('region-creation');
     } else {
-      setCurrentStep('stock-location-selection');
+      setCurrentStep('region-selection');
     }
   };
 
@@ -57,6 +65,23 @@ export const SetupWizardContent: React.FC<SetupWizardContentProps> = ({
 
   const handleSalesChannelBackToSelection = () => {
     setCurrentStep('sales-channel-selection');
+  };
+
+  const handleRegionComplete = (id: string) => {
+    setRegionId(id);
+    if (!hasStockLocations) {
+      setCurrentStep('stock-location-creation');
+    } else {
+      setCurrentStep('stock-location-selection');
+    }
+  };
+
+  const handleRegionCreateNew = () => {
+    setCurrentStep('region-creation');
+  };
+
+  const handleRegionBackToSelection = () => {
+    setCurrentStep('region-selection');
   };
 
   const handleStockLocationComplete = (id: string) => {
@@ -75,6 +100,7 @@ export const SetupWizardContent: React.FC<SetupWizardContentProps> = ({
   const handleWelcomeComplete = async () => {
     updateSettings.mutate({
       sales_channel_id: salesChannelId,
+      region_id: regionId,
       stock_location_id: stockLocationId,
     });
   };
@@ -104,6 +130,32 @@ export const SetupWizardContent: React.FC<SetupWizardContentProps> = ({
             onComplete={handleSalesChannelComplete}
             onBackToSelection={
               hasSalesChannels ? handleSalesChannelBackToSelection : undefined
+            }
+          />
+        );
+      case 'region-selection':
+        // Only show selection if there are items to select
+        if (!hasRegions) {
+          return (
+            <RegionCreationStep
+              onComplete={handleRegionComplete}
+              onBackToSelection={handleRegionBackToSelection}
+            />
+          );
+        }
+        return (
+          <RegionSelectionStep
+            onComplete={handleRegionComplete}
+            onCreateNew={handleRegionCreateNew}
+            initialValue={regionId}
+          />
+        );
+      case 'region-creation':
+        return (
+          <RegionCreationStep
+            onComplete={handleRegionComplete}
+            onBackToSelection={
+              hasRegions ? handleRegionBackToSelection : undefined
             }
           />
         );
