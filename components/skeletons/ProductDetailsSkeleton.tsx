@@ -37,7 +37,9 @@ export const ProductDetailsSkeleton = () => (
           disabled
           className="p-5 rounded-xl flex-1 bg-gray-light"
         >
-          <Text className="text mx-auto text-xl leading-5">Add to cart</Text>
+          <Text className="text-gray mx-auto text-xl leading-5">
+            Add to cart
+          </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

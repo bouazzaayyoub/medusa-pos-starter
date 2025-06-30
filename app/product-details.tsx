@@ -1,10 +1,19 @@
 import { useProduct } from '@/api/hooks/products';
-import { router, useLocalSearchParams } from 'expo-router';
-import React from 'react';
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ProductDetailsSkeleton } from '@/components/skeletons/ProductDetailsSkeleton';
+import { Button } from '@/components/ui/Button';
+import ColorPicker from '@/components/ui/ColorPicker';
+import QuantityPicker from '@/components/ui/QuantityPicker';
+import SizePicker from '@/components/ui/SizePicker';
+import { useLocalSearchParams } from 'expo-router';
+import React, { useState } from 'react';
+import { Image, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ProductDetailsScreen() {
+  const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState<string>('M');
+  const [selectedColor, setSelectedColor] = useState<string>('Black');
+
   const params = useLocalSearchParams<{
     productId: string;
     productName: string;
@@ -14,11 +23,7 @@ export default function ProductDetailsScreen() {
   const productQuery = useProduct(productId);
 
   if (productQuery.isLoading) {
-    return (
-      <View className="flex-1">
-        <Text>Loading product details...</Text>
-      </View>
-    );
+    return <ProductDetailsSkeleton />;
   }
 
   if (productQuery.isError) {
@@ -43,9 +48,11 @@ export default function ProductDetailsScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        {/* Product Image */}
-        <View className="h-48 bg-gray-100">
+      <ScrollView
+        className="flex-1 px-4 pb-4"
+        showsVerticalScrollIndicator={false}
+      >
+        <View className="h-60 mb-5 bg-gray-100 rounded-xl overflow-hidden">
           {imageUrl ? (
             <Image
               source={{ uri: imageUrl }}
@@ -59,33 +66,56 @@ export default function ProductDetailsScreen() {
           )}
         </View>
 
-        {/* Product Info */}
-        <View className="p-5">
-          <View className="flex-row justify-between items-start mb-4">
-            <View className="flex-1">
-              <Text className="text-2xl font-bold mb-1">{productName}</Text>
-              <Text className="text-base text-gray-600">
-                {productQuery.data.product.collection?.title || '—'}
+        <View className="flex-row mb-4 justify-between items-center">
+          <Text className="text-xl font-medium">{productName}</Text>
+          <View className="flex-row">
+            <Text className="text-[#888] line-through mt-1.5">€50</Text>
+            <View className="items-end">
+              <Text className="text-xl font-medium">€50.99</Text>
+              <Text className="text-xs text-gray-400 font-light">
+                Taxes: €0.99
               </Text>
             </View>
           </View>
+        </View>
 
-          <Text className="text-base leading-6 text-gray-800 mb-6">
-            {productQuery.data.product.description}
-          </Text>
+        <Text className="text-gray-400 mb-6">
+          {productQuery.data.product.description}
+        </Text>
+
+        <ColorPicker
+          selectedColor={selectedColor}
+          onColorChange={setSelectedColor}
+          colors={[
+            { name: 'Black', value: '#000000' },
+            { name: 'White', value: '#FFFFFF' },
+            { name: 'Navy', value: '#1E3A8A' },
+            { name: 'Gray', value: '#6B7280' },
+            { name: 'Red', value: '#DC2626' },
+          ]}
+          className="mb-6"
+        />
+
+        <SizePicker
+          selectedSize={selectedSize}
+          onSizeChange={setSelectedSize}
+          sizes={['XS', 'S', 'M', 'L', 'XL']}
+          className="mb-4"
+        />
+
+        <View className="flex-row items-center gap-4">
+          <QuantityPicker
+            quantity={quantity}
+            onQuantityChange={setQuantity}
+            min={1}
+            variant="ghost"
+          />
+
+          <Button size="lg" className="flex-1">
+            Add to cart
+          </Button>
         </View>
       </ScrollView>
-
-      {/* Bottom Actions */}
-      <View className="p-5 pt-0">
-        <TouchableOpacity
-          className="bg-white border border-gray-200 rounded-xl items-center justify-center flex-row p-5
-          disabled:bg-gray-100 disabled:text-gray-400"
-          onPress={() => router.back()}
-        >
-          <Text className="text-black text-xl">Cancel</Text>
-        </TouchableOpacity>
-      </View>
     </SafeAreaView>
   );
 }
