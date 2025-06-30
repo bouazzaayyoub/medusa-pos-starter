@@ -1,7 +1,8 @@
 import { useMedusaSdk } from '@/contexts/auth';
 import {
-  AdminCreateStockLocation,
-  AdminStockLocationListParams,
+  AdminCreateRegion,
+  AdminRegionFilters,
+  FindParams,
 } from '@medusajs/types';
 import {
   useInfiniteQuery,
@@ -11,15 +12,15 @@ import {
 
 const PER_PAGE = 20;
 
-export const useStockLocations = (
-  query?: Omit<AdminStockLocationListParams, 'limit' | 'offset'>,
+export const useRegions = (
+  query?: Omit<FindParams & AdminRegionFilters, 'offset' | 'limit'>,
 ) => {
   const sdk = useMedusaSdk();
 
   return useInfiniteQuery({
-    queryKey: ['stock-locations', JSON.stringify(query)],
+    queryKey: ['regions', JSON.stringify(query)],
     queryFn: async ({ pageParam = 1 }) => {
-      return sdk.admin.stockLocation.list({
+      return sdk.admin.region.list({
         ...query,
         limit: PER_PAGE,
         offset: (pageParam - 1) * PER_PAGE,
@@ -39,18 +40,18 @@ export const useStockLocations = (
   });
 };
 
-export const useCreateStockLocation = () => {
+export const useCreateRegion = () => {
   const sdk = useMedusaSdk();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationKey: ['create-stock-location'],
-    mutationFn: async (data: AdminCreateStockLocation) => {
-      return sdk.admin.stockLocation.create(data);
+    mutationKey: ['create-region'],
+    mutationFn: async (data: AdminCreateRegion) => {
+      return sdk.admin.region.create(data);
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ['stock-locations'],
+        queryKey: ['regions'],
         exact: false,
       });
     },

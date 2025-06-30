@@ -1,21 +1,50 @@
+import { useScanBarcode } from '@/api/hooks/products';
 import { X } from '@/components/icons/x';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { Camera, CameraView, FlashMode } from 'expo-camera';
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
+import {
+  BarcodeScanningResult,
+  Camera,
+  CameraView,
+  FlashMode,
+} from 'expo-camera';
+import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ScanScreen() {
+  const bottomSheetModalRef = useRef<BottomSheet>(null);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
-  const [scanned, setScanned] = useState(false);
   const [flashMode, setFlashMode] = useState<FlashMode>('auto');
-  const [isSearching, setIsSearching] = useState(false);
-  const insets = useSafeAreaInsets();
+  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const scanBarcodeMutation = useScanBarcode({
+    onMutate: () => {
+      setErrorMessage(null);
+    },
+    onSuccess: (data) => {
+      if (data) {
+        setIsProductModalOpen(true);
+        bottomSheetModalRef.current?.snapToIndex(0);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      } else {
+        setErrorMessage('Product not found');
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      }
+    },
+  });
+
+  const handleSheetChanges = useCallback((index: number) => {
+    if (index === -1) {
+      setIsProductModalOpen(false);
+      scanBarcodeMutation.reset();
+    }
+  }, []);
 
   useEffect(() => {
     const getCameraPermissions = async () => {
@@ -57,30 +86,16 @@ export default function ScanScreen() {
   const handleBarcodeScanned = async ({
     type,
     data,
-  }: {
-    type: string;
-    data: string;
-  }) => {
-    if (scanned || isSearching) return;
-
-    setScanned(true);
-    setIsSearching(true);
-
-    try {
-      // Simulate API call to find product
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Navigate to product details or show options
-      router.push({
-        pathname: '/product-details',
-        params: { barcode: data, scannedProduct: 'true' },
-      });
-    } catch (error) {
-      console.error('Error searching for product:', error);
-    } finally {
-      setIsSearching(false);
-      setScanned(false);
+  }: BarcodeScanningResult) => {
+    if (
+      isProductModalOpen ||
+      scanBarcodeMutation.isPending ||
+      (scanBarcodeMutation.isSuccess && scanBarcodeMutation.variables === data)
+    ) {
+      return;
     }
+
+    scanBarcodeMutation.mutate(data);
   };
 
   const handleGoBack = () => {
@@ -118,86 +133,139 @@ export default function ScanScreen() {
   }
 
   return (
-    <View className="flex-1 bg-black">
+    <View className="flex-1 bg-black relative">
       <StatusBar style="light" />
 
       {/* Camera View - Full Screen */}
       <CameraView
-        style={{ flex: 1 }}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
         facing="back"
         flash={flashMode}
-        onBarcodeScanned={
-          scanned || isSearching ? undefined : handleBarcodeScanned
-        }
+        onBarcodeScanned={handleBarcodeScanned}
         barcodeScannerSettings={{
-          barcodeTypes: ['qr', 'pdf417', 'ean13', 'ean8', 'code128', 'code39'],
+          barcodeTypes: [
+            'ean13',
+            'ean8',
+            'upc_a',
+            'upc_e',
+            'code128',
+            'code93',
+            'code39',
+          ],
         }}
-      >
-        {/* Top Navigation with Safe Area */}
-        <View
-          className="absolute top-0 left-0 right-0 z-10 px-6 flex-row justify-between items-center"
-          style={{ paddingTop: insets.top + 12, paddingBottom: 12 }}
+        autofocus="on"
+      />
+
+      {/* Top Navigation with Safe Area */}
+      <View className="absolute top-0 left-0 right-0 z-30 px-6 flex-row justify-between items-center py-safe-offset-3">
+        <TouchableOpacity
+          className="w-12 h-12 justify-center items-center"
+          onPress={handleGoBack}
         >
-          <TouchableOpacity
-            className="w-12 h-12 justify-center items-center"
-            onPress={handleGoBack}
-          >
-            <X size={32} color="white" />
-          </TouchableOpacity>
+          <X size={32} color="white" />
+        </TouchableOpacity>
 
-          <TouchableOpacity
-            className="w-12 h-12 justify-center items-center"
-            onPress={toggleFlashMode}
-          >
-            <IconSymbol name={getFlashIcon()} size={26} color="white" />
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          className="w-12 h-12 justify-center items-center"
+          onPress={toggleFlashMode}
+        >
+          <IconSymbol name={getFlashIcon()} size={26} color="white" />
+        </TouchableOpacity>
+      </View>
 
-        {/* Center Reticle Overlay */}
-        <View className="flex-1 justify-center items-center px-8">
-          <View className="items-center">
-            {/* Reticle Frame */}
-            <View className="w-64 h-64 relative">
-              {/* Corner brackets */}
-              <View className="absolute top-[3px] left-[3px] right-[3px] bottom-[3px] bg-[#ffffff4d] rounded-[29px]" />
-              <View className="absolute top-0 left-0 w-20 h-20 border-l-[3px] border-t-[3px] border-white rounded-tl-[32px]" />
-              <View className="absolute top-0 right-0 w-20 h-20 border-r-[3px] border-t-[3px] border-white rounded-tr-[32px]" />
-              <View className="absolute bottom-0 left-0 w-20 h-20 border-l-[3px] border-b-[3px] border-white rounded-bl-[32px]" />
-              <View className="absolute bottom-0 right-0 w-20 h-20 border-r-[3px] border-b-[3px] border-white rounded-br-[32px]" />
+      {/* Center Reticle Overlay */}
+      <View className="flex-1 justify-center items-center px-8 relative">
+        <View className="items-center">
+          {/* Reticle Frame */}
+          <View className="w-64 h-64 relative">
+            {/* Corner brackets */}
+            <View className="absolute top-[3px] left-[3px] right-[3px] bottom-[3px] bg-[#ffffff4d] rounded-[29px]" />
+            <View className="absolute top-0 left-0 w-20 h-20 border-l-[3px] border-t-[3px] border-white rounded-tl-[32px]" />
+            <View className="absolute top-0 right-0 w-20 h-20 border-r-[3px] border-t-[3px] border-white rounded-tr-[32px]" />
+            <View className="absolute bottom-0 left-0 w-20 h-20 border-l-[3px] border-b-[3px] border-white rounded-bl-[32px]" />
+            <View className="absolute bottom-0 right-0 w-20 h-20 border-r-[3px] border-b-[3px] border-white rounded-br-[32px]" />
 
-              {/* Loading indicator when searching */}
-              {isSearching && (
-                <View className="absolute inset-0 justify-center items-center">
-                  <ActivityIndicator size="large" color="white" />
-                </View>
-              )}
-            </View>
-
-            {/* Scan Text */}
-            {!isSearching && (
-              <View className="mt-6">
-                <Text className="text-white text-xl text-center">
-                  Scan barcode
-                </Text>
-              </View>
+            {/* Loading indicator when searching */}
+            {scanBarcodeMutation.isPending && (
+              <Animated.View
+                entering={FadeIn}
+                exiting={FadeOut}
+                className="absolute inset-0 justify-center items-center"
+              >
+                <ActivityIndicator size="large" color="white" />
+              </Animated.View>
             )}
           </View>
-        </View>
 
-        {/* Bottom Searching Indicator with Safe Area */}
-        {isSearching && (
-          <View
-            className="absolute bottom-0 left-0 right-0 px-6"
-            style={{ paddingBottom: insets.bottom + 16 }}
-          >
-            <View className="bg-white px-4 py-2 rounded-3xl">
-              <Text className="text-black text-center text-base">
-                Searching...
+          {/* Scan Text */}
+          {!scanBarcodeMutation.isPending && !isProductModalOpen && (
+            <Animated.View
+              entering={FadeIn}
+              exiting={FadeOut}
+              className="absolute top-full mt-6"
+            >
+              <Text className="text-white text-xl text-center">
+                Scan barcode
               </Text>
-            </View>
+            </Animated.View>
+          )}
+        </View>
+      </View>
+
+      {/* Bottom Searching Indicator with Safe Area */}
+      {scanBarcodeMutation.isPending && (
+        <Animated.View
+          entering={FadeIn}
+          exiting={FadeOut}
+          className="absolute bottom-0 left-0 right-0 px-6 pb-safe-offset-4 flex items-center"
+        >
+          <View className="bg-white px-4 py-2 rounded-3xl">
+            <Text className="text-black text-center text-base">
+              Searching...
+            </Text>
           </View>
-        )}
-      </CameraView>
+        </Animated.View>
+      )}
+
+      {!scanBarcodeMutation.isPending && errorMessage && (
+        <Animated.View
+          entering={FadeIn}
+          exiting={FadeOut}
+          className="absolute bottom-0 left-0 right-0 px-6 pb-safe-offset-4 flex items-center z-50"
+        >
+          <TouchableOpacity
+            className="bg-red-500 px-4 py-2 rounded-3xl"
+            onPress={() => {
+              setErrorMessage(null);
+              scanBarcodeMutation.reset();
+            }}
+          >
+            <Text className="text-white text-center text-base">
+              {errorMessage}
+            </Text>
+          </TouchableOpacity>
+        </Animated.View>
+      )}
+
+      <GestureHandlerRootView className="absolute top-0 left-0 right-0 bottom-0 z-20">
+        <BottomSheet
+          ref={bottomSheetModalRef}
+          onChange={handleSheetChanges}
+          index={-1}
+          enablePanDownToClose
+        >
+          <BottomSheetView className="flex-1 items-center pb-safe-offset-4">
+            <Text>Awesome 🎉</Text>
+            <Text>Awesome 🎉</Text>
+            <Text>Awesome 🎉</Text>
+            <Text>Awesome 🎉</Text>
+            <Text>Awesome 🎉</Text>
+            <Text>Awesome 🎉</Text>
+            <Text>Awesome 🎉</Text>
+            <Text>Awesome 🎉</Text>
+          </BottomSheetView>
+        </BottomSheet>
+      </GestureHandlerRootView>
     </View>
   );
 }

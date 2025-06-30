@@ -1,14 +1,12 @@
 import { useStockLocations } from '@/api/hooks/stock-location';
+import { CircleAlert } from '@/components/icons/circle-alert';
+import { Loader } from '@/components/icons/loader';
+import { MapPin } from '@/components/icons/map-pin';
 import { getCountryByAlpha2 } from '@/constants/countries';
 import { findProvinceByCode } from '@/constants/provinces';
-import React from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { clx } from '@/utils/clx';
+import React, { Fragment } from 'react';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 
 interface StockLocationListProps {
   selectedStockLocationId: string;
@@ -23,11 +21,22 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
 
   if (stockLocationsQuery.isLoading) {
     return (
-      <View className="flex-1 justify-center items-center p-5">
-        <ActivityIndicator size="large" color="#007AFF" />
-        <Text className="mt-4 text-base opacity-70">
+      <View className="flex-row mb-auto border rounded-xl border-[#E5E5E5] justify-between items-center p-4">
+        <Text className="text-base text-[#B5B5B5]">
           Loading stock locations...
         </Text>
+        <Loader size={16} className="text-[#B5B5B5] animate-spin" />
+      </View>
+    );
+  }
+
+  if (stockLocationsQuery.isError) {
+    return (
+      <View className="flex-row mb-auto bg-[#F8EC9A] rounded-xl justify-between items-center p-4">
+        <Text className="text-base text-[#9B8435]">
+          Unable to load stock locations.
+        </Text>
+        <CircleAlert size={16} className="text-[#9B8435]" />
       </View>
     );
   }
@@ -37,42 +46,64 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
       <FlatList
         data={stockLocationsQuery.data?.pages?.[0]?.stock_locations || []}
         keyExtractor={(item) => item.id}
-        className="flex-1"
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            className={`
-              bg-gray-50 rounded-xl p-4 mb-3 border-2
-              ${
-                selectedStockLocationId === item.id
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-transparent'
-              }
-            `}
-            onPress={() => onStockLocationSelect(item.id)}
-          >
-            <Text className="text-lg font-semibold mb-1">{item.name}</Text>
-            {item.address && (
-              <Text className="text-sm opacity-70">
-                {[
-                  item.address.address_1,
-                  item.address.address_2,
-                  [item.address.postal_code, item.address.city]
-                    .filter(Boolean)
-                    .join(' '),
-                  item.address.province
-                    ? findProvinceByCode(
+        className="border rounded-xl border-b border-[#EDEDED]"
+        renderItem={({ item, index }) => (
+          <Fragment key={item.id}>
+            <TouchableOpacity
+              className={clx(
+                'py-3 justify-between items-center flex-row px-4',
+                {
+                  'bg-black': selectedStockLocationId === item.id,
+                },
+              )}
+              onPress={() => onStockLocationSelect(item.id)}
+            >
+              <View>
+                <Text
+                  className={clx({
+                    'text-white': selectedStockLocationId === item.id,
+                  })}
+                >
+                  {item.name}
+                </Text>
+                {item.address && (
+                  <Text
+                    className={clx('text-sm text-gray-500', {
+                      'text-white': selectedStockLocationId === item.id,
+                    })}
+                  >
+                    {[
+                      item.address.address_1,
+                      item.address.address_2,
+                      [item.address.postal_code, item.address.city]
+                        .filter(Boolean)
+                        .join(' '),
+                      item.address.province
+                        ? findProvinceByCode(
+                            item.address.country_code,
+                            item.address.province,
+                          )?.name || item.address.province
+                        : undefined,
+                      getCountryByAlpha2(item.address.country_code)?.name ||
                         item.address.country_code,
-                        item.address.province,
-                      )?.name || item.address.province
-                    : undefined,
-                  getCountryByAlpha2(item.address.country_code)?.name ||
-                    item.address.country_code,
-                ]
-                  .filter(Boolean)
-                  .join(', ')}
-              </Text>
-            )}
-          </TouchableOpacity>
+                    ]
+                      .filter(Boolean)
+                      .join(', ')}
+                  </Text>
+                )}
+              </View>
+              <MapPin
+                size={16}
+                className={clx({
+                  'text-white': selectedStockLocationId === item.id,
+                })}
+              />
+            </TouchableOpacity>
+            {index <
+              (stockLocationsQuery.data?.pages?.[0]?.stock_locations.length ||
+                0) -
+                1 && <Text className="h-px bg-[#EDEDED] mx-4" />}
+          </Fragment>
         )}
       />
     </View>
