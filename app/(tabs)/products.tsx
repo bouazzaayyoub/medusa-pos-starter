@@ -11,6 +11,14 @@ import React, { useState } from 'react';
 import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+const isPlaceholderProduct = (
+  product: AdminProduct | { id: `placeholder_${string}` },
+): product is { id: `placeholder_${string}` } => {
+  return (
+    typeof product.id === 'string' && product.id.startsWith('placeholder_')
+  );
+};
+
 export default function ProductsScreen() {
   const settings = useSettings();
   const tabBarHeight = useBottomTabBarHeight();
@@ -29,7 +37,19 @@ export default function ProductsScreen() {
   }, []);
 
   const renderProduct = React.useCallback(
-    ({ item }: { item: AdminProduct }) => {
+    ({ item }: { item: AdminProduct | { id: `placeholder_${string}` } }) => {
+      if (isPlaceholderProduct(item)) {
+        return (
+          <View className="gap-4 flex w-full px-1">
+            <View className="bg-gray-200 aspect-square rounded-lg overflow-hidden" />
+            <View>
+              <View className="mb-1 h-4 rounded-md bg-gray-200" />
+              <View className="mb-1 h-4 w-1/3 rounded-md bg-gray-200" />
+            </View>
+          </View>
+        );
+      }
+
       const thumbnail = item.thumbnail || item.images?.[0]?.url;
       const variant_prices = (item.variants ?? [])
         .flatMap((variant) =>
@@ -91,14 +111,17 @@ export default function ProductsScreen() {
   );
 
   const data = React.useMemo(() => {
+    if (productsQuery.isLoading) {
+      return Array.from({ length: 8 }, (_, index) => ({
+        id: `placeholder_${index + 1}` as const,
+      }));
+    }
+
     return productsQuery.data?.pages.flatMap((page) => page.products) || [];
   }, [productsQuery]);
 
   return (
-    <SafeAreaView
-      className="flex-1 bg-white"
-      style={{ paddingBottom: tabBarHeight }}
-    >
+    <SafeAreaView className="flex-1 bg-white">
       <StatusBar style="auto" />
 
       <View className="m-4 mb-6 relative">
@@ -114,7 +137,6 @@ export default function ProductsScreen() {
         />
       </View>
 
-      {/* TODO: show initial loading data */}
       <View className="flex-1 px-3">
         <FlashList
           data={data}
@@ -132,6 +154,9 @@ export default function ProductsScreen() {
               </Text>
             </View>
           }
+          contentContainerStyle={{
+            paddingBottom: tabBarHeight,
+          }}
           ListFooterComponent={
             productsQuery.isFetchingNextPage ? (
               <View className="flex-row flex-wrap">
