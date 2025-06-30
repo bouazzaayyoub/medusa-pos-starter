@@ -87,7 +87,7 @@ export default function ProductsScreen() {
         </View>
       );
     },
-    [],
+    [settings.data?.region?.currency_code],
   );
 
   const data = React.useMemo(() => {
