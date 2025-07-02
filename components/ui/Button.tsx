@@ -1,4 +1,5 @@
 import { Loader } from '@/components/icons/loader';
+import { clx } from '@/utils/clx';
 import * as React from 'react';
 import { Text, TouchableOpacity, TouchableOpacityProps } from 'react-native';
 
@@ -48,12 +49,17 @@ export const Button: React.FC<ButtonProps> = ({
     <TouchableOpacity
       accessibilityRole="button"
       disabled={props.disabled || isPending}
-      className={`${buttonSizeClasses} ${buttonVariantClasses} flex-row items-center justify-center gap-2 rounded-xl ${className}`}
+      className={clx(
+        'flex-row items-center justify-center gap-2 rounded-xl',
+        buttonSizeClasses,
+        buttonVariantClasses,
+        className
+      )}
       {...props}
     >
       <Text
         disabled={props.disabled || isPending}
-        className={`${textSizeClasses} ${textVariantClasses}`}
+        className={clx(textSizeClasses, textVariantClasses)}
       >
         {children}
       </Text>

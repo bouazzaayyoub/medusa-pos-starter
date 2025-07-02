@@ -1,7 +1,7 @@
 import { useProduct } from '@/api/hooks/products';
 import { ProductDetailsSkeleton } from '@/components/skeletons/ProductDetailsSkeleton';
 import { Button } from '@/components/ui/Button';
-import ColorPicker from '@/components/ui/ColorPicker';
+import { ColorPicker } from '@/components/ui/ColorPicker';
 import QuantityPicker from '@/components/ui/QuantityPicker';
 import SizePicker from '@/components/ui/SizePicker';
 import { useLocalSearchParams } from 'expo-router';
