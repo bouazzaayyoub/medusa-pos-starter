@@ -1,7 +1,6 @@
 import { useScanBarcode } from '@/api/hooks/products';
 import { X } from '@/components/icons/x';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import {
   BarcodeScanningResult,
   Camera,
@@ -11,17 +10,14 @@ import {
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ScanScreen() {
-  const bottomSheetModalRef = useRef<BottomSheet>(null);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [flashMode, setFlashMode] = useState<FlashMode>('auto');
-  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const scanBarcodeMutation = useScanBarcode({
     onMutate: () => {
@@ -29,8 +25,13 @@ export default function ScanScreen() {
     },
     onSuccess: (data) => {
       if (data) {
-        setIsProductModalOpen(true);
-        bottomSheetModalRef.current?.snapToIndex(0);
+        router.push({
+          pathname: '/product-details',
+          params: {
+            productId: data.product.id,
+            productName: data.product.title,
+          },
+        });
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       } else {
         setErrorMessage('Product not found');
@@ -38,13 +39,6 @@ export default function ScanScreen() {
       }
     },
   });
-
-  const handleSheetChanges = useCallback((index: number) => {
-    if (index === -1) {
-      setIsProductModalOpen(false);
-      scanBarcodeMutation.reset();
-    }
-  }, []);
 
   useEffect(() => {
     const getCameraPermissions = async () => {
@@ -87,11 +81,13 @@ export default function ScanScreen() {
     type,
     data,
   }: BarcodeScanningResult) => {
-    if (
-      isProductModalOpen ||
-      scanBarcodeMutation.isPending ||
-      (scanBarcodeMutation.isSuccess && scanBarcodeMutation.variables === data)
-    ) {
+    // Disable scanning if mutation is pending
+    if (scanBarcodeMutation.isPending) {
+      return;
+    }
+
+    // Prevent duplicate scans of the same barcode
+    if (scanBarcodeMutation.variables === data) {
       return;
     }
 
@@ -198,7 +194,7 @@ export default function ScanScreen() {
           </View>
 
           {/* Scan Text */}
-          {!scanBarcodeMutation.isPending && !isProductModalOpen && (
+          {!scanBarcodeMutation.isPending && (
             <Animated.View
               entering={FadeIn}
               exiting={FadeOut}
@@ -246,26 +242,6 @@ export default function ScanScreen() {
           </TouchableOpacity>
         </Animated.View>
       )}
-
-      <GestureHandlerRootView className="absolute top-0 left-0 right-0 bottom-0 z-20">
-        <BottomSheet
-          ref={bottomSheetModalRef}
-          onChange={handleSheetChanges}
-          index={-1}
-          enablePanDownToClose
-        >
-          <BottomSheetView className="flex-1 items-center pb-safe-offset-4">
-            <Text>Awesome 🎉</Text>
-            <Text>Awesome 🎉</Text>
-            <Text>Awesome 🎉</Text>
-            <Text>Awesome 🎉</Text>
-            <Text>Awesome 🎉</Text>
-            <Text>Awesome 🎉</Text>
-            <Text>Awesome 🎉</Text>
-            <Text>Awesome 🎉</Text>
-          </BottomSheetView>
-        </BottomSheet>
-      </GestureHandlerRootView>
     </View>
   );
 }
