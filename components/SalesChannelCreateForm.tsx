@@ -57,7 +57,7 @@ const SalesChannelCreateForm: React.FC<SalesChannelCreateFormProps> = ({
       />
 
       <FormButton
-        loading={createSalesChannel.isPending}
+        isPending={createSalesChannel.isPending}
         disabled={createSalesChannel.isPending}
         className="mt-auto"
       >

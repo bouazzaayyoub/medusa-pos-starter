@@ -21,7 +21,7 @@ export function SizePicker({
 }: SizePickerProps) {
   return (
     <View className={className}>
-      {label && <Text className="text-base text-gray-900 mb-2">{label}</Text>}
+      {label && <Text className="text-base mb-2">{label}</Text>}
 
       <View className="flex-row flex-wrap gap-2">
         {sizes.map((size) => {

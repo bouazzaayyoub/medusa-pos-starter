@@ -60,7 +60,7 @@ const RegionCreateForm: React.FC<RegionCreateFormProps> = ({
       page?.currencies?.map((currency) => ({
         label: `${currency.name} (${currency.code.toUpperCase()})`,
         value: currency.code,
-      })),
+      }))
     ) || [];
 
   const countryOptions = COUNTRIES.map((country) => ({
@@ -107,7 +107,7 @@ const RegionCreateForm: React.FC<RegionCreateFormProps> = ({
       />
 
       <FormButton
-        loading={createRegion.isPending}
+        isPending={createRegion.isPending}
         disabled={createRegion.isPending}
         className="mt-auto"
       >

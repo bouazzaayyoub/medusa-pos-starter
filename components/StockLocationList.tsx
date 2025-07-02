@@ -21,22 +21,20 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
 
   if (stockLocationsQuery.isLoading) {
     return (
-      <View className="flex-row mb-auto border rounded-xl border-[#E5E5E5] justify-between items-center p-4">
-        <Text className="text-base text-[#B5B5B5]">
-          Loading stock locations...
-        </Text>
-        <Loader size={16} className="text-[#B5B5B5] animate-spin" />
+      <View className="flex-row mb-auto border rounded-xl border-border justify-between items-center p-4">
+        <Text className="text-base text-gray">Loading stock locations...</Text>
+        <Loader size={16} color="#B5B5B5" className="animate-spin" />
       </View>
     );
   }
 
   if (stockLocationsQuery.isError) {
     return (
-      <View className="flex-row mb-auto bg-[#F8EC9A] rounded-xl justify-between items-center p-4">
-        <Text className="text-base text-[#9B8435]">
+      <View className="flex-row mb-auto bg-yellow-light rounded-xl justify-between items-center p-4">
+        <Text className="text-base text-yellow">
           Unable to load stock locations.
         </Text>
-        <CircleAlert size={16} className="text-[#9B8435]" />
+        <CircleAlert size={16} className="text-yellow" />
       </View>
     );
   }
@@ -46,7 +44,7 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
       <FlatList
         data={stockLocationsQuery.data?.pages?.[0]?.stock_locations || []}
         keyExtractor={(item) => item.id}
-        className="border rounded-xl border-b border-[#EDEDED]"
+        className="border rounded-xl border-b border-border"
         renderItem={({ item, index }) => (
           <Fragment key={item.id}>
             <TouchableOpacity
@@ -54,7 +52,7 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
                 'py-3 justify-between items-center flex-row px-4',
                 {
                   'bg-black': selectedStockLocationId === item.id,
-                },
+                }
               )}
               onPress={() => onStockLocationSelect(item.id)}
             >
@@ -68,7 +66,7 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
                 </Text>
                 {item.address && (
                   <Text
-                    className={clx('text-sm text-gray-500', {
+                    className={clx('text-sm text-gray', {
                       'text-white': selectedStockLocationId === item.id,
                     })}
                   >
@@ -81,7 +79,7 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
                       item.address.province
                         ? findProvinceByCode(
                             item.address.country_code,
-                            item.address.province,
+                            item.address.province
                           )?.name || item.address.province
                         : undefined,
                       getCountryByAlpha2(item.address.country_code)?.name ||
@@ -102,7 +100,7 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
             {index <
               (stockLocationsQuery.data?.pages?.[0]?.stock_locations.length ||
                 0) -
-                1 && <Text className="h-px bg-[#EDEDED] mx-4" />}
+                1 && <Text className="h-px bg-border mx-4" />}
           </Fragment>
         )}
       />

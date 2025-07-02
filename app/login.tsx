@@ -103,9 +103,9 @@ export default function LoginScreen() {
     <SafeAreaView className="flex-1 p-4 pt-6 bg-white gap-7">
       <Text className="text-4xl font-semibold">Login</Text>
       {error && (
-        <View className="flex-row bg-[#FFDFDF] p-4 rounded-xl items-center gap-3">
+        <View className="flex-row bg-red-light p-4 rounded-xl items-center gap-3">
           <CircleAlert size={16} color="#ef4444" />
-          <Text className="text-red-500 text-base">{error}</Text>
+          <Text className="text-red text-base">{error}</Text>
         </View>
       )}
       <View className="w-full flex-1">
@@ -144,10 +144,7 @@ export default function LoginScreen() {
             readOnly={auth.state.status === 'loading'}
           />
 
-          <FormButton
-            loading={auth.state.status === 'loading'}
-            className="bg-gray-700 mt-auto"
-          >
+          <FormButton isPending={auth.state.status === 'loading'}>
             Sign In
           </FormButton>
         </Form>

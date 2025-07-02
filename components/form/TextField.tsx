@@ -84,7 +84,7 @@ export function TextField({
           <Animated.Text
             className={clx(
               'absolute left-4 z-10 text-lg top-5',
-              error ? 'text-red-500' : 'text-[#b5b5b5]',
+              error ? 'text-red' : 'text-gray'
             )}
             style={floatingPlaceholderStyle}
             pointerEvents="none"
@@ -94,12 +94,12 @@ export function TextField({
         )}
         <TextInput
           className={clx(
-            'bg-white rounded-xl px-4 py-5 text-lg leading-6 border border-gray-200',
+            'bg-white rounded-xl px-4 py-5 text-lg leading-6 border border-border',
             {
-              'border-red-500 bg-red-50': error,
+              'border-red': error,
               'pt-6 pb-4': floatingPlaceholder,
             },
-            inputClassName,
+            inputClassName
           )}
           placeholder={floatingPlaceholder ? undefined : placeholder}
           placeholderTextColor="#b5b5b5"
@@ -119,15 +119,9 @@ export function TextField({
             onPress={() => setShowValue(!showValue)}
           >
             {showValue ? (
-              <Eye
-                size={16}
-                className={error ? 'text-red-500' : 'text-[#B5B5B5]'}
-              />
+              <Eye size={16} className={error ? 'text-red' : 'text-gray'} />
             ) : (
-              <EyeOff
-                size={16}
-                className={error ? 'text-red-500' : 'text-[#B5B5B5]'}
-              />
+              <EyeOff size={16} className={error ? 'text-red' : 'text-gray'} />
             )}
           </TouchableOpacity>
         )}
@@ -135,7 +129,7 @@ export function TextField({
       {error && (
         <View className="flex-row items-center mt-1 gap-1">
           <CircleAlert size={14} color="#ef4444" />
-          <Text className={`text-red-500 text-sm ${errorClassName}`}>
+          <Text className={`text-red text-sm ${errorClassName}`}>
             {error.message}
           </Text>
         </View>

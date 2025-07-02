@@ -19,22 +19,20 @@ const SalesChannelList: React.FC<SalesChannelListProps> = ({
 
   if (salesChannelsQuery.isLoading) {
     return (
-      <View className="flex-row mb-auto border rounded-xl border-[#E5E5E5] justify-between items-center p-4">
-        <Text className="text-base text-[#B5B5B5]">
-          Loading sales channels...
-        </Text>
-        <Loader size={16} className="text-[#B5B5B5] animate-spin" />
+      <View className="flex-row mb-auto border rounded-xl border-border justify-between items-center p-4">
+        <Text className="text-base text-gray">Loading sales channels...</Text>
+        <Loader size={16} color="#B5B5B5" className="animate-spin" />
       </View>
     );
   }
 
   if (salesChannelsQuery.isError) {
     return (
-      <View className="flex-row mb-auto bg-[#F8EC9A] rounded-xl justify-between items-center p-4">
-        <Text className="text-base text-[#9B8435]">
+      <View className="flex-row mb-auto bg-yellow-light rounded-xl justify-between items-center p-4">
+        <Text className="text-base text-yellow">
           Unable to load sales channels.
         </Text>
-        <CircleAlert size={16} className="text-[#9B8435]" />
+        <CircleAlert size={16} className="text-yellow" />
       </View>
     );
   }
@@ -44,13 +42,13 @@ const SalesChannelList: React.FC<SalesChannelListProps> = ({
       <FlatList
         data={salesChannelsQuery.data?.pages?.[0]?.sales_channels || []}
         keyExtractor={(item) => item.id}
-        className="border rounded-xl border-b border-[#EDEDED]"
+        className="border rounded-xl border-b border-border"
         renderItem={({ item, index }) => (
           <Fragment key={item.id}>
             <TouchableOpacity
               className={clx(
                 'py-3 justify-between items-center flex-row px-4',
-                { 'bg-black': selectedSalesChannelId === item.id },
+                { 'bg-black': selectedSalesChannelId === item.id }
               )}
               onPress={() => onSalesChannelSelect(item.id)}
             >
@@ -71,7 +69,7 @@ const SalesChannelList: React.FC<SalesChannelListProps> = ({
             {index <
               (salesChannelsQuery.data?.pages?.[0]?.sales_channels.length ||
                 0) -
-                1 && <Text className="h-px bg-[#EDEDED] mx-4" />}
+                1 && <Text className="h-px bg-border mx-4" />}
           </Fragment>
         )}
       />

@@ -21,7 +21,7 @@ export function ColorPicker({
 }: ColorPickerProps) {
   return (
     <View className={className}>
-      {label && <Text className="text-base text-gray-900 mb-2">{label}</Text>}
+      {label && <Text className="text-base mb-2">{label}</Text>}
 
       <View className="flex-row flex-wrap gap-2">
         {colors.map((color) => {
@@ -39,7 +39,7 @@ export function ColorPicker({
               )}
             >
               <View
-                className="w-5 h-5 rounded-full border border-gray-300"
+                className="w-5 h-5 rounded-full border border-border"
                 style={{ backgroundColor: color.value }}
               />
               <Text className={clx(isSelected ? 'text-white' : 'text-black')}>

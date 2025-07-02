@@ -60,8 +60,8 @@ export default function ProductDetailsScreen() {
               style={{ resizeMode: 'cover' }}
             />
           ) : (
-            <View className="flex-1 justify-center items-center bg-gray-300">
-              <Text className="text-base text-gray-500">No Image</Text>
+            <View className="flex-1 justify-center items-center bg-gray-light">
+              <Text className="text-base text-gray-dark">No Image</Text>
             </View>
           )}
         </View>
@@ -69,17 +69,15 @@ export default function ProductDetailsScreen() {
         <View className="flex-row mb-4 justify-between items-center">
           <Text className="text-xl font-medium">{productName}</Text>
           <View className="flex-row">
-            <Text className="text-[#888] line-through mt-1.5">€50</Text>
+            <Text className="text-gray-dark line-through mt-1.5">€50</Text>
             <View className="items-end">
               <Text className="text-xl font-medium">€50.99</Text>
-              <Text className="text-xs text-gray-400 font-light">
-                Taxes: €0.99
-              </Text>
+              <Text className="text-xs text-gray font-light">Taxes: €0.99</Text>
             </View>
           </View>
         </View>
 
-        <Text className="text-gray-400 mb-6">
+        <Text className="text-gray mb-6">
           {productQuery.data.product.description}
         </Text>
 

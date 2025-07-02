@@ -14,6 +14,8 @@ module.exports = {
         sans: ['Noto Sans', 'sans-serif'],
       },
       colors: {
+        white: '#FFFFFF',
+        transparent: 'transparent',
         border: '#e5e5e5',
         black: '#282828',
         gray: {
@@ -21,7 +23,16 @@ module.exports = {
           DEFAULT: '#B5B5B5',
           dark: '#888',
         },
-        error: '#F14747',
+        red: {
+          DEFAULT: '#F14747',
+          light: '#FFDFDF',
+        },
+        yellow: {
+          DEFAULT: '#9B8435',
+          light: '#F8EC9A',
+        },
+        blue: '#4E78E5',
+        green: '#109D28',
       },
     },
   },

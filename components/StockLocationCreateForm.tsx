@@ -132,7 +132,7 @@ const StockLocationCreateForm: React.FC<StockLocationCreateFormProps> = ({
       />
 
       <FormButton
-        loading={createStockLocation.isPending}
+        isPending={createStockLocation.isPending}
         disabled={createStockLocation.isPending}
       >
         Create Stock Location

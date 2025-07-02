@@ -1,7 +1,8 @@
 import { SalesChannelCreateForm } from '@/components/SalesChannelCreateForm';
+import { Button } from '@/components/ui/Button';
 import { AdminSalesChannel } from '@medusajs/types';
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 interface SalesChannelCreationStepProps {
   onComplete: (salesChannelId: string) => void;
@@ -17,13 +18,9 @@ export const SalesChannelCreationStep: React.FC<
 
   return (
     <View className="flex-1">
-      <Text className="text-4xl mb-6 font-semibold text-gray-900">
-        Setting Up
-      </Text>
-      <Text className="text-2xl mb-2 text-gray-900">
-        Choose a sales channel
-      </Text>
-      <Text className="text-base mb-6 text-gray-400">
+      <Text className="text-4xl mb-6 font-semibold">Setting Up</Text>
+      <Text className="text-2xl mb-2">Choose a sales channel</Text>
+      <Text className="text-base mb-6 text-gray">
         Select an existing sales channel from the list or create a new one to
         proceed.
       </Text>
@@ -33,13 +30,14 @@ export const SalesChannelCreationStep: React.FC<
       />
 
       {typeof onBackToSelection === 'function' && (
-        <TouchableOpacity
-          className="bg-white border mt-4 border-gray-200 rounded-xl items-center justify-center flex-row p-5
-        disabled:bg-gray-100 disabled:text-gray-400"
+        <Button
+          variant="outline"
+          size="lg"
+          className="mt-4"
           onPress={onBackToSelection}
         >
-          <Text className="text-black text-xl">Cancel</Text>
-        </TouchableOpacity>
+          Cancel
+        </Button>
       )}
     </View>
   );

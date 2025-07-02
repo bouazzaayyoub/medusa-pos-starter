@@ -1,7 +1,8 @@
 import { StockLocationCreateForm } from '@/components/StockLocationCreateForm';
+import { Button } from '@/components/ui/Button';
 import { AdminStockLocation } from '@medusajs/types';
 import React from 'react';
-import { ScrollView, Text, TouchableOpacity } from 'react-native';
+import { ScrollView, Text } from 'react-native';
 
 interface StockLocationCreationStepProps {
   onComplete: (stockLocationId: string) => void;
@@ -17,13 +18,9 @@ export const StockLocationCreationStep: React.FC<
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <Text className="text-4xl mb-6 font-semibold text-gray-900">
-        Setting Up
-      </Text>
-      <Text className="text-2xl mb-2 text-gray-900">
-        Create a new stock location
-      </Text>
-      <Text className="text-base mb-6 text-gray-400">
+      <Text className="text-4xl mb-6 font-semibold">Setting Up</Text>
+      <Text className="text-2xl mb-2">Create a new stock location</Text>
+      <Text className="text-base mb-6 text-gray">
         Select where inventory will be sourced from, or add a new location if
         needed.
       </Text>
@@ -33,13 +30,14 @@ export const StockLocationCreationStep: React.FC<
       />
 
       {typeof onBackToSelection === 'function' && (
-        <TouchableOpacity
-          className="bg-white border mt-4 border-gray-200 rounded-xl items-center justify-center flex-row p-5
-          disabled:bg-gray-100 disabled:text-gray-400"
+        <Button
+          variant="outline"
+          size="lg"
+          className="mt-4"
           onPress={onBackToSelection}
         >
-          <Text className="text-black text-xl">Cancel</Text>
-        </TouchableOpacity>
+          Cancel
+        </Button>
       )}
     </ScrollView>
   );

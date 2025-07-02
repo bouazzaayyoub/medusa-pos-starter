@@ -26,7 +26,7 @@ const TEXT_VARIANTS = {
   outline: 'text-black disabled:text-gray',
 } as const;
 
-type ButtonProps = TouchableOpacityProps & {
+export type ButtonProps = TouchableOpacityProps & {
   isPending?: boolean;
   size?: keyof typeof BUTTON_SIZES;
   variant?: keyof typeof BUTTON_VARIANTS;
