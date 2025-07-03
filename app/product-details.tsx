@@ -68,7 +68,7 @@ const ProductImagesCarousel: React.FC<{ images: AdminProductImage[] }> = ({
         defaultScrollOffsetValue={scrollOffsetValue}
         style={{ width: '100%' }}
         onConfigurePanGesture={(gestureChain) => {
-          gestureChain.activeOffsetY([-10, 10]);
+          gestureChain.activeOffsetY([-5, 5]);
         }}
         renderItem={renderItem}
         onProgressChange={progress}
