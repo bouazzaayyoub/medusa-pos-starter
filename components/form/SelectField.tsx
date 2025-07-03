@@ -152,9 +152,9 @@ export function SelectField({
           onPress={() => setIsVisible(true)}
         >
           <Text
-            className={clx('text-lg', {
+            className={clx('text-base', {
               'text-gray-700': selectedOption,
-              'text-[#b5b5b5]': !selectedOption,
+              'text-gray': !selectedOption,
             })}
           >
             {selectedOption
