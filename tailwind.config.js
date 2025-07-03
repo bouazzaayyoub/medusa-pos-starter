@@ -13,6 +13,16 @@ module.exports = {
       fontFamily: {
         sans: ['Noto Sans', 'sans-serif'],
       },
+      colors: {
+        border: '#e5e5e5',
+        black: '#282828',
+        gray: {
+          light: '#F1F1F1',
+          DEFAULT: '#B5B5B5',
+          dark: '#888',
+        },
+        error: '#F14747',
+      },
     },
   },
   plugins: [],

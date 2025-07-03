@@ -1,6 +1,7 @@
 // import 'react-native-reanimated';
 import '../global.css';
 
+import { ProductDetailsHeader } from '@/components/ProductDetailsHeader';
 import { SplashScreenController } from '@/components/SplashScreenController';
 import { AuthProvider, useAuthCtx } from '@/contexts/auth';
 import { useSettings } from '@/contexts/settings';
@@ -89,6 +90,7 @@ function App() {
             options={{
               presentation: 'modal',
               title: 'Product Details',
+              header: () => <ProductDetailsHeader />,
             }}
           />
           <Stack.Screen
