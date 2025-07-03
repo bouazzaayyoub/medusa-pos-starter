@@ -6,7 +6,6 @@ import { AdminProduct } from '@medusajs/types';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { FlashList } from '@shopify/flash-list';
 import { router } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -122,8 +121,6 @@ export default function ProductsScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <StatusBar style="auto" />
-
       <View className="m-4 mb-6 relative">
         <Search
           size={16}

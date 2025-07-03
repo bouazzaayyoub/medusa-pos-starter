@@ -1,4 +1,5 @@
 // import 'react-native-reanimated';
+import { AppStatusBar } from '@/components/AppStatusBar';
 import '../global.css';
 
 import { ProductDetailsHeader } from '@/components/ProductDetailsHeader';
@@ -16,7 +17,6 @@ import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persi
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { Stack, useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
 
 const queryClient = new QueryClient({
@@ -143,8 +143,8 @@ export default function RootLayout() {
           value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
         >
           <SplashScreenController loaded={true} />
+          <AppStatusBar />
           <App />
-          <StatusBar style="auto" />
         </ThemeProvider>
       </AuthProvider>
     </PersistQueryClientProvider>
