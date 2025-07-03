@@ -6,7 +6,6 @@ import { AdminProduct } from '@medusajs/types';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { FlashList } from '@shopify/flash-list';
 import { router } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -51,7 +50,7 @@ export default function ProductsScreen() {
       }
 
       const thumbnail = item.thumbnail || item.images?.[0]?.url;
-      const variant_prices = (item.variants ?? [])
+      const variantPrices = (item.variants ?? [])
         .flatMap((variant) =>
           variant.prices?.filter(
             (price) =>
@@ -59,8 +58,8 @@ export default function ProductsScreen() {
           ),
         )
         .filter((price) => typeof price !== 'undefined');
-      const currency_code = variant_prices[0]?.currency_code ?? undefined;
-      const amounts = variant_prices.map((price) => price.amount);
+      const currencyCode = variantPrices[0]?.currency_code ?? undefined;
+      const amounts = variantPrices.map((price) => price.amount);
       const minPrice = amounts.length ? Math.min(...amounts) : undefined;
       const maxPrice = amounts.length ? Math.max(...amounts) : undefined;
 
@@ -89,16 +88,16 @@ export default function ProductsScreen() {
                   : minPrice === maxPrice
                   ? minPrice?.toLocaleString('en-US', {
                       style: 'currency',
-                      currency: currency_code,
+                      currency: currencyCode,
                       currencyDisplay: 'narrowSymbol',
                     })
                   : `${minPrice?.toLocaleString('en-US', {
                       style: 'currency',
-                      currency: currency_code,
+                      currency: currencyCode,
                       currencyDisplay: 'narrowSymbol',
                     })} — ${maxPrice?.toLocaleString('en-US', {
                       style: 'currency',
-                      currency: currency_code,
+                      currency: currencyCode,
                       currencyDisplay: 'narrowSymbol',
                     })}`}
               </Text>
@@ -122,8 +121,6 @@ export default function ProductsScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <StatusBar style="auto" />
-
       <View className="m-4 mb-6 relative">
         <Search
           size={16}

@@ -1,5 +1,4 @@
 import { Search } from '@/components/icons/search';
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { FlatList, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -21,8 +20,6 @@ const renderProduct = ({ item, index }: { item: any; index: number }) => {
 export const ProductsSkeleton = () => {
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <StatusBar style="auto" />
-
       <View className="m-4 mb-6 relative">
         <Search
           size={16}

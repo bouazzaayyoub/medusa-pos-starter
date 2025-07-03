@@ -2,7 +2,6 @@ import Form from '@/components/form/Form';
 import TextField from '@/components/form/TextField';
 import { Button } from '@/components/ui/Button';
 import QuantityPicker from '@/components/ui/QuantityPicker';
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { FlatList, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -15,8 +14,6 @@ const discountSchema = z.object({
 export default function CartScreen() {
   return (
     <SafeAreaView className="relative flex-1 px-4 bg-white">
-      <StatusBar style="auto" />
-
       <View className="py-4">
         <Text className="text-black text-[40px] font-semibold">Cart</Text>
       </View>
