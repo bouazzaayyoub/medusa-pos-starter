@@ -51,7 +51,7 @@ export default function ProductsScreen() {
       }
 
       const thumbnail = item.thumbnail || item.images?.[0]?.url;
-      const variant_prices = (item.variants ?? [])
+      const variantPrices = (item.variants ?? [])
         .flatMap((variant) =>
           variant.prices?.filter(
             (price) =>
@@ -59,8 +59,8 @@ export default function ProductsScreen() {
           ),
         )
         .filter((price) => typeof price !== 'undefined');
-      const currency_code = variant_prices[0]?.currency_code ?? undefined;
-      const amounts = variant_prices.map((price) => price.amount);
+      const currencyCode = variantPrices[0]?.currency_code ?? undefined;
+      const amounts = variantPrices.map((price) => price.amount);
       const minPrice = amounts.length ? Math.min(...amounts) : undefined;
       const maxPrice = amounts.length ? Math.max(...amounts) : undefined;
 
@@ -89,16 +89,16 @@ export default function ProductsScreen() {
                   : minPrice === maxPrice
                   ? minPrice?.toLocaleString('en-US', {
                       style: 'currency',
-                      currency: currency_code,
+                      currency: currencyCode,
                       currencyDisplay: 'narrowSymbol',
                     })
                   : `${minPrice?.toLocaleString('en-US', {
                       style: 'currency',
-                      currency: currency_code,
+                      currency: currencyCode,
                       currencyDisplay: 'narrowSymbol',
                     })} — ${maxPrice?.toLocaleString('en-US', {
                       style: 'currency',
-                      currency: currency_code,
+                      currency: currencyCode,
                       currencyDisplay: 'narrowSymbol',
                     })}`}
               </Text>

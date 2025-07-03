@@ -2,7 +2,7 @@ import { clx } from '@/utils/clx';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
-interface ColorPickerProps {
+interface OptionPickerProps {
   values: Array<{ id: string; value: string }>;
   selectedValue?: string;
   onValueChange: (value: { id: string; value: string }) => void;
@@ -18,7 +18,7 @@ export function OptionPicker({
   label,
   disabled = false,
   className = '',
-}: ColorPickerProps) {
+}: OptionPickerProps) {
   return (
     <View className={className}>
       <Text className="text-base text-gray-900 mb-2">{label}</Text>
