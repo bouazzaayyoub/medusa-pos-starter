@@ -10,14 +10,15 @@ import {
   FlashMode,
 } from 'expo-camera';
 import * as Haptics from 'expo-haptics';
-import { router } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
+import { router, usePathname } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ScanScreen() {
+  const pathname = usePathname();
+  const isScanningRef = React.useRef(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [flashMode, setFlashMode] = useState<FlashMode>('auto');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -79,25 +80,37 @@ export default function ScanScreen() {
     }
   };
 
-  const handleBarcodeScanned = async ({ data }: BarcodeScanningResult) => {
-    if (
-      scanBarcodeMutation.isPending ||
-      scanBarcodeMutation.variables === data
-    ) {
-      return;
-    }
+  const handleBarcodeScanned = React.useCallback(
+    async ({ data }: BarcodeScanningResult) => {
+      if (
+        scanBarcodeMutation.isPending ||
+        pathname !== '/scan' // Prevent scanning if not on the scan page
+      ) {
+        return;
+      }
 
-    scanBarcodeMutation.mutate(data);
-  };
+      // Prevent multiple scans
+      if (isScanningRef.current) {
+        return;
+      }
+      isScanningRef.current = true;
 
-  const handleGoBack = () => {
+      scanBarcodeMutation.mutate(data, {
+        onSettled: () => {
+          isScanningRef.current = false;
+        },
+      });
+    },
+    [scanBarcodeMutation, pathname],
+  );
+
+  const handleGoBack = React.useCallback(() => {
     router.back();
-  };
+  }, []);
 
   if (hasPermission === null) {
     return (
       <SafeAreaView className="flex-1 bg-black justify-center items-center">
-        <StatusBar style="light" />
         <ActivityIndicator size="large" color="white" />
         <Text className="text-white mt-4">Requesting camera permission...</Text>
       </SafeAreaView>
@@ -107,7 +120,6 @@ export default function ScanScreen() {
   if (hasPermission === false) {
     return (
       <SafeAreaView className="flex-1 bg-black justify-center items-center p-5">
-        <StatusBar style="light" />
         <Text className="text-white text-2xl mb-4 text-center">
           Camera Access Required
         </Text>
@@ -126,8 +138,6 @@ export default function ScanScreen() {
 
   return (
     <View className="flex-1 bg-black relative">
-      <StatusBar style="light" />
-
       {/* Camera View - Full Screen */}
       <CameraView
         style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
