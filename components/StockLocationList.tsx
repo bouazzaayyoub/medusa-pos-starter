@@ -46,7 +46,7 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
       <FlatList
         data={stockLocationsQuery.data?.pages?.[0]?.stock_locations || []}
         keyExtractor={(item) => item.id}
-        className="border rounded-xl border-b border-[#EDEDED]"
+        contentContainerClassName="border rounded-xl border-b overflow-hidden border-[#EDEDED]"
         renderItem={({ item, index }) => (
           <Fragment key={item.id}>
             <TouchableOpacity
@@ -54,7 +54,7 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
                 'py-3 justify-between items-center flex-row px-4',
                 {
                   'bg-black': selectedStockLocationId === item.id,
-                },
+                }
               )}
               onPress={() => onStockLocationSelect(item.id)}
             >
@@ -81,7 +81,7 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
                       item.address.province
                         ? findProvinceByCode(
                             item.address.country_code,
-                            item.address.province,
+                            item.address.province
                           )?.name || item.address.province
                         : undefined,
                       getCountryByAlpha2(item.address.country_code)?.name ||
