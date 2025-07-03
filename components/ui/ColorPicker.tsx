@@ -1,3 +1,4 @@
+import { clx } from '@/utils/clx';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
@@ -32,24 +33,16 @@ export function ColorPicker({
               key={color.name}
               onPress={() => !isDisabled && onColorChange(color.name)}
               disabled={isDisabled}
-              className={`
-                px-2 h-10 rounded-full border items-center justify-center flex-row gap-2 disabled:opacity-50
-                ${
-                  isSelected
-                    ? 'border-black bg-black'
-                    : 'border-border bg-white'
-                }
-              `}
+              className={clx(
+                'px-2 h-10 rounded-full border items-center justify-center flex-row gap-2 disabled:opacity-50',
+                isSelected ? 'border-black bg-black' : 'border-border bg-white'
+              )}
             >
               <View
                 className="w-5 h-5 rounded-full border border-gray-300"
                 style={{ backgroundColor: color.value }}
               />
-              <Text
-                className={`
-                  ${isSelected ? 'text-white' : 'text-black'}
-                `}
-              >
+              <Text className={clx(isSelected ? 'text-white' : 'text-black')}>
                 {color.name}
               </Text>
             </TouchableOpacity>
@@ -59,5 +52,3 @@ export function ColorPicker({
     </View>
   );
 }
-
-export default ColorPicker;

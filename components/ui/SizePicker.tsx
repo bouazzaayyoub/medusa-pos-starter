@@ -1,3 +1,4 @@
+import { clx } from '@/utils/clx';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
@@ -32,20 +33,12 @@ export function SizePicker({
               key={size}
               onPress={() => !isDisabled && onSizeChange(size)}
               disabled={isDisabled}
-              className={`
-                w-10 h-10 rounded-full border items-center justify-center disabled:opacity-50
-                ${
-                  isSelected
-                    ? 'border-black bg-black'
-                    : 'border-border bg-white'
-                }
-              `}
+              className={clx(
+                'w-10 h-10 rounded-full border items-center justify-center disabled:opacity-50',
+                isSelected ? 'border-black bg-black' : 'border-border bg-white'
+              )}
             >
-              <Text
-                className={`
-                  ${isSelected ? 'text-white' : 'text-black'}
-                `}
-              >
+              <Text className={clx(isSelected ? 'text-white' : 'text-black')}>
                 {size}
               </Text>
             </TouchableOpacity>

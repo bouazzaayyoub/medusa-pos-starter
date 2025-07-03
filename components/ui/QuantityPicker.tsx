@@ -1,3 +1,4 @@
+import { clx } from '@/utils/clx';
 import React from 'react';
 import { TextInput, TouchableOpacity, View } from 'react-native';
 import { Loader } from '../icons/loader';
@@ -58,10 +59,11 @@ export function QuantityPicker({
   return (
     <View className="flex-row items-center gap-2">
       <View
-        className={`
-          flex-row overflow-hidden rounded-md
-          ${variant === 'default' ? 'h-8 border border-border' : 'h-10'} ${className}
-        `}
+        className={clx(
+          'flex-row overflow-hidden rounded-md',
+          variant === 'default' ? 'h-8 border border-border' : 'h-10',
+          className
+        )}
       >
         <TouchableOpacity
           className="w-8 items-center justify-center"
@@ -70,20 +72,28 @@ export function QuantityPicker({
         >
           <Minus
             size={variant === 'default' ? 16 : 24}
-            className={`${variant === 'default' ? 'text-gray-dark' : 'text-black'} ${!canDecrement ? '!text-gray' : ''}`}
+            className={clx(
+              variant === 'default' ? 'text-gray-dark' : 'text-black',
+              !canDecrement ? 'text-gray' : ''
+            )}
           />
         </TouchableOpacity>
         <View
-          className={`items-center justify-center
-        ${variant === 'default' ? 'border-x border-border w-8' : 'w-12'}
-        `}
+          className={clx(
+            'items-center justify-center',
+            variant === 'default' ? 'border-x border-border w-8' : 'w-12'
+          )}
         >
           <TextInput
             value={quantity.toString()}
             onChangeText={handleInputChange}
             keyboardType="numeric"
             textAlign="center"
-            className={`w-full h-full leading-tight text-center text-black ${variant === 'default' ? 'text-base' : 'text-2xl'} ${disabled ? '!text-gray' : ''}`}
+            className={clx(
+              'w-full h-full !leading-tight text-center text-black',
+              variant === 'default' ? 'text-base' : 'text-2xl',
+              disabled ? 'text-gray' : ''
+            )}
             editable={!disabled}
             selectTextOnFocus
           />
@@ -95,7 +105,10 @@ export function QuantityPicker({
         >
           <Plus
             size={variant === 'default' ? 16 : 24}
-            className={`${variant === 'default' ? 'text-gray-dark' : 'text-black'} ${!canIncrement ? '!text-gray' : ''}`}
+            className={clx(
+              variant === 'default' ? 'text-gray-dark' : 'text-black',
+              !canIncrement ? 'text-gray' : ''
+            )}
           />
         </TouchableOpacity>
       </View>
