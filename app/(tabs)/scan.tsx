@@ -1,14 +1,8 @@
 import { useScanBarcode } from '@/api/hooks/products';
 import { X } from '@/components/icons/x';
 import { Zap } from '@/components/icons/zap';
-import { ZapAuto } from '@/components/icons/zap-auto';
 import { ZapOff } from '@/components/icons/zap-off';
-import {
-  BarcodeScanningResult,
-  Camera,
-  CameraView,
-  FlashMode,
-} from 'expo-camera';
+import { BarcodeScanningResult, Camera, CameraView } from 'expo-camera';
 import * as Haptics from 'expo-haptics';
 import { router, usePathname } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -20,7 +14,7 @@ export default function ScanScreen() {
   const pathname = usePathname();
   const isScanningRef = React.useRef(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
-  const [flashMode, setFlashMode] = useState<FlashMode>('auto');
+  const [enableTorch, setEnableTorch] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const scanBarcodeMutation = useScanBarcode({
     onMutate: () => {
@@ -52,33 +46,9 @@ export default function ScanScreen() {
     getCameraPermissions();
   }, []);
 
-  const toggleFlashMode = () => {
-    setFlashMode((current) => {
-      switch (current) {
-        case 'off':
-          return 'on';
-        case 'on':
-          return 'auto';
-        case 'auto':
-          return 'off';
-        default:
-          return 'auto';
-      }
-    });
-  };
-
-  const getFlashIcon = () => {
-    switch (flashMode) {
-      case 'off':
-        return <ZapOff size={26} color="white" />;
-      case 'on':
-        return <Zap size={26} color="white" />;
-      case 'auto':
-        return <ZapAuto size={26} color="white" />;
-      default:
-        return <ZapAuto size={26} color="white" />;
-    }
-  };
+  const toggleTorch = React.useCallback(() => {
+    setEnableTorch((current) => !current);
+  }, []);
 
   const handleBarcodeScanned = React.useCallback(
     async ({ data }: BarcodeScanningResult) => {
@@ -142,8 +112,7 @@ export default function ScanScreen() {
       <CameraView
         style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
         facing="back"
-        flash={flashMode}
-        enableTorch={flashMode === 'on'}
+        enableTorch={enableTorch}
         onBarcodeScanned={handleBarcodeScanned}
         barcodeScannerSettings={{
           barcodeTypes: [
@@ -157,6 +126,7 @@ export default function ScanScreen() {
           ],
         }}
         autofocus="on"
+        active={pathname === '/scan'}
       />
 
       {/* Top Navigation with Safe Area */}
@@ -170,9 +140,13 @@ export default function ScanScreen() {
 
         <TouchableOpacity
           className="w-12 h-12 justify-center items-center"
-          onPress={toggleFlashMode}
+          onPress={toggleTorch}
         >
-          {getFlashIcon()}
+          {enableTorch ? (
+            <Zap size={26} color="white" />
+          ) : (
+            <ZapOff size={26} color="white" />
+          )}
         </TouchableOpacity>
       </View>
 
