@@ -1,27 +1,20 @@
 import { useScanBarcode } from '@/api/hooks/products';
 import { X } from '@/components/icons/x';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import {
-  BarcodeScanningResult,
-  Camera,
-  CameraView,
-  FlashMode,
-} from 'expo-camera';
+import { Zap } from '@/components/icons/zap';
+import { ZapOff } from '@/components/icons/zap-off';
+import { BarcodeScanningResult, Camera, CameraView } from 'expo-camera';
 import * as Haptics from 'expo-haptics';
-import { router } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { router, usePathname } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ScanScreen() {
-  const bottomSheetModalRef = useRef<BottomSheet>(null);
+  const pathname = usePathname();
+  const isScanningRef = React.useRef(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
-  const [flashMode, setFlashMode] = useState<FlashMode>('auto');
-  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+  const [enableTorch, setEnableTorch] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const scanBarcodeMutation = useScanBarcode({
     onMutate: () => {
@@ -29,8 +22,13 @@ export default function ScanScreen() {
     },
     onSuccess: (data) => {
       if (data) {
-        setIsProductModalOpen(true);
-        bottomSheetModalRef.current?.snapToIndex(0);
+        router.push({
+          pathname: '/product-details',
+          params: {
+            productId: data.product.id,
+            productName: data.product.title,
+          },
+        });
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       } else {
         setErrorMessage('Product not found');
@@ -38,13 +36,6 @@ export default function ScanScreen() {
       }
     },
   });
-
-  const handleSheetChanges = useCallback((index: number) => {
-    if (index === -1) {
-      setIsProductModalOpen(false);
-      scanBarcodeMutation.reset();
-    }
-  }, []);
 
   useEffect(() => {
     const getCameraPermissions = async () => {
@@ -55,57 +46,41 @@ export default function ScanScreen() {
     getCameraPermissions();
   }, []);
 
-  const toggleFlashMode = () => {
-    setFlashMode((current) => {
-      switch (current) {
-        case 'off':
-          return 'on';
-        case 'on':
-          return 'auto';
-        case 'auto':
-          return 'off';
-        default:
-          return 'auto';
+  const toggleTorch = React.useCallback(() => {
+    setEnableTorch((current) => !current);
+  }, []);
+
+  const handleBarcodeScanned = React.useCallback(
+    async ({ data }: BarcodeScanningResult) => {
+      if (
+        scanBarcodeMutation.isPending ||
+        pathname !== '/scan' // Prevent scanning if not on the scan page
+      ) {
+        return;
       }
-    });
-  };
 
-  const getFlashIcon = () => {
-    switch (flashMode) {
-      case 'off':
-        return 'bolt.slash.fill';
-      case 'on':
-        return 'bolt.fill';
-      case 'auto':
-        return 'bolt.badge.a.fill';
-      default:
-        return 'bolt.badge.a.fill';
-    }
-  };
+      // Prevent multiple scans
+      if (isScanningRef.current) {
+        return;
+      }
+      isScanningRef.current = true;
 
-  const handleBarcodeScanned = async ({
-    type,
-    data,
-  }: BarcodeScanningResult) => {
-    if (
-      isProductModalOpen ||
-      scanBarcodeMutation.isPending ||
-      (scanBarcodeMutation.isSuccess && scanBarcodeMutation.variables === data)
-    ) {
-      return;
-    }
+      scanBarcodeMutation.mutate(data, {
+        onSettled: () => {
+          isScanningRef.current = false;
+        },
+      });
+    },
+    [scanBarcodeMutation, pathname],
+  );
 
-    scanBarcodeMutation.mutate(data);
-  };
-
-  const handleGoBack = () => {
+  const handleGoBack = React.useCallback(() => {
     router.back();
-  };
+  }, []);
 
   if (hasPermission === null) {
     return (
       <SafeAreaView className="flex-1 bg-black justify-center items-center">
-        <StatusBar style="light" />
         <ActivityIndicator size="large" color="white" />
         <Text className="text-white mt-4">Requesting camera permission...</Text>
       </SafeAreaView>
@@ -115,7 +90,6 @@ export default function ScanScreen() {
   if (hasPermission === false) {
     return (
       <SafeAreaView className="flex-1 bg-black justify-center items-center p-5">
-        <StatusBar style="light" />
         <Text className="text-white text-2xl mb-4 text-center">
           Camera Access Required
         </Text>
@@ -134,13 +108,11 @@ export default function ScanScreen() {
 
   return (
     <View className="flex-1 bg-black relative">
-      <StatusBar style="light" />
-
       {/* Camera View - Full Screen */}
       <CameraView
         style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
         facing="back"
-        flash={flashMode}
+        enableTorch={enableTorch}
         onBarcodeScanned={handleBarcodeScanned}
         barcodeScannerSettings={{
           barcodeTypes: [
@@ -154,6 +126,7 @@ export default function ScanScreen() {
           ],
         }}
         autofocus="on"
+        active={pathname === '/scan'}
       />
 
       {/* Top Navigation with Safe Area */}
@@ -167,9 +140,13 @@ export default function ScanScreen() {
 
         <TouchableOpacity
           className="w-12 h-12 justify-center items-center"
-          onPress={toggleFlashMode}
+          onPress={toggleTorch}
         >
-          <IconSymbol name={getFlashIcon()} size={26} color="white" />
+          {enableTorch ? (
+            <Zap size={26} color="white" />
+          ) : (
+            <ZapOff size={26} color="white" />
+          )}
         </TouchableOpacity>
       </View>
 
@@ -198,7 +175,7 @@ export default function ScanScreen() {
           </View>
 
           {/* Scan Text */}
-          {!scanBarcodeMutation.isPending && !isProductModalOpen && (
+          {!scanBarcodeMutation.isPending && (
             <Animated.View
               entering={FadeIn}
               exiting={FadeOut}
@@ -246,26 +223,6 @@ export default function ScanScreen() {
           </TouchableOpacity>
         </Animated.View>
       )}
-
-      <GestureHandlerRootView className="absolute top-0 left-0 right-0 bottom-0 z-20">
-        <BottomSheet
-          ref={bottomSheetModalRef}
-          onChange={handleSheetChanges}
-          index={-1}
-          enablePanDownToClose
-        >
-          <BottomSheetView className="flex-1 items-center pb-safe-offset-4">
-            <Text>Awesome 🎉</Text>
-            <Text>Awesome 🎉</Text>
-            <Text>Awesome 🎉</Text>
-            <Text>Awesome 🎉</Text>
-            <Text>Awesome 🎉</Text>
-            <Text>Awesome 🎉</Text>
-            <Text>Awesome 🎉</Text>
-            <Text>Awesome 🎉</Text>
-          </BottomSheetView>
-        </BottomSheet>
-      </GestureHandlerRootView>
     </View>
   );
 }
