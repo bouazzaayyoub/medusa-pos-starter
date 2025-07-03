@@ -9,30 +9,15 @@ interface ZapAutoProps {
 
 export function ZapAuto({ size = 24, color = 'white' }: ZapAutoProps) {
   return (
-    <View style={{ position: 'relative', width: size, height: size }}>
+    <View className="relative" style={{ width: size, height: size }}>
       <Zap size={size} color={color} />
       <View
+        className="absolute bottom-[-2px] right-[-2px] rounded-md w-3 h-3 justify-center items-center"
         style={{
-          position: 'absolute',
-          bottom: -2,
-          right: -2,
           backgroundColor: color,
-          borderRadius: 6,
-          width: 12,
-          height: 12,
-          justifyContent: 'center',
-          alignItems: 'center',
         }}
       >
-        <Text
-          style={{
-            color: 'black',
-            fontSize: 8,
-            fontWeight: 'bold',
-            textAlign: 'center',
-            lineHeight: 10,
-          }}
-        >
+        <Text className="text-black text-[8px] font-bold text-center leading-[10px]">
           A
         </Text>
       </View>
