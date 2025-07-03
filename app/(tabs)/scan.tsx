@@ -1,6 +1,8 @@
 import { useScanBarcode } from '@/api/hooks/products';
 import { X } from '@/components/icons/x';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { Zap } from '@/components/icons/zap';
+import { ZapAuto } from '@/components/icons/zap-auto';
+import { ZapOff } from '@/components/icons/zap-off';
 import {
   BarcodeScanningResult,
   Camera,
@@ -67,27 +69,21 @@ export default function ScanScreen() {
   const getFlashIcon = () => {
     switch (flashMode) {
       case 'off':
-        return 'bolt.slash.fill';
+        return <ZapOff size={26} color="white" />;
       case 'on':
-        return 'bolt.fill';
+        return <Zap size={26} color="white" />;
       case 'auto':
-        return 'bolt.badge.a.fill';
+        return <ZapAuto size={26} color="white" />;
       default:
-        return 'bolt.badge.a.fill';
+        return <ZapAuto size={26} color="white" />;
     }
   };
 
-  const handleBarcodeScanned = async ({
-    type,
-    data,
-  }: BarcodeScanningResult) => {
-    // Disable scanning if mutation is pending
-    if (scanBarcodeMutation.isPending) {
-      return;
-    }
-
-    // Prevent duplicate scans of the same barcode
-    if (scanBarcodeMutation.variables === data) {
+  const handleBarcodeScanned = async ({ data }: BarcodeScanningResult) => {
+    if (
+      scanBarcodeMutation.isPending ||
+      scanBarcodeMutation.variables === data
+    ) {
       return;
     }
 
@@ -137,6 +133,7 @@ export default function ScanScreen() {
         style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
         facing="back"
         flash={flashMode}
+        enableTorch={flashMode === 'on'}
         onBarcodeScanned={handleBarcodeScanned}
         barcodeScannerSettings={{
           barcodeTypes: [
@@ -165,7 +162,7 @@ export default function ScanScreen() {
           className="w-12 h-12 justify-center items-center"
           onPress={toggleFlashMode}
         >
-          <IconSymbol name={getFlashIcon()} size={26} color="white" />
+          {getFlashIcon()}
         </TouchableOpacity>
       </View>
 
