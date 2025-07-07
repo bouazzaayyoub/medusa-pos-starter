@@ -62,7 +62,7 @@ export const Button: React.FC<ButtonProps> = ({
         {children}
       </Text>
       {isPending && <Loader size={16} color="#B5B5B5" className="animate-spin" />}
-      {icon && !isPending && icon}
+      {typeof icon !== 'undefined' && !isPending ? icon : null}
     </TouchableOpacity>
   );
 };
