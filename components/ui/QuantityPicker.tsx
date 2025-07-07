@@ -90,7 +90,7 @@ export function QuantityPicker({
             keyboardType="numeric"
             textAlign="center"
             className={clx(
-              'w-full h-full !leading-tight text-center text-black',
+              'text-black !p-0',
               variant === 'default' ? 'text-base' : 'text-2xl',
               disabled ? 'text-gray' : ''
             )}

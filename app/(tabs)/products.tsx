@@ -11,7 +11,7 @@ import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const isPlaceholderProduct = (
-  product: AdminProduct | { id: `placeholder_${string}` },
+  product: AdminProduct | { id: `placeholder_${string}` }
 ): product is { id: `placeholder_${string}` } => {
   return (
     typeof product.id === 'string' && product.id.startsWith('placeholder_')
@@ -54,8 +54,8 @@ export default function ProductsScreen() {
         .flatMap((variant) =>
           variant.prices?.filter(
             (price) =>
-              price.currency_code === settings.data?.region?.currency_code,
-          ),
+              price.currency_code === settings.data?.region?.currency_code
+          )
         )
         .filter((price) => typeof price !== 'undefined');
       const currencyCode = variantPrices[0]?.currency_code ?? undefined;
@@ -86,27 +86,27 @@ export default function ProductsScreen() {
                 (typeof minPrice !== 'number' && typeof maxPrice !== 'number')
                   ? 'No price available'
                   : minPrice === maxPrice
-                  ? minPrice?.toLocaleString('en-US', {
-                      style: 'currency',
-                      currency: currencyCode,
-                      currencyDisplay: 'narrowSymbol',
-                    })
-                  : `${minPrice?.toLocaleString('en-US', {
-                      style: 'currency',
-                      currency: currencyCode,
-                      currencyDisplay: 'narrowSymbol',
-                    })} — ${maxPrice?.toLocaleString('en-US', {
-                      style: 'currency',
-                      currency: currencyCode,
-                      currencyDisplay: 'narrowSymbol',
-                    })}`}
+                    ? minPrice?.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: currencyCode,
+                        currencyDisplay: 'narrowSymbol',
+                      })
+                    : `${minPrice?.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: currencyCode,
+                        currencyDisplay: 'narrowSymbol',
+                      })} — ${maxPrice?.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: currencyCode,
+                        currencyDisplay: 'narrowSymbol',
+                      })}`}
               </Text>
             </View>
           </TouchableOpacity>
         </View>
       );
     },
-    [settings.data?.region?.currency_code],
+    [settings.data?.region?.currency_code]
   );
 
   const data = React.useMemo(() => {
@@ -127,7 +127,7 @@ export default function ProductsScreen() {
           className="absolute left-4 top-1/2 -translate-y-[50%] text-gray"
         />
         <TextInput
-          className="rounded-full leading-snug pb-3 pt-2 pr-4 pl-10 text-base border placeholder:text-gray border-border"
+          className="rounded-full pb-3 pt-2 pr-4 pl-10 text-base border placeholder:text-gray border-border"
           placeholder="Search products..."
           value={searchQuery}
           onChangeText={setSearchQuery}
