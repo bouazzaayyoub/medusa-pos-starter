@@ -1,4 +1,5 @@
 import {
+  DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL,
   useAddPromotion,
   useCancelDraftOrder,
   useDraftOrder,
@@ -10,12 +11,19 @@ import TextField from '@/components/form/TextField';
 import { Button } from '@/components/ui/Button';
 import QuantityPicker from '@/components/ui/QuantityPicker';
 import { useSettings } from '@/contexts/settings';
-import { AdminOrderLineItem } from '@medusajs/types';
+import { AdminDraftOrder, AdminOrderLineItem } from '@medusajs/types';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import { router } from 'expo-router';
 import React from 'react';
-import { ActivityIndicator, Alert, Image, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as z from 'zod/v4';
 
@@ -81,6 +89,35 @@ const DraftOrderItem: React.FC<{ item: AdminOrderLineItem }> = ({ item }) => {
         })}
       </Text>
     </View>
+  );
+};
+
+const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({
+  customer,
+}) => {
+  if (!customer || customer.email === DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL) {
+    return (
+      <Button
+        onPress={() => {
+          router.push('/customer-lookup');
+        }}
+      >
+        Add Customer
+      </Button>
+    );
+  }
+
+  return (
+    <TouchableOpacity
+      onPress={() => {
+        router.push('/customer-lookup');
+      }}
+    >
+      <Text>
+        {[customer.first_name, customer.last_name].filter(Boolean).join(' ')}
+      </Text>
+      <Text>{customer.email}</Text>
+    </TouchableOpacity>
   );
 };
 
@@ -172,6 +209,8 @@ export default function CartScreen() {
       <View className="py-4">
         <Text className="text-black text-[40px] font-semibold">Cart</Text>
       </View>
+
+      <CustomerBadge customer={draftOrder.data.draft_order.customer} />
 
       <FlashList
         data={draftOrder.data?.draft_order.items || []}

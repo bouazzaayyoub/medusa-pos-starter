@@ -103,8 +103,10 @@ function App() {
           <Stack.Screen
             name="customer-lookup"
             options={{
-              presentation: 'modal',
+              presentation: 'transparentModal',
               title: 'Customer Lookup',
+              headerShown: false,
+              animation: 'none',
             }}
           />
           <Stack.Screen name="+not-found" />

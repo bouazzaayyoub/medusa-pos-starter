@@ -1,15 +1,18 @@
+import { Dialog } from '@/components/ui/Dialog';
+import { router } from 'expo-router';
 import React from 'react';
-import { Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Text } from 'react-native';
 
 export default function CustomerLookupScreen() {
   return (
-    <SafeAreaView className="flex-1">
-      <View className="p-5 pt-15">
-        <Text className="text-black text-3xl font-semibold">
-          Customer Lookup
-        </Text>
-      </View>
-    </SafeAreaView>
+    <Dialog
+      open={true}
+      title="Customer Lookup"
+      onClose={() => router.back()}
+      dismissOnOverlayPress={true}
+      animationType="fade"
+    >
+      <Text>Customer lookup...</Text>
+    </Dialog>
   );
 }

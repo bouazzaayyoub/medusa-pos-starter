@@ -15,6 +15,7 @@ import * as SecureStore from 'expo-secure-store';
 import * as React from 'react';
 
 const DRAFT_ORDER_ID_STORAGE_KEY = 'draft_order_id';
+export const DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL = 'noreply+pos-guest@agilo.com';
 
 const useGetOrSetDraftOrderId = () => {
   const sdk = useMedusaSdk();
@@ -40,7 +41,7 @@ const useGetOrSetDraftOrderId = () => {
     const newDraftOrder = await sdk.admin.draftOrder.create({
       region_id: settings.data?.region?.id,
       sales_channel_id: settings.data?.sales_channel?.id,
-      email: 'noreply+pos-guest@agilo.com',
+      email: DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL,
     });
 
     await SecureStore.setItemAsync(
