@@ -57,9 +57,10 @@ export default function CartScreen() {
           <TextField
             placeholder="Enter your discount code"
             name="discount"
-            className="w-[60%]"
+            className="w-[60%] h-[3.125rem]"
+            inputClassName="py-0 h-full"
           />
-          <Button size="sm" className="flex-1 h-[58px]">
+          <Button size="sm" className="flex-1 h-[3.125rem]">
             Submit
           </Button>
         </Form>
