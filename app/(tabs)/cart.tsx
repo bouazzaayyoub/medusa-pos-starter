@@ -104,12 +104,8 @@ const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({ cu
       </View>
 
       <View className="flex-row gap-4">
-        <TouchableOpacity>
-          <ChevronDown size={24} />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <X size={24} />
-        </TouchableOpacity>
+        <ChevronDown size={24} />
+        <X size={24} />
       </View>
     </TouchableOpacity>
   );
