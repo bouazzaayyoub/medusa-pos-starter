@@ -8,6 +8,9 @@ import {
 import Form from '@/components/form/Form';
 import FormButton from '@/components/form/FormButton';
 import TextField from '@/components/form/TextField';
+import { ChevronDown } from '@/components/icons/chevron-down';
+import { UserRoundPlus } from '@/components/icons/user-round-plus';
+import { X } from '@/components/icons/x';
 import { Button } from '@/components/ui/Button';
 import QuantityPicker from '@/components/ui/QuantityPicker';
 import { useSettings } from '@/contexts/settings';
@@ -98,9 +101,10 @@ const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({
   if (!customer || customer.email === DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL) {
     return (
       <Button
-        onPress={() => {
-          router.push('/customer-lookup');
-        }}
+        onPress={() => router.push('/customer-lookup')}
+        variant="outline"
+        icon={<UserRoundPlus size={20} />}
+        className="justify-between mb-6"
       >
         Add Customer
       </Button>
@@ -112,11 +116,23 @@ const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({
       onPress={() => {
         router.push('/customer-lookup');
       }}
+      className="flex-row mb-6 pb-6 border-b border-border justify-between items-center"
     >
-      <Text>
-        {[customer.first_name, customer.last_name].filter(Boolean).join(' ')}
-      </Text>
-      <Text>{customer.email}</Text>
+      <View>
+        <Text className="text-lg">
+          {[customer.first_name, customer.last_name].filter(Boolean).join(' ')}
+        </Text>
+        <Text className="text-sm text-gray">{customer.email}</Text>
+      </View>
+
+      <View className="flex-row gap-4">
+        <TouchableOpacity>
+          <ChevronDown size={24} />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <X size={24} />
+        </TouchableOpacity>
+      </View>
     </TouchableOpacity>
   );
 };
@@ -214,7 +230,6 @@ export default function CartScreen() {
 
       <FlashList
         data={draftOrder.data?.draft_order.items || []}
-        contentContainerClassName="mt-4"
         estimatedItemSize={86}
         renderItem={renderItem}
         ItemSeparatorComponent={() => <View className="h-px bg-border my-6" />}
@@ -242,6 +257,7 @@ export default function CartScreen() {
             autoComplete="off"
             autoCorrect={false}
             enterKeyHint="send"
+            errorVariation="inline"
           />
           <FormButton
             size="sm"
@@ -312,7 +328,7 @@ export default function CartScreen() {
                     },
                     style: 'destructive',
                   },
-                ],
+                ]
               );
             }}
             isPending={cancelDraftOrder.isPending}
