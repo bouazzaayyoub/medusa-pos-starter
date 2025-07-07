@@ -197,7 +197,8 @@ export default function CartScreen() {
           <TextField
             placeholder="Enter promotion code"
             name="promotionCode"
-            className="w-[60%]"
+            className="w-[60%] h-[3.125rem]"
+            inputClassName="py-0 h-full"
             readOnly={addPromotion.isPending}
             autoComplete="off"
             autoCorrect={false}
@@ -205,7 +206,7 @@ export default function CartScreen() {
           />
           <FormButton
             size="sm"
-            className="flex-1 h-[58px]"
+            className="flex-1 h-[3.125rem]"
             isPending={addPromotion.isPending}
           >
             Submit
