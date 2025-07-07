@@ -91,6 +91,8 @@ const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({ cu
     );
   }
 
+  const customerName = [customer.first_name, customer.last_name].filter(Boolean).join(' ');
+
   return (
     <TouchableOpacity
       onPress={() => {
@@ -98,10 +100,17 @@ const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({ cu
       }}
       className="flex-row mb-6 pb-6 border-b border-border justify-between items-center"
     >
-      <View>
-        <Text className="text-lg">{[customer.first_name, customer.last_name].filter(Boolean).join(' ')}</Text>
-        <Text className="text-sm text-gray">{customer.email}</Text>
-      </View>
+      {customerName.length > 0 ? (
+        <View>
+          <Text className="text-lg">{customerName}</Text>
+          <Text className="text-sm text-gray">{customer.email}</Text>
+        </View>
+      ) : (
+        <View>
+          <Text className="text-sm text-gray">Customer</Text>
+          <Text className="text-lg">{customer.email}</Text>
+        </View>
+      )}
 
       <View className="flex-row gap-4">
         <ChevronDown size={24} />

@@ -52,7 +52,7 @@ export const useDraftOrder = () => {
       }
 
       return sdk.admin.draftOrder.retrieve(draftOrderId, {
-        fields: '+tax_total,+subtotal,+total,+items.variant.inventory_quantity',
+        fields: '+tax_total,+subtotal,+total,+items.variant.inventory_quantity,+customer.*',
       });
     },
   });
