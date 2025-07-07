@@ -3,6 +3,7 @@ import { useSettings } from '@/contexts/settings';
 import {
   AdminAddDraftOrderItems,
   AdminDraftOrderPreviewResponse,
+  AdminUpdateDraftOrderItem,
 } from '@medusajs/types';
 import {
   useMutation,
@@ -13,12 +14,16 @@ import {
 import * as SecureStore from 'expo-secure-store';
 import * as React from 'react';
 
+const DRAFT_ORDER_ID_STORAGE_KEY = 'draft_order_id';
+
 const useGetOrSetDraftOrderId = () => {
   const sdk = useMedusaSdk();
   const settings = useSettings();
 
   return React.useCallback(async () => {
-    const draftOrderId = await SecureStore.getItemAsync('draft_order_id');
+    const draftOrderId = await SecureStore.getItemAsync(
+      DRAFT_ORDER_ID_STORAGE_KEY,
+    );
 
     if (draftOrderId) {
       return draftOrderId;
@@ -38,10 +43,8 @@ const useGetOrSetDraftOrderId = () => {
       email: 'noreply+pos-guest@agilo.com',
     });
 
-    await sdk.admin.draftOrder.beginEdit(newDraftOrder.draft_order.id);
-
     await SecureStore.setItemAsync(
-      'draft_order_id',
+      DRAFT_ORDER_ID_STORAGE_KEY,
       newDraftOrder.draft_order.id,
     );
 
@@ -51,13 +54,52 @@ const useGetOrSetDraftOrderId = () => {
 
 export const useDraftOrder = () => {
   const sdk = useMedusaSdk();
-  const getOrSetDraftOrderId = useGetOrSetDraftOrderId();
 
   return useQuery({
     queryKey: ['draft-order'],
     queryFn: async () => {
-      const draftOrderId = await getOrSetDraftOrderId();
-      return sdk.admin.draftOrder.retrieve(draftOrderId);
+      const draftOrderId = await SecureStore.getItemAsync(
+        DRAFT_ORDER_ID_STORAGE_KEY,
+      );
+
+      if (!draftOrderId) {
+        return null;
+      }
+
+      return sdk.admin.draftOrder.retrieve(draftOrderId, {
+        fields: '+tax_total,+subtotal,+total,+items.variant.inventory_quantity',
+      });
+    },
+  });
+};
+
+export const useCancelDraftOrder = (
+  options?: Omit<UseMutationOptions<void>, 'mutationKey' | 'mutationFn'>,
+) => {
+  const sdk = useMedusaSdk();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationKey: ['cancel-draft-order'],
+    mutationFn: async () => {
+      const draftOrderId = await SecureStore.getItemAsync(
+        DRAFT_ORDER_ID_STORAGE_KEY,
+      );
+      if (!draftOrderId) {
+        throw new Error('Draft order ID not found');
+      }
+
+      await sdk.admin.draftOrder.delete(draftOrderId);
+      await SecureStore.deleteItemAsync(DRAFT_ORDER_ID_STORAGE_KEY);
+    },
+    ...options,
+    onSuccess: async (...args) => {
+      await queryClient.invalidateQueries({
+        queryKey: ['draft-order'],
+        exact: false,
+      });
+
+      return options?.onSuccess?.(...args);
     },
   });
 };
@@ -81,7 +123,131 @@ export const useAddToDraftOrder = (
     mutationKey: ['add-to-draft-order'],
     mutationFn: async (items: AdminAddDraftOrderItems) => {
       const draftOrderId = await getOrSetDraftOrderId();
-      return sdk.admin.draftOrder.addItems(draftOrderId, items);
+      await sdk.admin.draftOrder.beginEdit(draftOrderId);
+      await sdk.admin.draftOrder
+        .addItems(draftOrderId, items)
+        .catch(async (error) => {
+          await sdk.admin.draftOrder.cancelEdit(draftOrderId);
+          throw error;
+        });
+      return sdk.admin.draftOrder.confirmEdit(draftOrderId);
+    },
+    ...options,
+    onSuccess: async (...args) => {
+      await queryClient.invalidateQueries({
+        queryKey: ['draft-order'],
+        exact: false,
+      });
+
+      return options?.onSuccess?.(...args);
+    },
+  });
+};
+
+export const useUpdateDraftOrderItem = (
+  options?: Omit<
+    UseMutationOptions<
+      AdminDraftOrderPreviewResponse,
+      Error,
+      { id: string; update: AdminUpdateDraftOrderItem },
+      unknown
+    >,
+    'mutationKey' | 'mutationFn'
+  >,
+) => {
+  const sdk = useMedusaSdk();
+  const queryClient = useQueryClient();
+  const getOrSetDraftOrderId = useGetOrSetDraftOrderId();
+
+  return useMutation({
+    mutationKey: ['update-draft-order-item'],
+    mutationFn: async (item: {
+      id: string;
+      update: AdminUpdateDraftOrderItem;
+    }) => {
+      const draftOrderId = await getOrSetDraftOrderId();
+      await sdk.admin.draftOrder.beginEdit(draftOrderId);
+      await sdk.admin.draftOrder
+        .updateItem(draftOrderId, item.id, item.update)
+        .catch(async (error) => {
+          await sdk.admin.draftOrder.cancelEdit(draftOrderId);
+          throw error;
+        });
+      return sdk.admin.draftOrder.confirmEdit(draftOrderId);
+    },
+    ...options,
+    onSuccess: async (...args) => {
+      await queryClient.invalidateQueries({
+        queryKey: ['draft-order'],
+        exact: false,
+      });
+
+      return options?.onSuccess?.(...args);
+    },
+  });
+};
+
+export const useAddPromotion = (
+  options?: Omit<
+    UseMutationOptions<AdminDraftOrderPreviewResponse, Error, string, unknown>,
+    'mutationKey' | 'mutationFn'
+  >,
+) => {
+  const sdk = useMedusaSdk();
+  const queryClient = useQueryClient();
+  const getOrSetDraftOrderId = useGetOrSetDraftOrderId();
+
+  return useMutation({
+    mutationKey: ['add-promotion'],
+    mutationFn: async (promotionCode: string) => {
+      const draftOrderId = await getOrSetDraftOrderId();
+      await sdk.admin.draftOrder.beginEdit(draftOrderId);
+      await sdk.admin.draftOrder
+        .addPromotions(draftOrderId, {
+          promo_codes: [promotionCode],
+        })
+        .catch(async (error) => {
+          await sdk.admin.draftOrder.cancelEdit(draftOrderId);
+          throw error;
+        });
+      return sdk.admin.draftOrder.confirmEdit(draftOrderId);
+    },
+    ...options,
+    onSuccess: async (...args) => {
+      await queryClient.invalidateQueries({
+        queryKey: ['draft-order'],
+        exact: false,
+      });
+
+      return options?.onSuccess?.(...args);
+    },
+  });
+};
+
+export const useRemovePromotion = (
+  options?: Omit<
+    UseMutationOptions<AdminDraftOrderPreviewResponse, Error, string, unknown>,
+    'mutationKey' | 'mutationFn'
+  >,
+) => {
+  const sdk = useMedusaSdk();
+  const queryClient = useQueryClient();
+  const getOrSetDraftOrderId = useGetOrSetDraftOrderId();
+
+  return useMutation({
+    mutationKey: ['remove-promotion'],
+    mutationFn: async (promotionCode: string) => {
+      const draftOrderId = await getOrSetDraftOrderId();
+      await sdk.admin.draftOrder.beginEdit(draftOrderId);
+      await sdk.admin.draftOrder
+        .removePromotions(draftOrderId, {
+          promo_codes: [promotionCode],
+        })
+        .catch(async (error) => {
+          await sdk.admin.draftOrder.cancelEdit(draftOrderId);
+          throw error;
+        });
+      return sdk.admin.draftOrder.confirmEdit(draftOrderId);
     },
     ...options,
     onSuccess: async (...args) => {
