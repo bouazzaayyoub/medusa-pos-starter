@@ -89,9 +89,10 @@ export function QuantityPicker({
             onChangeText={handleInputChange}
             keyboardType="numeric"
             textAlign="center"
+            verticalAlign="middle"
             className={clx(
-              'text-black !p-0',
-              variant === 'default' ? 'text-base' : 'text-2xl',
+              'h-full w-full !p-0',
+              variant === 'default' ? '' : 'text-[1.5rem]',
               disabled ? 'text-gray' : ''
             )}
             editable={!disabled}
