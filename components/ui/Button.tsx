@@ -30,6 +30,7 @@ export type ButtonProps = TouchableOpacityProps & {
   isPending?: boolean;
   size?: keyof typeof BUTTON_SIZES;
   variant?: keyof typeof BUTTON_VARIANTS;
+  icon?: React.ReactNode;
 };
 
 export const Button: React.FC<ButtonProps> = ({
@@ -38,6 +39,7 @@ export const Button: React.FC<ButtonProps> = ({
   isPending = false,
   size = 'md',
   variant = 'solid',
+  icon,
   ...props
 }) => {
   const buttonSizeClasses = BUTTON_SIZES[size];
@@ -66,6 +68,7 @@ export const Button: React.FC<ButtonProps> = ({
       {isPending && (
         <Loader size={16} color="#B5B5B5" className="animate-spin" />
       )}
+      {icon && !isPending && icon}
     </TouchableOpacity>
   );
 };

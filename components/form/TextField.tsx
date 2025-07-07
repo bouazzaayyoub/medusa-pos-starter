@@ -25,6 +25,7 @@ interface TextFieldProps
   className?: string;
   inputClassName?: string;
   errorClassName?: string;
+  errorVariation?: 'default' | 'inline';
 }
 
 export function TextField({
@@ -34,6 +35,7 @@ export function TextField({
   className = '',
   inputClassName = '',
   errorClassName = '',
+  errorVariation = 'default',
   secureTextEntry,
   ...textInputProps
 }: TextFieldProps) {
@@ -98,6 +100,7 @@ export function TextField({
             {
               'border-red': error,
               'pt-6 pb-4': floatingPlaceholder,
+              'pr-10': error && errorVariation === 'inline',
             },
             inputClassName
           )}
@@ -125,8 +128,13 @@ export function TextField({
             )}
           </TouchableOpacity>
         )}
+        {error && errorVariation === 'inline' && (
+          <View className="absolute right-4 top-1/2 -translate-y-1/2">
+            <CircleAlert size={16} color="#ef4444" />
+          </View>
+        )}
       </View>
-      {error && (
+      {error && errorVariation === 'default' && (
         <View className="flex-row items-center mt-1 gap-1">
           <CircleAlert size={14} color="#ef4444" />
           <Text className={`text-red text-sm ${errorClassName}`}>
