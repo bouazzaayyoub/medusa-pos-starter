@@ -3,16 +3,20 @@ import React from 'react';
 import {
   FieldValues,
   FormProvider,
-  SubmitHandler,
   useForm,
   UseFormProps,
+  UseFormReturn,
 } from 'react-hook-form';
 import { View } from 'react-native';
 import * as z from 'zod/v4';
 
 interface FormProps<T extends FieldValues, Output> {
   schema: z.ZodType<Output, T>;
-  onSubmit: SubmitHandler<Output>;
+  onSubmit: (
+    data: Output,
+    form: UseFormReturn<T, unknown, Output>,
+    event?: React.BaseSyntheticEvent,
+  ) => unknown | Promise<unknown>;
   defaultValues?: UseFormProps<T>['defaultValues'];
   children: React.ReactNode;
   className?: string;
@@ -47,7 +51,9 @@ export function Form<T extends FieldValues, Output>({
     mode: 'onChange',
   });
 
-  const handleSubmit = methods.handleSubmit(onSubmit);
+  const handleSubmit = methods.handleSubmit((data, event) => {
+    return onSubmit(data, methods, event);
+  });
 
   return (
     <FormProvider {...methods}>
