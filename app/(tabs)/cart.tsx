@@ -9,6 +9,7 @@ import Form from '@/components/form/Form';
 import FormButton from '@/components/form/FormButton';
 import TextField from '@/components/form/TextField';
 import { ChevronDown } from '@/components/icons/chevron-down';
+import { ShoppingCart } from '@/components/icons/shopping-cart';
 import { UserRoundPlus } from '@/components/icons/user-round-plus';
 import { X } from '@/components/icons/x';
 import { Button } from '@/components/ui/Button';
@@ -146,7 +147,7 @@ export default function CartScreen() {
 
   const renderItem = React.useCallback<ListRenderItem<AdminOrderLineItem>>(
     ({ item }) => <DraftOrderItem item={item} />,
-    [],
+    []
   );
 
   if (draftOrder.isLoading || settings.isLoading) {
@@ -198,8 +199,10 @@ export default function CartScreen() {
         <View className="py-4">
           <Text className="text-black text-[40px] font-semibold">Cart</Text>
         </View>
-        <View className="items-center justify-center flex-grow">
-          <Text className="text-gray-dark">Your cart is empty.</Text>
+        <View className="flex-1 items-center justify-center">
+          <ShoppingCart size={24} className="mb-1" />
+          <Text className="text-xl mb-1">Your cart is empty</Text>
+          <Text className="text-gray text-base">Add products to begin</Text>
         </View>
         <View className="flex-row gap-2">
           <Button
