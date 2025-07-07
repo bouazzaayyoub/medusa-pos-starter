@@ -3,12 +3,7 @@ import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useCustomFormContext } from './Form';
 
-export function FormButton({
-  children = 'Submit',
-  disabled = false,
-  isPending = false,
-  ...props
-}: ButtonProps) {
+export function FormButton({ children = 'Submit', disabled = false, isPending = false, ...props }: ButtonProps) {
   const { formState } = useFormContext();
   const { handleSubmit } = useCustomFormContext();
 

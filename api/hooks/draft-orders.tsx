@@ -1,16 +1,7 @@
 import { useMedusaSdk } from '@/contexts/auth';
 import { useSettings } from '@/contexts/settings';
-import {
-  AdminAddDraftOrderItems,
-  AdminDraftOrderPreviewResponse,
-  AdminUpdateDraftOrderItem,
-} from '@medusajs/types';
-import {
-  useMutation,
-  UseMutationOptions,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { AdminAddDraftOrderItems, AdminDraftOrderPreviewResponse, AdminUpdateDraftOrderItem } from '@medusajs/types';
+import { useMutation, UseMutationOptions, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as SecureStore from 'expo-secure-store';
 import * as React from 'react';
 
@@ -22,9 +13,7 @@ const useGetOrSetDraftOrderId = () => {
   const settings = useSettings();
 
   return React.useCallback(async () => {
-    const draftOrderId = await SecureStore.getItemAsync(
-      DRAFT_ORDER_ID_STORAGE_KEY,
-    );
+    const draftOrderId = await SecureStore.getItemAsync(DRAFT_ORDER_ID_STORAGE_KEY);
 
     if (draftOrderId) {
       return draftOrderId;
@@ -44,13 +33,10 @@ const useGetOrSetDraftOrderId = () => {
       email: DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL,
     });
 
-    await SecureStore.setItemAsync(
-      DRAFT_ORDER_ID_STORAGE_KEY,
-      newDraftOrder.draft_order.id,
-    );
+    await SecureStore.setItemAsync(DRAFT_ORDER_ID_STORAGE_KEY, newDraftOrder.draft_order.id);
 
     return newDraftOrder.draft_order.id;
-  }, []);
+  }, [sdk, settings.data?.region?.id, settings.data?.sales_channel?.id]);
 };
 
 export const useDraftOrder = () => {
@@ -59,9 +45,7 @@ export const useDraftOrder = () => {
   return useQuery({
     queryKey: ['draft-order'],
     queryFn: async () => {
-      const draftOrderId = await SecureStore.getItemAsync(
-        DRAFT_ORDER_ID_STORAGE_KEY,
-      );
+      const draftOrderId = await SecureStore.getItemAsync(DRAFT_ORDER_ID_STORAGE_KEY);
 
       if (!draftOrderId) {
         return null;
@@ -74,18 +58,14 @@ export const useDraftOrder = () => {
   });
 };
 
-export const useCancelDraftOrder = (
-  options?: Omit<UseMutationOptions<void>, 'mutationKey' | 'mutationFn'>,
-) => {
+export const useCancelDraftOrder = (options?: Omit<UseMutationOptions<void>, 'mutationKey' | 'mutationFn'>) => {
   const sdk = useMedusaSdk();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationKey: ['cancel-draft-order'],
     mutationFn: async () => {
-      const draftOrderId = await SecureStore.getItemAsync(
-        DRAFT_ORDER_ID_STORAGE_KEY,
-      );
+      const draftOrderId = await SecureStore.getItemAsync(DRAFT_ORDER_ID_STORAGE_KEY);
       if (!draftOrderId) {
         throw new Error('Draft order ID not found');
       }
@@ -107,12 +87,7 @@ export const useCancelDraftOrder = (
 
 export const useAddToDraftOrder = (
   options?: Omit<
-    UseMutationOptions<
-      AdminDraftOrderPreviewResponse,
-      Error,
-      AdminAddDraftOrderItems,
-      unknown
-    >,
+    UseMutationOptions<AdminDraftOrderPreviewResponse, Error, AdminAddDraftOrderItems, unknown>,
     'mutationKey' | 'mutationFn'
   >,
 ) => {
@@ -125,12 +100,10 @@ export const useAddToDraftOrder = (
     mutationFn: async (items: AdminAddDraftOrderItems) => {
       const draftOrderId = await getOrSetDraftOrderId();
       await sdk.admin.draftOrder.beginEdit(draftOrderId);
-      await sdk.admin.draftOrder
-        .addItems(draftOrderId, items)
-        .catch(async (error) => {
-          await sdk.admin.draftOrder.cancelEdit(draftOrderId);
-          throw error;
-        });
+      await sdk.admin.draftOrder.addItems(draftOrderId, items).catch(async (error) => {
+        await sdk.admin.draftOrder.cancelEdit(draftOrderId);
+        throw error;
+      });
       return sdk.admin.draftOrder.confirmEdit(draftOrderId);
     },
     ...options,
@@ -162,18 +135,13 @@ export const useUpdateDraftOrderItem = (
 
   return useMutation({
     mutationKey: ['update-draft-order-item'],
-    mutationFn: async (item: {
-      id: string;
-      update: AdminUpdateDraftOrderItem;
-    }) => {
+    mutationFn: async (item: { id: string; update: AdminUpdateDraftOrderItem }) => {
       const draftOrderId = await getOrSetDraftOrderId();
       await sdk.admin.draftOrder.beginEdit(draftOrderId);
-      await sdk.admin.draftOrder
-        .updateItem(draftOrderId, item.id, item.update)
-        .catch(async (error) => {
-          await sdk.admin.draftOrder.cancelEdit(draftOrderId);
-          throw error;
-        });
+      await sdk.admin.draftOrder.updateItem(draftOrderId, item.id, item.update).catch(async (error) => {
+        await sdk.admin.draftOrder.cancelEdit(draftOrderId);
+        throw error;
+      });
       return sdk.admin.draftOrder.confirmEdit(draftOrderId);
     },
     ...options,

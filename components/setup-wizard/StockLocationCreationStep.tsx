@@ -9,9 +9,10 @@ interface StockLocationCreationStepProps {
   onBackToSelection?: () => void;
 }
 
-export const StockLocationCreationStep: React.FC<
-  StockLocationCreationStepProps
-> = ({ onComplete, onBackToSelection }) => {
+export const StockLocationCreationStep: React.FC<StockLocationCreationStepProps> = ({
+  onComplete,
+  onBackToSelection,
+}) => {
   const handleStockLocationCreated = (stockLocation: AdminStockLocation) => {
     onComplete(stockLocation.id);
   };
@@ -21,21 +22,13 @@ export const StockLocationCreationStep: React.FC<
       <Text className="text-4xl mb-6 font-semibold">Setting Up</Text>
       <Text className="text-2xl mb-2">Create a new stock location</Text>
       <Text className="text-base mb-6 text-gray">
-        Select where inventory will be sourced from, or add a new location if
-        needed.
+        Select where inventory will be sourced from, or add a new location if needed.
       </Text>
 
-      <StockLocationCreateForm
-        onStockLocationCreated={handleStockLocationCreated}
-      />
+      <StockLocationCreateForm onStockLocationCreated={handleStockLocationCreated} />
 
       {typeof onBackToSelection === 'function' && (
-        <Button
-          variant="outline"
-          size="lg"
-          className="mt-4"
-          onPress={onBackToSelection}
-        >
+        <Button variant="outline" size="lg" className="mt-4" onPress={onBackToSelection}>
           Cancel
         </Button>
       )}

@@ -1,19 +1,10 @@
 import { useMedusaSdk } from '@/contexts/auth';
-import {
-  AdminCreateStockLocation,
-  AdminStockLocationListParams,
-} from '@medusajs/types';
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { AdminCreateStockLocation, AdminStockLocationListParams } from '@medusajs/types';
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 const PER_PAGE = 20;
 
-export const useStockLocations = (
-  query?: Omit<AdminStockLocationListParams, 'limit' | 'offset'>,
-) => {
+export const useStockLocations = (query?: Omit<AdminStockLocationListParams, 'limit' | 'offset'>) => {
   const sdk = useMedusaSdk();
 
   return useInfiniteQuery({
@@ -28,9 +19,7 @@ export const useStockLocations = (
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       const nextPage = (lastPage.offset + lastPage.limit) / PER_PAGE + 1;
-      return lastPage.count > lastPage.offset + lastPage.limit
-        ? nextPage
-        : undefined;
+      return lastPage.count > lastPage.offset + lastPage.limit ? nextPage : undefined;
     },
     getPreviousPageParam: (firstPage) => {
       const prevPage = (firstPage.offset + firstPage.limit) / PER_PAGE - 1;

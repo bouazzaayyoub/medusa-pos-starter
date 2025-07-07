@@ -9,11 +9,12 @@ interface SalesChannelSelectionStepProps {
   initialValue?: string;
 }
 
-export const SalesChannelSelectionStep: React.FC<
-  SalesChannelSelectionStepProps
-> = ({ onComplete, onCreateNew, initialValue = '' }) => {
-  const [selectedSalesChannel, setSelectedSalesChannel] =
-    useState(initialValue);
+export const SalesChannelSelectionStep: React.FC<SalesChannelSelectionStepProps> = ({
+  onComplete,
+  onCreateNew,
+  initialValue = '',
+}) => {
+  const [selectedSalesChannel, setSelectedSalesChannel] = useState(initialValue);
 
   const handleSalesChannelSelect = (salesChannelId: string) => {
     setSelectedSalesChannel(salesChannelId);
@@ -24,21 +25,12 @@ export const SalesChannelSelectionStep: React.FC<
       <Text className="text-4xl mb-6 font-semibold">Setting Up</Text>
       <Text className="text-2xl mb-2">Choose a sales channel</Text>
       <Text className="text-base mb-6 text-gray">
-        Select an existing sales channel from the list or create a new one to
-        proceed.
+        Select an existing sales channel from the list or create a new one to proceed.
       </Text>
 
-      <SalesChannelList
-        selectedSalesChannelId={selectedSalesChannel}
-        onSalesChannelSelect={handleSalesChannelSelect}
-      />
+      <SalesChannelList selectedSalesChannelId={selectedSalesChannel} onSalesChannelSelect={handleSalesChannelSelect} />
 
-      <Button
-        variant="outline"
-        size="lg"
-        onPress={onCreateNew}
-        className="mt-6"
-      >
+      <Button variant="outline" size="lg" onPress={onCreateNew} className="mt-6">
         Create New Sales Channel
       </Button>
 

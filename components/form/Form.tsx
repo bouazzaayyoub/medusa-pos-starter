@@ -1,12 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import React from 'react';
-import {
-  FieldValues,
-  FormProvider,
-  useForm,
-  UseFormProps,
-  UseFormReturn,
-} from 'react-hook-form';
+import { FieldValues, FormProvider, useForm, UseFormProps, UseFormReturn } from 'react-hook-form';
 import { View } from 'react-native';
 import * as z from 'zod/v4';
 
@@ -22,11 +16,11 @@ interface FormProps<T extends FieldValues, Output> {
   className?: string;
 }
 
-interface CustomFormContext {
+interface CustomFormContextType {
   handleSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
 }
 
-const CustomFormContext = React.createContext<CustomFormContext>({
+const CustomFormContext = React.createContext<CustomFormContextType>({
   handleSubmit: () => Promise.reject(new Error('handleSubmit not implemented')),
 });
 

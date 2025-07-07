@@ -9,11 +9,12 @@ interface StockLocationSelectionStepProps {
   initialValue?: string;
 }
 
-export const StockLocationSelectionStep: React.FC<
-  StockLocationSelectionStepProps
-> = ({ onComplete, onCreateNew, initialValue = '' }) => {
-  const [selectedStockLocation, setSelectedStockLocation] =
-    useState(initialValue);
+export const StockLocationSelectionStep: React.FC<StockLocationSelectionStepProps> = ({
+  onComplete,
+  onCreateNew,
+  initialValue = '',
+}) => {
+  const [selectedStockLocation, setSelectedStockLocation] = useState(initialValue);
 
   const handleStockLocationSelect = (stockLocationId: string) => {
     setSelectedStockLocation(stockLocationId);
@@ -24,8 +25,7 @@ export const StockLocationSelectionStep: React.FC<
       <Text className="text-4xl mb-6 font-semibold">Setting Up</Text>
       <Text className="text-2xl mb-2">Select stock location</Text>
       <Text className="text-base mb-6 text-gray">
-        Select where inventory will be sourced from, or add a new location if
-        needed.
+        Select where inventory will be sourced from, or add a new location if needed.
       </Text>
 
       <StockLocationList
@@ -33,12 +33,7 @@ export const StockLocationSelectionStep: React.FC<
         onStockLocationSelect={handleStockLocationSelect}
       />
 
-      <Button
-        variant="outline"
-        size="lg"
-        className="mt-6"
-        onPress={onCreateNew}
-      >
+      <Button variant="outline" size="lg" className="mt-6" onPress={onCreateNew}>
         Create a new location
       </Button>
 

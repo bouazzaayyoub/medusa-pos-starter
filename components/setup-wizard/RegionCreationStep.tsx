@@ -9,10 +9,7 @@ interface RegionCreationStepProps {
   onBackToSelection?: () => void;
 }
 
-export const RegionCreationStep: React.FC<RegionCreationStepProps> = ({
-  onComplete,
-  onBackToSelection,
-}) => {
+export const RegionCreationStep: React.FC<RegionCreationStepProps> = ({ onComplete, onBackToSelection }) => {
   const handleRegionCreated = (region: AdminRegion) => {
     onComplete(region.id);
   };
@@ -22,19 +19,13 @@ export const RegionCreationStep: React.FC<RegionCreationStepProps> = ({
       <Text className="text-4xl mb-6 font-semibold">Setting Up</Text>
       <Text className="text-2xl mb-2">Choose a region</Text>
       <Text className="text-base mb-6 text-gray">
-        Create a new region that defines your market area, currency, and tax
-        settings.
+        Create a new region that defines your market area, currency, and tax settings.
       </Text>
 
       <RegionCreateForm onRegionCreated={handleRegionCreated} />
 
       {typeof onBackToSelection === 'function' && (
-        <Button
-          variant="outline"
-          size="lg"
-          className="mt-4"
-          onPress={onBackToSelection}
-        >
+        <Button variant="outline" size="lg" className="mt-4" onPress={onBackToSelection}>
           Cancel
         </Button>
       )}

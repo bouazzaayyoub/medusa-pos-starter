@@ -35338,26 +35338,17 @@ export const PROVINCES_BY_COUNTRY = [
 
 // Helper function to get provinces for a country
 export function getProvincesForCountry(countryCode: string): Province[] {
-  return PROVINCES_BY_COUNTRY.filter(
-    (province) => province.country === countryCode.toUpperCase(),
-  );
+  return PROVINCES_BY_COUNTRY.filter((province) => province.country === countryCode.toUpperCase());
 }
 
 // Helper function to check if a country has provinces
 export function hasProvinces(countryCode: string): boolean {
-  return PROVINCES_BY_COUNTRY.some(
-    (province) => province.country === countryCode.toUpperCase(),
-  );
+  return PROVINCES_BY_COUNTRY.some((province) => province.country === countryCode.toUpperCase());
 }
 
 // Helper function to find a province by code
-export function findProvinceByCode(
-  countryCode: string,
-  provinceCode: string,
-): Province | undefined {
+export function findProvinceByCode(countryCode: string, provinceCode: string): Province | undefined {
   return PROVINCES_BY_COUNTRY.find(
-    (province) =>
-      province.country === countryCode.toUpperCase() &&
-      province.code === provinceCode.toUpperCase(),
+    (province) => province.country === countryCode.toUpperCase() && province.code === provinceCode.toUpperCase(),
   );
 }

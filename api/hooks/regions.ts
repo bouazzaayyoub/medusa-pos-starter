@@ -1,20 +1,10 @@
 import { useMedusaSdk } from '@/contexts/auth';
-import {
-  AdminCreateRegion,
-  AdminRegionFilters,
-  FindParams,
-} from '@medusajs/types';
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { AdminCreateRegion, AdminRegionFilters, FindParams } from '@medusajs/types';
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 const PER_PAGE = 20;
 
-export const useRegions = (
-  query?: Omit<FindParams & AdminRegionFilters, 'offset' | 'limit'>,
-) => {
+export const useRegions = (query?: Omit<FindParams & AdminRegionFilters, 'offset' | 'limit'>) => {
   const sdk = useMedusaSdk();
 
   return useInfiniteQuery({
@@ -29,9 +19,7 @@ export const useRegions = (
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       const nextPage = (lastPage.offset + lastPage.limit) / PER_PAGE + 1;
-      return lastPage.count > lastPage.offset + lastPage.limit
-        ? nextPage
-        : undefined;
+      return lastPage.count > lastPage.offset + lastPage.limit ? nextPage : undefined;
     },
     getPreviousPageParam: (firstPage) => {
       const prevPage = (firstPage.offset + firstPage.limit) / PER_PAGE - 1;

@@ -39,9 +39,7 @@ export const AuthContext = React.createContext<AuthContextType>({
   },
 });
 
-export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({
-  children,
-}) => {
+export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const [state, setState] = React.useState<AuthStateType>({
     status: 'loading',
   });
@@ -96,9 +94,8 @@ export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({
         user: {
           id: userResponse.user.id,
           name:
-            [userResponse.user.first_name, userResponse.user.last_name]
-              .filter(Boolean)
-              .join(' ') || userResponse.user.email.split('@')[0],
+            [userResponse.user.first_name, userResponse.user.last_name].filter(Boolean).join(' ') ||
+            userResponse.user.email.split('@')[0],
           email: userResponse.user.email,
         },
         userEmail: email,
@@ -163,9 +160,8 @@ export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({
             user: {
               id: userResponse.user.id,
               name:
-                [userResponse.user.first_name, userResponse.user.last_name]
-                  .filter(Boolean)
-                  .join(' ') || userResponse.user.email.split('@')[0],
+                [userResponse.user.first_name, userResponse.user.last_name].filter(Boolean).join(' ') ||
+                userResponse.user.email.split('@')[0],
               email: userResponse.user.email,
             },
             userEmail: userResponse.user.email,
@@ -204,11 +200,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({
     };
   }, []);
 
-  return (
-    <AuthContext.Provider value={{ state, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ state, login, logout }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuthCtx = () => {

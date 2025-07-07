@@ -3,19 +3,8 @@ import { X } from '@/components/icons/x';
 import { clx } from '@/utils/clx';
 import React, { useEffect, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
-import {
-  FlatList,
-  Modal,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import { FlatList, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 interface MultiSelectOption {
   label: string;
@@ -56,18 +45,13 @@ export function MultiSelectField({
   const [isVisible, setIsVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const selectedOptions = options.filter((option) =>
-    value.includes(option.value)
-  );
+  const selectedOptions = options.filter((option) => value.includes(option.value));
 
   const filteredOptions = searchable
-    ? options.filter((option) =>
-        option.label.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+    ? options.filter((option) => option.label.toLowerCase().includes(searchQuery.toLowerCase()))
     : options;
 
-  const showFloating =
-    floatingPlaceholder && (isVisible || selectedOptions.length > 0);
+  const showFloating = floatingPlaceholder && (isVisible || selectedOptions.length > 0);
   const floatingPlaceholderTranslateY = useSharedValue(0);
   const floatingPlaceholderScale = useSharedValue(1);
 
@@ -93,7 +77,7 @@ export function MultiSelectField({
       floatingPlaceholderTranslateY.value = withTiming(0, { duration: 150 });
       floatingPlaceholderScale.value = withTiming(1, { duration: 150 });
     }
-  }, [showFloating]);
+  }, [floatingPlaceholderScale, floatingPlaceholderTranslateY, showFloating]);
 
   const toggleOption = (optionValue: string) => {
     const newValue = value.includes(optionValue)
@@ -107,15 +91,10 @@ export function MultiSelectField({
     onChange(newValue);
   };
 
-  const defaultRenderOption = (
-    option: MultiSelectOption,
-    isSelected: boolean
-  ) => (
+  const defaultRenderOption = (option: MultiSelectOption, isSelected: boolean) => (
     <TouchableOpacity
       key={option.value}
-      className={clx(
-        'p-4 border-b border-border flex-row justify-between items-center bg-white'
-      )}
+      className={clx('p-4 border-b border-border flex-row justify-between items-center bg-white')}
       onPress={() => toggleOption(option.value)}
     >
       <Text
@@ -140,20 +119,15 @@ export function MultiSelectField({
               'border-red': error,
               [buttonClassName]: buttonClassName,
               'pt-6 pb-4': floatingPlaceholder,
-            }
+            },
           )}
         >
           <View>
             {selectedOptions.length > 0 ? (
               <View className="flex flex-row flex-wrap gap-1">
                 {selectedOptions.map((option) => (
-                  <View
-                    key={option.value}
-                    className="bg-gray-100 rounded-lg px-2 py-1 flex-row items-center mr-1 mb-1"
-                  >
-                    <Text className="text-sm text-gray-700">
-                      {option.label}
-                    </Text>
+                  <View key={option.value} className="bg-gray-100 rounded-lg px-2 py-1 flex-row items-center mr-1 mb-1">
+                    <Text className="text-sm text-gray-700">{option.label}</Text>
                     <TouchableOpacity
                       onPress={(e) => {
                         e.stopPropagation();
@@ -177,17 +151,11 @@ export function MultiSelectField({
             )}
           </View>
         </TouchableOpacity>
-        <ChevronDown
-          size={24}
-          className="text-gray absolute top-1/2 -translate-y-1/2 right-4"
-        />
+        <ChevronDown size={24} className="text-gray absolute top-1/2 -translate-y-1/2 right-4" />
 
         {floatingPlaceholder && (
           <Animated.Text
-            className={clx(
-              'absolute left-4 z-10 text-lg top-5',
-              error ? 'text-red' : 'text-gray'
-            )}
+            className={clx('absolute left-4 z-10 text-lg top-5', error ? 'text-red' : 'text-gray')}
             style={floatingPlaceholderStyle}
             pointerEvents="none"
           >
@@ -196,25 +164,11 @@ export function MultiSelectField({
         )}
       </View>
 
-      {error && (
-        <Text className={clx('text-red text-sm mt-1', errorClassName)}>
-          {error.message}
-        </Text>
-      )}
+      {error && <Text className={clx('text-red text-sm mt-1', errorClassName)}>{error.message}</Text>}
 
-      <Modal
-        visible={isVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setIsVisible(false)}
-      >
+      <Modal visible={isVisible} animationType="slide" transparent={true} onRequestClose={() => setIsVisible(false)}>
         <View className="flex-1 bg-black/50 justify-end">
-          <View
-            className={clx(
-              'bg-white rounded-t-3xl max-h-[80%] pb-safe',
-              modalClassName
-            )}
-          >
+          <View className={clx('bg-white rounded-t-3xl max-h-[80%] pb-safe', modalClassName)}>
             <View className="p-4 border-b border-gray-200 flex-row justify-between items-center">
               <Text className="text-lg font-semibold">Select Options</Text>
               <TouchableOpacity
@@ -250,9 +204,7 @@ export function MultiSelectField({
               ListEmptyComponent={
                 <View className="p-8 items-center">
                   <Text className="text-gray-500 text-base">
-                    {searchable && searchQuery
-                      ? 'No options found'
-                      : 'No options available'}
+                    {searchable && searchQuery ? 'No options found' : 'No options available'}
                   </Text>
                 </View>
               }

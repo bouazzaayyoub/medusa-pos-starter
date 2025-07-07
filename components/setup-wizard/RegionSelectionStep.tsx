@@ -25,30 +25,16 @@ export const RegionSelectionStep: React.FC<RegionSelectionStepProps> = ({
       <Text className="text-4xl mb-6 font-semibold">Setting Up</Text>
       <Text className="text-2xl mb-2">Choose a region</Text>
       <Text className="text-base mb-6 text-gray">
-        Select a region that defines your market area, currency, and tax
-        settings.
+        Select a region that defines your market area, currency, and tax settings.
       </Text>
 
-      <RegionList
-        selectedRegionId={selectedRegion}
-        onRegionSelect={handleRegionSelect}
-      />
+      <RegionList selectedRegionId={selectedRegion} onRegionSelect={handleRegionSelect} />
 
-      <Button
-        variant="outline"
-        size="lg"
-        className="mt-6"
-        onPress={onCreateNew}
-      >
+      <Button variant="outline" size="lg" className="mt-6" onPress={onCreateNew}>
         Create New Region
       </Button>
 
-      <Button
-        size="lg"
-        className="mt-4"
-        onPress={() => onComplete(selectedRegion)}
-        disabled={!selectedRegion}
-      >
+      <Button size="lg" className="mt-4" onPress={() => onComplete(selectedRegion)} disabled={!selectedRegion}>
         Next
       </Button>
     </View>

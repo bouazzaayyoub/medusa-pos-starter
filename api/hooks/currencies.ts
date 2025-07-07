@@ -4,9 +4,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 
 const PER_PAGE = 20;
 
-export const useCurrencies = (
-  query?: Omit<AdminCurrencyListParams, 'offset' | 'limit'>,
-) => {
+export const useCurrencies = (query?: Omit<AdminCurrencyListParams, 'offset' | 'limit'>) => {
   const sdk = useMedusaSdk();
 
   return useInfiniteQuery({
@@ -21,9 +19,7 @@ export const useCurrencies = (
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       const nextPage = (lastPage.offset + lastPage.limit) / PER_PAGE + 1;
-      return lastPage.count > lastPage.offset + lastPage.limit
-        ? nextPage
-        : undefined;
+      return lastPage.count > lastPage.offset + lastPage.limit ? nextPage : undefined;
     },
     getPreviousPageParam: (firstPage) => {
       const prevPage = (firstPage.offset + firstPage.limit) / PER_PAGE - 1;

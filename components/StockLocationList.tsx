@@ -31,9 +31,7 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
   if (stockLocationsQuery.isError) {
     return (
       <View className="flex-row mb-auto bg-yellow-light rounded-xl justify-between items-center p-4">
-        <Text className="text-base text-yellow">
-          Unable to load stock locations.
-        </Text>
+        <Text className="text-base text-yellow">Unable to load stock locations.</Text>
         <CircleAlert size={16} className="text-yellow" />
       </View>
     );
@@ -48,12 +46,9 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
         renderItem={({ item, index }) => (
           <Fragment key={item.id}>
             <TouchableOpacity
-              className={clx(
-                'py-3 justify-between items-center flex-row px-4',
-                {
-                  'bg-black': selectedStockLocationId === item.id,
-                },
-              )}
+              className={clx('py-3 justify-between items-center flex-row px-4', {
+                'bg-black': selectedStockLocationId === item.id,
+              })}
               onPress={() => onStockLocationSelect(item.id)}
             >
               <View>
@@ -73,17 +68,12 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
                     {[
                       item.address.address_1,
                       item.address.address_2,
-                      [item.address.postal_code, item.address.city]
-                        .filter(Boolean)
-                        .join(' '),
+                      [item.address.postal_code, item.address.city].filter(Boolean).join(' '),
                       item.address.province
-                        ? findProvinceByCode(
-                            item.address.country_code,
-                            item.address.province,
-                          )?.name || item.address.province
+                        ? findProvinceByCode(item.address.country_code, item.address.province)?.name ||
+                          item.address.province
                         : undefined,
-                      getCountryByAlpha2(item.address.country_code)?.name ||
-                        item.address.country_code,
+                      getCountryByAlpha2(item.address.country_code)?.name || item.address.country_code,
                     ]
                       .filter(Boolean)
                       .join(', ')}
@@ -97,10 +87,9 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
                 })}
               />
             </TouchableOpacity>
-            {index <
-              (stockLocationsQuery.data?.pages?.[0]?.stock_locations.length ||
-                0) -
-                1 && <Text className="h-px bg-border mx-4" />}
+            {index < (stockLocationsQuery.data?.pages?.[0]?.stock_locations.length || 0) - 1 && (
+              <Text className="h-px bg-border mx-4" />
+            )}
           </Fragment>
         )}
       />

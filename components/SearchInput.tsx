@@ -10,10 +10,7 @@ export const SearchInput: React.FC<{
 }> = ({ value, onChange, placeholder = 'Search...', className }) => {
   return (
     <View className={clx('relative', className)}>
-      <Search
-        size={16}
-        className="absolute left-4 top-1/2 -translate-y-[50%] text-gray"
-      />
+      <Search size={16} className="absolute left-4 top-1/2 -translate-y-[50%] text-gray" />
       <TextInput
         className="rounded-full pb-3 pt-2 pr-4 pl-10 text-base border placeholder:text-gray border-border"
         placeholder={placeholder}

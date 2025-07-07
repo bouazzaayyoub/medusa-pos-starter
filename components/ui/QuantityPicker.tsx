@@ -72,17 +72,11 @@ export function QuantityPicker({
         >
           <Minus
             size={variant === 'default' ? 16 : 24}
-            className={clx(
-              variant === 'default' ? 'text-gray-dark' : 'text-black',
-              !canDecrement ? 'text-gray' : '',
-            )}
+            className={clx(variant === 'default' ? 'text-gray-dark' : 'text-black', !canDecrement ? 'text-gray' : '')}
           />
         </TouchableOpacity>
         <View
-          className={clx(
-            'items-center justify-center',
-            variant === 'default' ? 'border-x border-border w-8' : 'w-12',
-          )}
+          className={clx('items-center justify-center', variant === 'default' ? 'border-x border-border w-8' : 'w-12')}
         >
           <TextInput
             value={quantity.toString()}
@@ -106,16 +100,11 @@ export function QuantityPicker({
         >
           <Plus
             size={variant === 'default' ? 16 : 24}
-            className={clx(
-              variant === 'default' ? 'text-gray-dark' : 'text-black',
-              !canIncrement ? 'text-gray' : '',
-            )}
+            className={clx(variant === 'default' ? 'text-gray-dark' : 'text-black', !canIncrement ? 'text-gray' : '')}
           />
         </TouchableOpacity>
       </View>
-      {isPending && (
-        <Loader size={16} color="#B5B5B5" className="animate-spin" />
-      )}
+      {isPending && <Loader size={16} color="#B5B5B5" className="animate-spin" />}
     </View>
   );
 }

@@ -5,29 +5,22 @@ import {
   useDraftOrder,
   useUpdateDraftOrderItem,
 } from '@/api/hooks/draft-orders';
-import Form from '@/components/form/Form';
-import FormButton from '@/components/form/FormButton';
-import TextField from '@/components/form/TextField';
+import { Form } from '@/components/form/Form';
+import { FormButton } from '@/components/form/FormButton';
+import { TextField } from '@/components/form/TextField';
 import { ChevronDown } from '@/components/icons/chevron-down';
 import { ShoppingCart } from '@/components/icons/shopping-cart';
 import { UserRoundPlus } from '@/components/icons/user-round-plus';
 import { X } from '@/components/icons/x';
 import { Button } from '@/components/ui/Button';
-import QuantityPicker from '@/components/ui/QuantityPicker';
+import { QuantityPicker } from '@/components/ui/QuantityPicker';
 import { useSettings } from '@/contexts/settings';
 import { AdminDraftOrder, AdminOrderLineItem } from '@medusajs/types';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import { router } from 'expo-router';
-import React from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import * as React from 'react';
+import { ActivityIndicator, Alert, Image, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as z from 'zod/v4';
 
@@ -39,35 +32,25 @@ const DraftOrderItem: React.FC<{ item: AdminOrderLineItem }> = ({ item }) => {
   const settings = useSettings();
   const draftOrder = useDraftOrder();
   const updateDraftOrderItem = useUpdateDraftOrderItem();
-  const thumbnail =
-    item.thumbnail || item.product?.thumbnail || item.product?.images?.[0]?.url;
+  const thumbnail = item.thumbnail || item.product?.thumbnail || item.product?.images?.[0]?.url;
 
   return (
     <View className="flex-row gap-4">
       <View className="h-[5.25rem] w-[5.25rem] rounded-xl bg-border overflow-hidden">
-        {thumbnail && (
-          <Image
-            source={{ uri: thumbnail }}
-            className="w-full h-full object-cover"
-          />
-        )}
+        {thumbnail && <Image source={{ uri: thumbnail }} className="w-full h-full object-cover" />}
       </View>
       <View>
         <Text className="font-medium mb-2">{item.product_title}</Text>
-        {item.variant &&
-          item.variant.options &&
-          item.variant.options.length > 0 && (
-            <View className="flex-row items-center mb-2 gap-4">
-              {item.variant.options.map((option) => (
-                <View className="flex-row" key={option.id}>
-                  <Text className="text-gray-dark text-sm">
-                    {option.option?.title || option.option_id}:
-                  </Text>
-                  <Text className="text-sm">{option.value}</Text>
-                </View>
-              ))}
-            </View>
-          )}
+        {item.variant && item.variant.options && item.variant.options.length > 0 && (
+          <View className="flex-row items-center mb-2 gap-4">
+            {item.variant.options.map((option) => (
+              <View className="flex-row" key={option.id}>
+                <Text className="text-gray-dark text-sm">{option.option?.title || option.option_id}:</Text>
+                <Text className="text-sm">{option.value}</Text>
+              </View>
+            ))}
+          </View>
+        )}
         <QuantityPicker
           quantity={item.quantity}
           max={item.variant?.inventory_quantity}
@@ -86,9 +69,7 @@ const DraftOrderItem: React.FC<{ item: AdminOrderLineItem }> = ({ item }) => {
       <Text className="font-medium ml-auto">
         {item.unit_price.toLocaleString('en-US', {
           style: 'currency',
-          currency:
-            draftOrder.data?.draft_order.region?.currency_code ||
-            settings.data?.region?.currency_code,
+          currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
           currencyDisplay: 'narrowSymbol',
         })}
       </Text>
@@ -96,9 +77,7 @@ const DraftOrderItem: React.FC<{ item: AdminOrderLineItem }> = ({ item }) => {
   );
 };
 
-const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({
-  customer,
-}) => {
+const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({ customer }) => {
   if (!customer || customer.email === DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL) {
     return (
       <Button
@@ -120,9 +99,7 @@ const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({
       className="flex-row mb-6 pb-6 border-b border-border justify-between items-center"
     >
       <View>
-        <Text className="text-lg">
-          {[customer.first_name, customer.last_name].filter(Boolean).join(' ')}
-        </Text>
+        <Text className="text-lg">{[customer.first_name, customer.last_name].filter(Boolean).join(' ')}</Text>
         <Text className="text-sm text-gray">{customer.email}</Text>
       </View>
 
@@ -147,7 +124,7 @@ export default function CartScreen() {
 
   const renderItem = React.useCallback<ListRenderItem<AdminOrderLineItem>>(
     ({ item }) => <DraftOrderItem item={item} />,
-    []
+    [],
   );
 
   if (draftOrder.isLoading || settings.isLoading) {
@@ -192,10 +169,7 @@ export default function CartScreen() {
 
   if (draftOrder.data?.draft_order.items.length === 0) {
     return (
-      <SafeAreaView
-        className="relative flex-1 px-4 bg-white"
-        style={{ paddingBottom: bottomTabBarHeight }}
-      >
+      <SafeAreaView className="relative flex-1 px-4 bg-white" style={{ paddingBottom: bottomTabBarHeight }}>
         <View className="py-4">
           <Text className="text-black text-[40px] font-semibold">Cart</Text>
         </View>
@@ -262,11 +236,7 @@ export default function CartScreen() {
             enterKeyHint="send"
             errorVariation="inline"
           />
-          <FormButton
-            size="sm"
-            className="flex-1 h-[3.125rem]"
-            isPending={addPromotion.isPending}
-          >
+          <FormButton size="sm" className="flex-1 h-[3.125rem]" isPending={addPromotion.isPending}>
             Submit
           </FormButton>
         </Form>
@@ -275,9 +245,7 @@ export default function CartScreen() {
           <Text className="text-gray-dark">
             {draftOrder.data?.draft_order.tax_total?.toLocaleString('en-US', {
               style: 'currency',
-              currency:
-                draftOrder.data?.draft_order.region?.currency_code ||
-                settings.data?.region?.currency_code,
+              currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
               currencyDisplay: 'narrowSymbol',
             })}
           </Text>
@@ -287,9 +255,7 @@ export default function CartScreen() {
           <Text className="text-gray-dark">
             {draftOrder.data?.draft_order.subtotal?.toLocaleString('en-US', {
               style: 'currency',
-              currency:
-                draftOrder.data?.draft_order.region?.currency_code ||
-                settings.data?.region?.currency_code,
+              currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
               currencyDisplay: 'narrowSymbol',
             })}
           </Text>
@@ -302,9 +268,7 @@ export default function CartScreen() {
           <Text className="font-medium text-lg">
             {draftOrder.data?.draft_order.total?.toLocaleString('en-US', {
               style: 'currency',
-              currency:
-                draftOrder.data?.draft_order.region?.currency_code ||
-                settings.data?.region?.currency_code,
+              currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
               currencyDisplay: 'narrowSymbol',
             })}
           </Text>
@@ -315,24 +279,20 @@ export default function CartScreen() {
             variant="outline"
             className="flex-1"
             onPress={() => {
-              Alert.alert(
-                'Cancel Cart',
-                'Are you sure you want to cancel the cart?',
-                [
-                  {
-                    text: 'No',
-                    style: 'cancel',
+              Alert.alert('Cancel Cart', 'Are you sure you want to cancel the cart?', [
+                {
+                  text: 'No',
+                  style: 'cancel',
+                },
+                {
+                  text: 'Yes',
+                  isPreferred: true,
+                  onPress: () => {
+                    cancelDraftOrder.mutate();
                   },
-                  {
-                    text: 'Yes',
-                    isPreferred: true,
-                    onPress: () => {
-                      cancelDraftOrder.mutate();
-                    },
-                    style: 'destructive',
-                  },
-                ]
-              );
+                  style: 'destructive',
+                },
+              ]);
             }}
             isPending={cancelDraftOrder.isPending}
           >
@@ -340,10 +300,7 @@ export default function CartScreen() {
           </Button>
           <Button
             className="flex-1"
-            disabled={
-              cancelDraftOrder.isPending ||
-              draftOrder.data.draft_order.items.length === 0
-            }
+            disabled={cancelDraftOrder.isPending || draftOrder.data.draft_order.items.length === 0}
             onPress={() => {
               router.push('/checkout');
             }}

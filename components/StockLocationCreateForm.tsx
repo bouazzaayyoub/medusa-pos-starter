@@ -5,10 +5,10 @@ import { AdminStockLocation } from '@medusajs/types';
 import React from 'react';
 import { Alert } from 'react-native';
 import * as z from 'zod/v4';
-import Form from './form/Form';
-import FormButton from './form/FormButton';
-import SelectField from './form/SelectField';
-import TextField from './form/TextField';
+import { Form } from './form/Form';
+import { FormButton } from './form/FormButton';
+import { SelectField } from './form/SelectField';
+import { TextField } from './form/TextField';
 
 interface StockLocationCreateFormProps {
   onStockLocationCreated: (stockLocation: AdminStockLocation) => void;
@@ -27,10 +27,7 @@ const stockLocationSchema = z.object({
 
 type StockLocationFormData = z.infer<typeof stockLocationSchema>;
 
-const StockLocationCreateForm: React.FC<StockLocationCreateFormProps> = ({
-  onStockLocationCreated,
-  defaultValues,
-}) => {
+const StockLocationCreateForm: React.FC<StockLocationCreateFormProps> = ({ onStockLocationCreated, defaultValues }) => {
   const createStockLocation = useCreateStockLocation();
 
   // Prepare country options for SelectField
@@ -80,47 +77,19 @@ const StockLocationCreateForm: React.FC<StockLocationCreateFormProps> = ({
     >
       <TextField name="name" floatingPlaceholder placeholder="Location Name" />
 
-      <TextField
-        name="company"
-        floatingPlaceholder
-        placeholder="Company Name (optional)"
-      />
+      <TextField name="company" floatingPlaceholder placeholder="Company Name (optional)" />
 
-      <TextField
-        name="phone"
-        floatingPlaceholder
-        placeholder="Phone (optional)"
-      />
+      <TextField name="phone" floatingPlaceholder placeholder="Phone (optional)" />
 
-      <TextField
-        name="address_1"
-        floatingPlaceholder
-        placeholder="Address Line 1"
-      />
+      <TextField name="address_1" floatingPlaceholder placeholder="Address Line 1" />
 
-      <TextField
-        name="address_2"
-        floatingPlaceholder
-        placeholder="Address Line 2 (optional)"
-      />
+      <TextField name="address_2" floatingPlaceholder placeholder="Address Line 2 (optional)" />
 
-      <TextField
-        name="postal_code"
-        floatingPlaceholder
-        placeholder="Postal Code (optional)"
-      />
+      <TextField name="postal_code" floatingPlaceholder placeholder="Postal Code (optional)" />
 
-      <TextField
-        name="city"
-        floatingPlaceholder
-        placeholder="City (optional)"
-      />
+      <TextField name="city" floatingPlaceholder placeholder="City (optional)" />
 
-      <ProvinceField
-        name="province"
-        countryFieldName="country_code"
-        placeholder="Province/State (optional)"
-      />
+      <ProvinceField name="province" countryFieldName="country_code" placeholder="Province/State (optional)" />
 
       <SelectField
         floatingPlaceholder
@@ -131,10 +100,7 @@ const StockLocationCreateForm: React.FC<StockLocationCreateFormProps> = ({
         className="mb-2"
       />
 
-      <FormButton
-        isPending={createStockLocation.isPending}
-        disabled={createStockLocation.isPending}
-      >
+      <FormButton isPending={createStockLocation.isPending} disabled={createStockLocation.isPending}>
         Create Stock Location
       </FormButton>
     </Form>

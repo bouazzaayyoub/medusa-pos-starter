@@ -17,8 +17,7 @@ const TEXT_SIZES = {
 
 const BUTTON_VARIANTS = {
   solid: 'bg-black disabled:bg-gray-light',
-  outline:
-    'border border-border bg-transparent disabled:bg-gray-light disabled:border-gray-light',
+  outline: 'border border-border bg-transparent disabled:bg-gray-light disabled:border-gray-light',
 } as const;
 
 const TEXT_VARIANTS = {
@@ -55,19 +54,14 @@ export const Button: React.FC<ButtonProps> = ({
         'flex-row items-center justify-center gap-2 rounded-xl',
         buttonSizeClasses,
         buttonVariantClasses,
-        className
+        className,
       )}
       {...props}
     >
-      <Text
-        disabled={props.disabled || isPending}
-        className={clx(textSizeClasses, textVariantClasses)}
-      >
+      <Text disabled={props.disabled || isPending} className={clx(textSizeClasses, textVariantClasses)}>
         {children}
       </Text>
-      {isPending && (
-        <Loader size={16} color="#B5B5B5" className="animate-spin" />
-      )}
+      {isPending && <Loader size={16} color="#B5B5B5" className="animate-spin" />}
       {icon && !isPending && icon}
     </TouchableOpacity>
   );

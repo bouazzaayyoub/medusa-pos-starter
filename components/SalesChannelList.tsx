@@ -11,10 +11,7 @@ interface SalesChannelListProps {
   onSalesChannelSelect: (id: string) => void;
 }
 
-const SalesChannelList: React.FC<SalesChannelListProps> = ({
-  selectedSalesChannelId,
-  onSalesChannelSelect,
-}) => {
+const SalesChannelList: React.FC<SalesChannelListProps> = ({ selectedSalesChannelId, onSalesChannelSelect }) => {
   const salesChannelsQuery = useSalesChannels();
 
   if (salesChannelsQuery.isLoading) {
@@ -29,9 +26,7 @@ const SalesChannelList: React.FC<SalesChannelListProps> = ({
   if (salesChannelsQuery.isError) {
     return (
       <View className="flex-row mb-auto bg-yellow-light rounded-xl justify-between items-center p-4">
-        <Text className="text-base text-yellow">
-          Unable to load sales channels.
-        </Text>
+        <Text className="text-base text-yellow">Unable to load sales channels.</Text>
         <CircleAlert size={16} className="text-yellow" />
       </View>
     );
@@ -46,10 +41,9 @@ const SalesChannelList: React.FC<SalesChannelListProps> = ({
         renderItem={({ item, index }) => (
           <Fragment key={item.id}>
             <TouchableOpacity
-              className={clx(
-                'py-3 justify-between items-center flex-row px-4',
-                { 'bg-black': selectedSalesChannelId === item.id },
-              )}
+              className={clx('py-3 justify-between items-center flex-row px-4', {
+                'bg-black': selectedSalesChannelId === item.id,
+              })}
               onPress={() => onSalesChannelSelect(item.id)}
             >
               <Text
@@ -66,10 +60,9 @@ const SalesChannelList: React.FC<SalesChannelListProps> = ({
                 })}
               />
             </TouchableOpacity>
-            {index <
-              (salesChannelsQuery.data?.pages?.[0]?.sales_channels.length ||
-                0) -
-                1 && <Text className="h-px bg-border mx-4" />}
+            {index < (salesChannelsQuery.data?.pages?.[0]?.sales_channels.length || 0) - 1 && (
+              <Text className="h-px bg-border mx-4" />
+            )}
           </Fragment>
         )}
       />

@@ -11,10 +11,7 @@ interface RegionListProps {
   onRegionSelect: (id: string) => void;
 }
 
-const RegionList: React.FC<RegionListProps> = ({
-  selectedRegionId,
-  onRegionSelect,
-}) => {
+const RegionList: React.FC<RegionListProps> = ({ selectedRegionId, onRegionSelect }) => {
   const regionsQuery = useRegions();
 
   if (regionsQuery.isLoading) {
@@ -44,10 +41,9 @@ const RegionList: React.FC<RegionListProps> = ({
         renderItem={({ item, index }) => (
           <Fragment key={item.id}>
             <TouchableOpacity
-              className={clx(
-                'py-3 justify-between items-center flex-row px-4',
-                { 'bg-black': selectedRegionId === item.id }
-              )}
+              className={clx('py-3 justify-between items-center flex-row px-4', {
+                'bg-black': selectedRegionId === item.id,
+              })}
               onPress={() => onRegionSelect(item.id)}
             >
               <View className="flex-1">
@@ -74,8 +70,7 @@ const RegionList: React.FC<RegionListProps> = ({
                 })}
               />
             </TouchableOpacity>
-            {index <
-              (regionsQuery.data?.pages?.[0]?.regions.length || 0) - 1 && (
+            {index < (regionsQuery.data?.pages?.[0]?.regions.length || 0) - 1 && (
               <Text className="h-px bg-border mx-4" />
             )}
           </Fragment>

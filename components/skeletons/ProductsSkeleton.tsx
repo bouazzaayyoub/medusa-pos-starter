@@ -21,10 +21,7 @@ export const ProductsSkeleton = () => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="m-4 mb-6 relative">
-        <Search
-          size={16}
-          className="absolute left-4 top-1/2 -translate-y-[50%] text-gray"
-        />
+        <Search size={16} className="absolute left-4 top-1/2 -translate-y-[50%] text-gray" />
         <TextInput
           className="rounded-full pb-3 pt-2 pr-4 pl-10 text-base border placeholder:text-gray border-border"
           placeholder="Search products..."

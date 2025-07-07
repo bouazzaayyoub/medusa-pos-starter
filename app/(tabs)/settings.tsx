@@ -33,29 +33,15 @@ export default function SettingsScreen() {
     description: string,
     onPress: () => void,
     style?: 'default' | 'destructive',
-    className?: string
+    className?: string,
   ) => (
     <TouchableOpacity
-      className={clx(
-        'bg-white px-5 py-4 border-b border-border',
-        style === 'destructive' ? '' : '',
-        className
-      )}
+      className={clx('bg-white px-5 py-4 border-b border-border', style === 'destructive' ? '' : '', className)}
       onPress={onPress}
     >
       <View>
-        <Text
-          className={`text-base font-medium mb-1 ${
-            style === 'destructive' ? 'text-red' : ''
-          }`}
-        >
-          {title}
-        </Text>
-        <Text
-          className={`text-sm ${
-            style === 'destructive' ? 'text-red opacity-70' : 'text-gray-dark'
-          }`}
-        >
+        <Text className={`text-base font-medium mb-1 ${style === 'destructive' ? 'text-red' : ''}`}>{title}</Text>
+        <Text className={`text-sm ${style === 'destructive' ? 'text-red opacity-70' : 'text-gray-dark'}`}>
           {description}
         </Text>
       </View>
@@ -71,25 +57,18 @@ export default function SettingsScreen() {
 
         {/* Store Information */}
         <View className="mb-8">
-          <Text className="text-lg font-semibold mb-4 mx-5 text-gray-dark">
-            Store Information
-          </Text>
+          <Text className="text-lg font-semibold mb-4 mx-5 text-gray-dark">Store Information</Text>
 
           <TouchableOpacity
             className="bg-white px-5 py-4 border-b border-border"
             onPress={() => {
               // TODO: Navigate to tax settings screen
-              Alert.alert(
-                'Tax Settings',
-                'Configure tax settings functionality'
-              );
+              Alert.alert('Tax Settings', 'Configure tax settings functionality');
             }}
           >
             <View>
               <Text className="text-base font-medium mb-1">Sales Channel</Text>
-              <Text className="text-sm text-gray-dark">
-                {settings.data?.sales_channel?.name || '—'}
-              </Text>
+              <Text className="text-sm text-gray-dark">{settings.data?.sales_channel?.name || '—'}</Text>
             </View>
           </TouchableOpacity>
 
@@ -97,17 +76,12 @@ export default function SettingsScreen() {
             className="bg-white px-5 py-4 border-b border-border"
             onPress={() => {
               // TODO: Navigate to tax settings screen
-              Alert.alert(
-                'Tax Settings',
-                'Configure tax settings functionality'
-              );
+              Alert.alert('Tax Settings', 'Configure tax settings functionality');
             }}
           >
             <View>
               <Text className="text-base font-medium mb-1">Stock Location</Text>
-              <Text className="text-sm text-gray-dark">
-                {settings.data?.stock_location?.name || '—'}
-              </Text>
+              <Text className="text-sm text-gray-dark">{settings.data?.stock_location?.name || '—'}</Text>
             </View>
           </TouchableOpacity>
 
@@ -119,18 +93,14 @@ export default function SettingsScreen() {
           >
             <View>
               <Text className="text-base font-medium mb-1">Clear Settings</Text>
-              <Text className="text-sm text-gray-dark">
-                Reset settings to default
-              </Text>
+              <Text className="text-sm text-gray-dark">Reset settings to default</Text>
             </View>
           </TouchableOpacity>
         </View>
 
         {/* Support */}
         <View className="mb-8">
-          <Text className="text-lg font-semibold mb-4 mx-5 text-gray-dark">
-            Support
-          </Text>
+          <Text className="text-lg font-semibold mb-4 mx-5 text-gray-dark">Support</Text>
 
           {renderMenuButton('Help & FAQ', 'Get help and find answers', () => {
             // TODO: Navigate to help screen
@@ -142,28 +112,16 @@ export default function SettingsScreen() {
             Alert.alert('Contact Support', 'Contact support functionality');
           })}
 
-          {renderMenuButton(
-            'About',
-            'App version and legal information',
-            () => {
-              Alert.alert('About', 'Agilo POS v1.0.0\n\nBuilt with Expo');
-            }
-          )}
+          {renderMenuButton('About', 'App version and legal information', () => {
+            Alert.alert('About', 'Agilo POS v1.0.0\n\nBuilt with Expo');
+          })}
         </View>
 
         {/* Account */}
         <View className="mb-16">
-          <Text className="text-lg font-semibold mb-4 mx-5 text-gray-dark">
-            Account
-          </Text>
+          <Text className="text-lg font-semibold mb-4 mx-5 text-gray-dark">Account</Text>
 
-          {renderMenuButton(
-            'Logout',
-            'Sign out of your account',
-            handleLogout,
-            'destructive',
-            'border-0'
-          )}
+          {renderMenuButton('Logout', 'Sign out of your account', handleLogout, 'destructive', 'border-0')}
         </View>
       </ScrollView>
     </SafeAreaView>

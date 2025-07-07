@@ -8,11 +8,7 @@ import { AuthProvider, useAuthCtx } from '@/contexts/auth';
 import { useSettings } from '@/contexts/settings';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
@@ -45,11 +41,7 @@ function App() {
 
     if (auth.state.status === 'authenticated') {
       if (settings.isSuccess) {
-        if (
-          !settings.data ||
-          !settings.data.sales_channel ||
-          !settings.data.stock_location
-        ) {
+        if (!settings.data || !settings.data.sales_channel || !settings.data.stock_location) {
           // If settings are not set, redirect to the setup wizard
           router.replace('/setup-wizard');
           return;
@@ -62,27 +54,20 @@ function App() {
         }
       }
     }
-  }, [auth.state, settings.isSuccess, settings.data]);
+  }, [auth.state, settings.isSuccess, settings.data, router]);
 
   return (
     <Stack>
       <Stack.Protected guard={auth.state.status === 'authenticated'}>
         <Stack.Protected
-          guard={
-            settings.isSuccess &&
-            !!settings.data?.sales_channel &&
-            !!settings.data?.stock_location
-          }
+          guard={settings.isSuccess && !!settings.data?.sales_channel && !!settings.data?.stock_location}
         >
           {/* Main App - Tab Navigation */}
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
           {/* Checkout Flow */}
           <Stack.Screen name="checkout" options={{ title: 'Checkout' }} />
-          <Stack.Screen
-            name="order-confirmation"
-            options={{ title: 'Order Confirmation' }}
-          />
+          <Stack.Screen name="order-confirmation" options={{ title: 'Order Confirmation' }} />
 
           {/* Modal Dialogs */}
           <Stack.Screen
@@ -114,10 +99,7 @@ function App() {
 
         {/* TODO: settings loading state */}
         <Stack.Protected
-          guard={
-            settings.isSuccess &&
-            (!settings.data?.sales_channel || !settings.data?.stock_location)
-          }
+          guard={settings.isSuccess && (!settings.data?.sales_channel || !settings.data?.stock_location)}
         >
           <Stack.Screen name="setup-wizard" options={{ headerShown: false }} />
         </Stack.Protected>
@@ -136,14 +118,9 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <PersistQueryClientProvider
-      client={queryClient}
-      persistOptions={{ persister: asyncStoragePersister }}
-    >
+    <PersistQueryClientProvider client={queryClient} persistOptions={{ persister: asyncStoragePersister }}>
       <AuthProvider>
-        <ThemeProvider
-          value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
-        >
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <SplashScreenController loaded={true} />
           <AppStatusBar />
           <App />

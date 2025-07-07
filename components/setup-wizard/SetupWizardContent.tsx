@@ -128,19 +128,14 @@ export const SetupWizardContent: React.FC<SetupWizardContentProps> = ({
         return (
           <SalesChannelCreationStep
             onComplete={handleSalesChannelComplete}
-            onBackToSelection={
-              hasSalesChannels ? handleSalesChannelBackToSelection : undefined
-            }
+            onBackToSelection={hasSalesChannels ? handleSalesChannelBackToSelection : undefined}
           />
         );
       case 'region-selection':
         // Only show selection if there are items to select
         if (!hasRegions) {
           return (
-            <RegionCreationStep
-              onComplete={handleRegionComplete}
-              onBackToSelection={handleRegionBackToSelection}
-            />
+            <RegionCreationStep onComplete={handleRegionComplete} onBackToSelection={handleRegionBackToSelection} />
           );
         }
         return (
@@ -154,9 +149,7 @@ export const SetupWizardContent: React.FC<SetupWizardContentProps> = ({
         return (
           <RegionCreationStep
             onComplete={handleRegionComplete}
-            onBackToSelection={
-              hasRegions ? handleRegionBackToSelection : undefined
-            }
+            onBackToSelection={hasRegions ? handleRegionBackToSelection : undefined}
           />
         );
       case 'stock-location-selection':
@@ -180,9 +173,7 @@ export const SetupWizardContent: React.FC<SetupWizardContentProps> = ({
         return (
           <StockLocationCreationStep
             onComplete={handleStockLocationComplete}
-            onBackToSelection={
-              hasStockLocations ? handleStockLocationBackToSelection : undefined
-            }
+            onBackToSelection={hasStockLocations ? handleStockLocationBackToSelection : undefined}
           />
         );
       case 'welcome':
@@ -192,9 +183,5 @@ export const SetupWizardContent: React.FC<SetupWizardContentProps> = ({
     }
   };
 
-  return (
-    <SafeAreaView className="flex-1 bg-white p-5 gap-10">
-      {renderCurrentStep()}
-    </SafeAreaView>
-  );
+  return <SafeAreaView className="flex-1 bg-white p-5 gap-10">{renderCurrentStep()}</SafeAreaView>;
 };

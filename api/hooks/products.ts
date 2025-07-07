@@ -1,10 +1,5 @@
 import { useMedusaSdk } from '@/contexts/auth';
-import {
-  AdminProduct,
-  AdminProductListParams,
-  AdminProductListResponse,
-  AdminProductVariant,
-} from '@medusajs/types';
+import { AdminProduct, AdminProductListParams, AdminProductListResponse, AdminProductVariant } from '@medusajs/types';
 import {
   InfiniteData,
   UndefinedInitialDataInfiniteOptions,
@@ -27,11 +22,7 @@ export const useProducts = (
       readonly unknown[],
       number
     >,
-    | 'queryKey'
-    | 'queryFn'
-    | 'initialPageParam'
-    | 'getNextPageParam'
-    | 'getPreviousPageParam'
+    'queryKey' | 'queryFn' | 'initialPageParam' | 'getNextPageParam' | 'getPreviousPageParam'
   >,
 ) => {
   const sdk = useMedusaSdk();
@@ -48,9 +39,7 @@ export const useProducts = (
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       const nextPage = (lastPage.offset + lastPage.limit) / limit + 1;
-      return lastPage.count > lastPage.offset + lastPage.limit
-        ? nextPage
-        : undefined;
+      return lastPage.count > lastPage.offset + lastPage.limit ? nextPage : undefined;
     },
     getPreviousPageParam: (firstPage) => {
       const prevPage = (firstPage.offset + firstPage.limit) / limit - 1;
@@ -105,9 +94,7 @@ export const useScanBarcode = (
         return null;
       }
 
-      const variant = product.variants?.find(
-        (v) => v.ean === barcode || v.upc === barcode || v.barcode === barcode,
-      );
+      const variant = product.variants?.find((v) => v.ean === barcode || v.upc === barcode || v.barcode === barcode);
       if (!variant) {
         return null;
       }

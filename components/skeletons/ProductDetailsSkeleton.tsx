@@ -1,14 +1,11 @@
-import QuantityPicker from '@/components/ui/QuantityPicker';
+import { QuantityPicker } from '@/components/ui/QuantityPicker';
 import React from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export const ProductDetailsSkeleton = () => (
   <SafeAreaView className="flex-1 bg-white">
-    <ScrollView
-      className="flex-1 px-4 pb-4"
-      showsVerticalScrollIndicator={false}
-    >
+    <ScrollView className="flex-1 px-4 pb-4" showsVerticalScrollIndicator={false}>
       <View className="rounded-xl bg-gray-200 h-60 mb-4" />
 
       <View className="flex-row mb-2 gap-14 items-center">
@@ -26,20 +23,10 @@ export const ProductDetailsSkeleton = () => (
       <View className="rounded-md h-5 flex-1 mb-4 bg-gray-200" />
 
       <View className="flex-row items-center gap-4">
-        <QuantityPicker
-          quantity={1}
-          onQuantityChange={() => {}}
-          variant="ghost"
-          disabled
-        />
+        <QuantityPicker quantity={1} onQuantityChange={() => {}} variant="ghost" disabled />
 
-        <TouchableOpacity
-          disabled
-          className="p-5 rounded-xl flex-1 bg-gray-light"
-        >
-          <Text className="text-gray mx-auto text-xl leading-5">
-            Add to cart
-          </Text>
+        <TouchableOpacity disabled className="p-5 rounded-xl flex-1 bg-gray-light">
+          <Text className="text-gray mx-auto text-xl leading-5">Add to cart</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
