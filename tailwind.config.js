@@ -32,7 +32,11 @@ module.exports = {
           light: '#F8EC9A',
         },
         blue: '#4E78E5',
-        green: '#109D28',
+        green: {
+          dark: '#109D28',
+          DEFAULT: '#33C320',
+          light: '#cbfcc5',
+        },
       },
     },
   },
