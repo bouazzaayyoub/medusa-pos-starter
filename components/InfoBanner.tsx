@@ -7,6 +7,7 @@ type InfoBannerProps = {
   colorScheme?: 'error' | 'warning';
   className?: string;
   children?: React.ReactNode;
+  iconPosition?: 'left' | 'right';
 };
 
 const WRAPPER_COLOR_SCHEME = {
@@ -24,17 +25,30 @@ const ICON_COLOR_SCHEME = {
   warning: '#9B8435',
 } as const;
 
-export const InfoBanner = ({ variant = 'solid', colorScheme = 'warning', className, children }: InfoBannerProps) => {
+const WRAPPER_VARIANT = {
+  ghost: 'justify-end',
+  solid: 'p-4 rounded-xl justify-between',
+} as const;
+
+export const InfoBanner = ({
+  variant = 'solid',
+  colorScheme = 'warning',
+  iconPosition = 'right',
+  className,
+  children,
+}: InfoBannerProps) => {
   const wrapperColorSchemeClassNames = WRAPPER_COLOR_SCHEME[colorScheme];
   const textColorSchemeClassNames = TEXT_COLOR_SCHEME[colorScheme];
   const iconColorSchemeColor = ICON_COLOR_SCHEME[colorScheme];
+  const wrapperVariantClassNames = WRAPPER_VARIANT[variant];
 
   return (
     <View
       className={clx(
-        'flex-row rounded-xl justify-between gap-3 items-center',
+        'gap-3 items-center',
         variant === 'solid' && wrapperColorSchemeClassNames,
-        variant === 'solid' ? 'p-4' : '',
+        iconPosition === 'left' ? 'flex-row-reverse' : 'flex-row',
+        wrapperVariantClassNames,
         className,
       )}
     >
