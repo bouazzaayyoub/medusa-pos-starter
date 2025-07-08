@@ -3,7 +3,7 @@ import { CircleAlert } from '@/components/icons/circle-alert';
 import { Globe } from '@/components/icons/globe';
 import { Loader } from '@/components/icons/loader';
 import { clx } from '@/utils/clx';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 
 interface RegionListProps {
@@ -38,42 +38,38 @@ const RegionList: React.FC<RegionListProps> = ({ selectedRegionId, onRegionSelec
         data={regionsQuery.data?.pages?.[0]?.regions || []}
         keyExtractor={(item) => item.id}
         className="border rounded-xl border-b border-border"
-        renderItem={({ item, index }) => (
-          <Fragment key={item.id}>
-            <TouchableOpacity
-              className={clx('py-3 justify-between items-center flex-row px-4', {
-                'bg-black': selectedRegionId === item.id,
-              })}
-              onPress={() => onRegionSelect(item.id)}
-            >
-              <View className="flex-1">
-                <Text
-                  className={clx('font-medium', {
-                    'text-white': selectedRegionId === item.id,
-                  })}
-                >
-                  {item.name}
-                </Text>
-                <Text
-                  className={clx('text-sm', {
-                    'text-gray-light': selectedRegionId === item.id,
-                    'text-gray': selectedRegionId !== item.id,
-                  })}
-                >
-                  {item.currency_code.toUpperCase()}
-                </Text>
-              </View>
-              <Globe
-                size={16}
-                className={clx({
+        ItemSeparatorComponent={() => <View className="h-px bg-border mx-4" />}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            className={clx('py-3 justify-between items-center flex-row px-4', {
+              'bg-black': selectedRegionId === item.id,
+            })}
+            onPress={() => onRegionSelect(item.id)}
+          >
+            <View className="flex-1">
+              <Text
+                className={clx('font-medium', {
                   'text-white': selectedRegionId === item.id,
                 })}
-              />
-            </TouchableOpacity>
-            {index < (regionsQuery.data?.pages?.[0]?.regions.length || 0) - 1 && (
-              <Text className="h-px bg-border mx-4" />
-            )}
-          </Fragment>
+              >
+                {item.name}
+              </Text>
+              <Text
+                className={clx('text-sm', {
+                  'text-gray-light': selectedRegionId === item.id,
+                  'text-gray': selectedRegionId !== item.id,
+                })}
+              >
+                {item.currency_code.toUpperCase()}
+              </Text>
+            </View>
+            <Globe
+              size={16}
+              className={clx({
+                'text-white': selectedRegionId === item.id,
+              })}
+            />
+          </TouchableOpacity>
         )}
       />
     </View>

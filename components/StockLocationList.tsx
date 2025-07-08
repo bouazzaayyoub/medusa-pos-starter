@@ -5,7 +5,7 @@ import { MapPin } from '@/components/icons/map-pin';
 import { getCountryByAlpha2 } from '@/constants/countries';
 import { findProvinceByCode } from '@/constants/provinces';
 import { clx } from '@/utils/clx';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 
 interface StockLocationListProps {
@@ -43,54 +43,50 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
         data={stockLocationsQuery.data?.pages?.[0]?.stock_locations || []}
         keyExtractor={(item) => item.id}
         contentContainerClassName="border rounded-xl border-b overflow-hidden border-[#EDEDED]"
-        renderItem={({ item, index }) => (
-          <Fragment key={item.id}>
-            <TouchableOpacity
-              className={clx('py-3 justify-between items-center flex-row px-4', {
-                'bg-black': selectedStockLocationId === item.id,
-              })}
-              onPress={() => onStockLocationSelect(item.id)}
-            >
-              <View>
-                <Text
-                  className={clx({
-                    'text-white': selectedStockLocationId === item.id,
-                  })}
-                >
-                  {item.name}
-                </Text>
-                {item.address && (
-                  <Text
-                    className={clx('text-sm text-gray', {
-                      'text-white': selectedStockLocationId === item.id,
-                    })}
-                  >
-                    {[
-                      item.address.address_1,
-                      item.address.address_2,
-                      [item.address.postal_code, item.address.city].filter(Boolean).join(' '),
-                      item.address.province
-                        ? findProvinceByCode(item.address.country_code, item.address.province)?.name ||
-                          item.address.province
-                        : undefined,
-                      getCountryByAlpha2(item.address.country_code)?.name || item.address.country_code,
-                    ]
-                      .filter(Boolean)
-                      .join(', ')}
-                  </Text>
-                )}
-              </View>
-              <MapPin
-                size={16}
+        ItemSeparatorComponent={() => <View className="h-px bg-border mx-4" />}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            className={clx('py-3 justify-between items-center flex-row px-4', {
+              'bg-black': selectedStockLocationId === item.id,
+            })}
+            onPress={() => onStockLocationSelect(item.id)}
+          >
+            <View>
+              <Text
                 className={clx({
                   'text-white': selectedStockLocationId === item.id,
                 })}
-              />
-            </TouchableOpacity>
-            {index < (stockLocationsQuery.data?.pages?.[0]?.stock_locations.length || 0) - 1 && (
-              <Text className="h-px bg-border mx-4" />
-            )}
-          </Fragment>
+              >
+                {item.name}
+              </Text>
+              {item.address && (
+                <Text
+                  className={clx('text-sm text-gray', {
+                    'text-white': selectedStockLocationId === item.id,
+                  })}
+                >
+                  {[
+                    item.address.address_1,
+                    item.address.address_2,
+                    [item.address.postal_code, item.address.city].filter(Boolean).join(' '),
+                    item.address.province
+                      ? findProvinceByCode(item.address.country_code, item.address.province)?.name ||
+                        item.address.province
+                      : undefined,
+                    getCountryByAlpha2(item.address.country_code)?.name || item.address.country_code,
+                  ]
+                    .filter(Boolean)
+                    .join(', ')}
+                </Text>
+              )}
+            </View>
+            <MapPin
+              size={16}
+              className={clx({
+                'text-white': selectedStockLocationId === item.id,
+              })}
+            />
+          </TouchableOpacity>
         )}
       />
     </View>

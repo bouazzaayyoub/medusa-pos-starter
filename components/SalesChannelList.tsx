@@ -3,7 +3,7 @@ import { Antenna } from '@/components/icons/antenna';
 import { CircleAlert } from '@/components/icons/circle-alert';
 import { Loader } from '@/components/icons/loader';
 import { clx } from '@/utils/clx';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 
 interface SalesChannelListProps {
@@ -38,32 +38,28 @@ const SalesChannelList: React.FC<SalesChannelListProps> = ({ selectedSalesChanne
         data={salesChannelsQuery.data?.pages?.[0]?.sales_channels || []}
         keyExtractor={(item) => item.id}
         contentContainerClassName="border overflow-hidden rounded-xl border-b border-[#EDEDED]"
-        renderItem={({ item, index }) => (
-          <Fragment key={item.id}>
-            <TouchableOpacity
-              className={clx('py-3 justify-between items-center flex-row px-4', {
-                'bg-black': selectedSalesChannelId === item.id,
+        ItemSeparatorComponent={() => <View className="h-px bg-border mx-4" />}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            className={clx('py-3 justify-between items-center flex-row px-4', {
+              'bg-black': selectedSalesChannelId === item.id,
+            })}
+            onPress={() => onSalesChannelSelect(item.id)}
+          >
+            <Text
+              className={clx({
+                'text-white': selectedSalesChannelId === item.id,
               })}
-              onPress={() => onSalesChannelSelect(item.id)}
             >
-              <Text
-                className={clx({
-                  'text-white': selectedSalesChannelId === item.id,
-                })}
-              >
-                {item.name}
-              </Text>
-              <Antenna
-                size={16}
-                className={clx({
-                  'text-white': selectedSalesChannelId === item.id,
-                })}
-              />
-            </TouchableOpacity>
-            {index < (salesChannelsQuery.data?.pages?.[0]?.sales_channels.length || 0) - 1 && (
-              <Text className="h-px bg-border mx-4" />
-            )}
-          </Fragment>
+              {item.name}
+            </Text>
+            <Antenna
+              size={16}
+              className={clx({
+                'text-white': selectedSalesChannelId === item.id,
+              })}
+            />
+          </TouchableOpacity>
         )}
       />
     </View>
