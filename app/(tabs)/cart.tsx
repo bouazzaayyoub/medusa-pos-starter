@@ -221,7 +221,6 @@ export default function CartScreen() {
         <Form
           schema={addPromotionFormSchema}
           onSubmit={(data, form) => {
-            console.log('Submitting promotion code:', data);
             addPromotion.mutate(data.promotionCode, {
               onSuccess: () => {
                 form.reset();
