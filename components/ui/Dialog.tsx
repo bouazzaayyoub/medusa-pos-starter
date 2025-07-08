@@ -1,7 +1,7 @@
 import { X } from '@/components/icons/x';
 import { clx } from '@/utils/clx';
 import React from 'react';
-import { Modal, ModalProps, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Modal, ModalProps, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 
 export interface DialogProps extends ModalProps {
   open: boolean;
@@ -22,9 +22,9 @@ export const Dialog: React.FC<DialogProps> = ({
   children,
   showCloseButton = true,
   dismissOnOverlayPress = true,
-  containerClassName = '',
-  contentClassName = '',
-  headerClassName = '',
+  containerClassName,
+  contentClassName,
+  headerClassName,
   overlayTint = 'bg-black/50',
   ...modalProps
 }) => {
@@ -36,26 +36,28 @@ export const Dialog: React.FC<DialogProps> = ({
 
   return (
     <Modal visible={open} transparent={true} onRequestClose={onClose} statusBarTranslucent {...modalProps}>
-      <View className={clx('flex-1 px-4 justify-center items-center', overlayTint)}>
+      <SafeAreaView className={clx('flex-1 justify-center items-center', overlayTint)}>
         <TouchableWithoutFeedback onPress={handleOverlayPress}>
           <View className="absolute inset-0" />
         </TouchableWithoutFeedback>
 
-        <View className={clx('bg-white rounded-2xl p-4 w-full max-h-full', containerClassName)}>
-          {(title || showCloseButton) && (
-            <View className={clx('flex-row mb-4 justify-between gap-2 items-center', headerClassName)}>
-              {title && <Text className="text-base">{title}</Text>}
-              {showCloseButton && (
-                <TouchableOpacity onPress={onClose} accessibilityLabel="Close dialog">
-                  <X size={20} />
-                </TouchableOpacity>
-              )}
-            </View>
-          )}
+        <View className="p-4 w-full max-h-full">
+          <View className={clx('bg-white rounded-2xl p-4 w-full overflow-hidden max-h-full', containerClassName)}>
+            {(title || showCloseButton) && (
+              <View className={clx('flex-row mb-4 justify-between gap-2 items-center', headerClassName)}>
+                {title && <Text className="text-base">{title}</Text>}
+                {showCloseButton && (
+                  <TouchableOpacity onPress={onClose} accessibilityLabel="Close dialog">
+                    <X size={20} />
+                  </TouchableOpacity>
+                )}
+              </View>
+            )}
 
-          <View className={contentClassName}>{children}</View>
+            <View className={contentClassName}>{children}</View>
+          </View>
         </View>
-      </View>
+      </SafeAreaView>
     </Modal>
   );
 };

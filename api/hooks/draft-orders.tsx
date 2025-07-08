@@ -1,6 +1,11 @@
 import { useMedusaSdk } from '@/contexts/auth';
 import { useSettings } from '@/contexts/settings';
-import { AdminAddDraftOrderItems, AdminDraftOrderPreviewResponse, AdminUpdateDraftOrderItem } from '@medusajs/types';
+import {
+  AdminAddDraftOrderItems,
+  AdminDraftOrderPreviewResponse,
+  AdminUpdateDraftOrder,
+  AdminUpdateDraftOrderItem,
+} from '@medusajs/types';
 import { useMutation, UseMutationOptions, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as SecureStore from 'expo-secure-store';
 import * as React from 'react';
@@ -216,6 +221,39 @@ export const useRemovePromotion = (
           await sdk.admin.draftOrder.cancelEdit(draftOrderId);
           throw error;
         });
+      return sdk.admin.draftOrder.confirmEdit(draftOrderId);
+    },
+    ...options,
+    onSuccess: async (...args) => {
+      await queryClient.invalidateQueries({
+        queryKey: ['draft-order'],
+        exact: false,
+      });
+
+      return options?.onSuccess?.(...args);
+    },
+  });
+};
+
+export const useUpdateDraftOrder = (
+  options?: Omit<
+    UseMutationOptions<AdminDraftOrderPreviewResponse, Error, AdminUpdateDraftOrder, unknown>,
+    'mutationKey' | 'mutationFn'
+  >,
+) => {
+  const sdk = useMedusaSdk();
+  const queryClient = useQueryClient();
+  const getOrSetDraftOrderId = useGetOrSetDraftOrderId();
+
+  return useMutation({
+    mutationKey: ['update-draft-order'],
+    mutationFn: async (data: AdminUpdateDraftOrder) => {
+      const draftOrderId = await getOrSetDraftOrderId();
+      await sdk.admin.draftOrder.beginEdit(draftOrderId);
+      await sdk.admin.draftOrder.update(draftOrderId, data).catch(async (error) => {
+        await sdk.admin.draftOrder.cancelEdit(draftOrderId);
+        throw error;
+      });
       return sdk.admin.draftOrder.confirmEdit(draftOrderId);
     },
     ...options,
