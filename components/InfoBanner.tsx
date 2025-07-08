@@ -8,6 +8,7 @@ type InfoBannerProps = {
   className?: string;
   children?: React.ReactNode;
   iconPosition?: 'left' | 'right';
+  showIcon?: boolean;
 };
 
 const WRAPPER_COLOR_SCHEME = {
@@ -19,7 +20,7 @@ const WRAPPER_COLOR_SCHEME = {
 const TEXT_COLOR_SCHEME = {
   error: 'text-red',
   warning: 'text-yellow',
-  success: 'text-green',
+  success: 'text-green-dark',
 } as const;
 
 const ICON_COLOR_SCHEME = {
@@ -37,6 +38,7 @@ export const InfoBanner = ({
   variant = 'solid',
   colorScheme = 'warning',
   iconPosition = 'right',
+  showIcon = true,
   className,
   children,
 }: InfoBannerProps) => {
@@ -56,7 +58,7 @@ export const InfoBanner = ({
       )}
     >
       <Text className={clx('text-base', textColorSchemeClassNames)}>{children}</Text>
-      <CircleAlert size={16} color={iconColorSchemeColor} />,
+      {showIcon && <CircleAlert size={16} color={iconColorSchemeColor} />}
     </View>
   );
 };
