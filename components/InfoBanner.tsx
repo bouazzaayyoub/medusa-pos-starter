@@ -4,7 +4,7 @@ import { Text, View } from 'react-native';
 
 type InfoBannerProps = {
   variant?: 'ghost' | 'solid';
-  colorScheme?: 'error' | 'warning';
+  colorScheme?: 'error' | 'warning' | 'success';
   className?: string;
   children?: React.ReactNode;
   iconPosition?: 'left' | 'right';
@@ -13,21 +13,24 @@ type InfoBannerProps = {
 const WRAPPER_COLOR_SCHEME = {
   error: 'bg-red-light',
   warning: 'bg-yellow-light',
+  success: 'bg-green-light',
 } as const;
 
 const TEXT_COLOR_SCHEME = {
   error: 'text-red',
   warning: 'text-yellow',
+  success: 'text-green',
 } as const;
 
 const ICON_COLOR_SCHEME = {
   error: '#F14747',
   warning: '#9B8435',
+  success: '#33C320',
 } as const;
 
 const WRAPPER_VARIANT = {
-  ghost: 'justify-end',
-  solid: 'p-4 rounded-xl justify-between',
+  ghost: 'justify-end gap-1',
+  solid: 'p-4 rounded-xl justify-between gap-3',
 } as const;
 
 export const InfoBanner = ({
@@ -45,7 +48,7 @@ export const InfoBanner = ({
   return (
     <View
       className={clx(
-        'gap-3 items-center',
+        'items-center',
         variant === 'solid' && wrapperColorSchemeClassNames,
         iconPosition === 'left' ? 'flex-row-reverse' : 'flex-row',
         wrapperVariantClassNames,
