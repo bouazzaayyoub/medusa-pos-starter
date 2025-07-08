@@ -1,8 +1,10 @@
+import { useCustomers } from '@/api/hooks/customers';
 import {
   DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL,
   useAddPromotion,
   useCancelDraftOrder,
   useDraftOrder,
+  useUpdateDraftOrder,
   useUpdateDraftOrderItem,
 } from '@/api/hooks/draft-orders';
 import { Form } from '@/components/form/Form';
@@ -78,6 +80,9 @@ const DraftOrderItem: React.FC<{ item: AdminOrderLineItem }> = ({ item }) => {
 };
 
 const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({ customer }) => {
+  const updateDraftOrder = useUpdateDraftOrder();
+  const defaultCustomer = useCustomers({ email: DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL }, 1);
+
   if (!customer || customer.email === DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL) {
     return (
       <Button
@@ -96,7 +101,12 @@ const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({ cu
   return (
     <TouchableOpacity
       onPress={() => {
-        router.push('/customer-lookup');
+        router.push({
+          pathname: '/customer-lookup',
+          params: {
+            customerId: customer.id,
+          },
+        });
       }}
       className="flex-row mb-6 pb-6 border-b border-border justify-between items-center"
     >
@@ -112,9 +122,16 @@ const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({ cu
         </View>
       )}
 
-      <View className="flex-row gap-4">
-        <ChevronDown size={24} />
-        <X size={24} />
+      <View className="flex-row">
+        <View className="p-2">
+          <ChevronDown size={24} />
+        </View>
+        <TouchableOpacity
+          onPress={() => updateDraftOrder.mutate({ customer_id: defaultCustomer.data?.pages[0].customers?.[0]?.id })}
+          className="p-2"
+        >
+          <X size={24} />
+        </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );

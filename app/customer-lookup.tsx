@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Dialog } from '@/components/ui/Dialog';
 import { clx } from '@/utils/clx';
 import { AdminCustomer } from '@medusajs/types';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import * as React from 'react';
 import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
@@ -138,8 +138,11 @@ const CustomersList: React.FC<{ q?: string; selectedCustomerId?: string; onCusto
 };
 
 export default function CustomerLookupScreen() {
+  const params = useLocalSearchParams<{
+    customerId?: string;
+  }>();
   const [searchQuery, setSearchQuery] = React.useState('');
-  const [selectedCustomerId, setSelectedCustomerId] = React.useState<string | undefined>(undefined);
+  const [selectedCustomerId, setSelectedCustomerId] = React.useState<string | undefined>(params.customerId);
   const updateDraftOrder = useUpdateDraftOrder({
     onSuccess: () => {
       router.back();
@@ -184,7 +187,7 @@ export default function CustomerLookupScreen() {
           });
         }}
       >
-        Add Selected
+        Select Customer
       </Button>
       <Button variant="outline">Add New Customer</Button>
     </Dialog>
