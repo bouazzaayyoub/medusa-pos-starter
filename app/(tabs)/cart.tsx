@@ -23,6 +23,7 @@ import { AdminDraftOrder, AdminOrderLineItem } from '@medusajs/types';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import type { FlashListProps, FlashList as FlashListType } from '@shopify/flash-list';
 import { AnimatedFlashList as FlashList, ListRenderItem } from '@shopify/flash-list';
+import { useIsMutating } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import * as React from 'react';
 import { ActivityIndicator, Alert, Image, Pressable, Text, TouchableOpacity, View } from 'react-native';
@@ -91,7 +92,6 @@ const DraftOrderItem: React.FC<{ item: AdminOrderLineItem; onRemove?: (item: Adm
               })
             }
             className="self-start"
-            isPending={updateDraftOrderItem.isPending}
           />
         </View>
         <Text className="font-medium ml-auto">
@@ -170,6 +170,7 @@ export default function CartScreen() {
   const addPromotion = useAddPromotion();
   const cancelDraftOrder = useCancelDraftOrder();
   const updateDraftOrderItem = useUpdateDraftOrderItem();
+  const isUpdatingDraftOrder = useIsMutating({ mutationKey: ['draft-order'], exact: false });
   const bottomTabBarHeight = useBottomTabBarHeight();
   const itemsListRef = React.useRef<FlashListType<AdminOrderLineItem>>(null);
 
@@ -302,42 +303,59 @@ export default function CartScreen() {
             enterKeyHint="send"
             errorVariation="inline"
           />
-          <FormButton size="sm" className="flex-1 h-[3.125rem]" isPending={addPromotion.isPending}>
+          <FormButton
+            size="sm"
+            className="flex-1 h-[3.125rem]"
+            isPending={addPromotion.isPending}
+            disabled={draftOrder.isFetching || isUpdatingDraftOrder > 0}
+          >
             Submit
           </FormButton>
         </Form>
         <View className="flex-row mb-2 justify-between">
           <Text className="text-gray-dark">Taxes</Text>
-          <Text className="text-gray-dark">
-            {draftOrder.data?.draft_order.tax_total?.toLocaleString('en-US', {
-              style: 'currency',
-              currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
-              currencyDisplay: 'narrowSymbol',
-            })}
-          </Text>
+          {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
+            <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
+          ) : (
+            <Text className="text-gray-dark">
+              {draftOrder.data?.draft_order.tax_total?.toLocaleString('en-US', {
+                style: 'currency',
+                currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
+                currencyDisplay: 'narrowSymbol',
+              })}
+            </Text>
+          )}
         </View>
         <View className="flex-row justify-between">
           <Text className="text-gray-dark">Subtotal</Text>
-          <Text className="text-gray-dark">
-            {draftOrder.data?.draft_order.subtotal?.toLocaleString('en-US', {
-              style: 'currency',
-              currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
-              currencyDisplay: 'narrowSymbol',
-            })}
-          </Text>
+          {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
+            <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
+          ) : (
+            <Text className="text-gray-dark">
+              {draftOrder.data?.draft_order.subtotal?.toLocaleString('en-US', {
+                style: 'currency',
+                currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
+                currencyDisplay: 'narrowSymbol',
+              })}
+            </Text>
+          )}
         </View>
 
         <View className="h-px bg-border my-4" />
 
         <View className="flex-row justify-between mb-6">
           <Text className="font-medium text-lg">Total</Text>
-          <Text className="font-medium text-lg">
-            {draftOrder.data?.draft_order.total?.toLocaleString('en-US', {
-              style: 'currency',
-              currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
-              currencyDisplay: 'narrowSymbol',
-            })}
-          </Text>
+          {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
+            <View className="w-1/4 h-7 rounded-md bg-gray-200" />
+          ) : (
+            <Text className="font-medium text-lg">
+              {draftOrder.data?.draft_order.total?.toLocaleString('en-US', {
+                style: 'currency',
+                currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
+                currencyDisplay: 'narrowSymbol',
+              })}
+            </Text>
+          )}
         </View>
 
         <View className="flex-row gap-2">
@@ -361,12 +379,15 @@ export default function CartScreen() {
               ]);
             }}
             isPending={cancelDraftOrder.isPending}
+            disabled={draftOrder.isFetching || isUpdatingDraftOrder > 0}
           >
             Cancel Cart
           </Button>
           <Button
             className="flex-1"
-            disabled={cancelDraftOrder.isPending || draftOrder.data.draft_order.items.length === 0}
+            disabled={
+              draftOrder.data.draft_order.items.length === 0 || draftOrder.isFetching || isUpdatingDraftOrder > 0
+            }
             onPress={() => {
               router.push('/checkout');
             }}
