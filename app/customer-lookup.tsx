@@ -1,5 +1,5 @@
 import { useCustomers } from '@/api/hooks/customers';
-import { useUpdateDraftOrder } from '@/api/hooks/draft-orders';
+import { useUpdateDraftOrderCustomer } from '@/api/hooks/draft-orders';
 import { CircleAlert } from '@/components/icons/circle-alert';
 import { Search } from '@/components/icons/search';
 import { Button } from '@/components/ui/Button';
@@ -25,11 +25,11 @@ const CustomerListPlaceholder: React.FC = () => {
   );
 };
 
-const CustomersList: React.FC<{ q?: string; selectedCustomerId?: string; onCustomerSelect: (id: string) => void }> = ({
-  q,
-  selectedCustomerId,
-  onCustomerSelect,
-}) => {
+const CustomersList: React.FC<{
+  q?: string;
+  selectedCustomerId?: string;
+  onCustomerSelect: (customer: AdminCustomer) => void;
+}> = ({ q, selectedCustomerId, onCustomerSelect }) => {
   const customersQuery = useCustomers({
     q,
     order: 'email',
@@ -48,7 +48,7 @@ const CustomersList: React.FC<{ q?: string; selectedCustomerId?: string; onCusto
           className={clx('py-3 justify-between items-center flex-row px-4 gap-4', {
             'bg-black': selectedCustomerId === item.id,
           })}
-          onPress={() => onCustomerSelect(item.id)}
+          onPress={() => onCustomerSelect(item)}
         >
           {customerName.length > 0 && (
             <Text
@@ -143,11 +143,8 @@ export default function CustomerLookupScreen() {
   }>();
   const [searchQuery, setSearchQuery] = React.useState('');
   const [selectedCustomerId, setSelectedCustomerId] = React.useState<string | undefined>(params.customerId);
-  const updateDraftOrder = useUpdateDraftOrder({
-    onSuccess: () => {
-      router.back();
-    },
-  });
+  const [selectedCustomer, setSelectedCustomer] = React.useState<AdminCustomer>();
+  const updateDraftOrderCustomer = useUpdateDraftOrderCustomer();
 
   return (
     <Dialog
@@ -171,7 +168,10 @@ export default function CustomerLookupScreen() {
       <CustomersList
         q={searchQuery ? searchQuery : undefined}
         selectedCustomerId={selectedCustomerId}
-        onCustomerSelect={setSelectedCustomerId}
+        onCustomerSelect={(customer) => {
+          setSelectedCustomerId(customer.id);
+          setSelectedCustomer(customer);
+        }}
       />
 
       <Button
@@ -182,9 +182,11 @@ export default function CustomerLookupScreen() {
             return;
           }
 
-          updateDraftOrder.mutate({
-            customer_id: selectedCustomerId,
-          });
+          if (selectedCustomer) {
+            updateDraftOrderCustomer.mutate(selectedCustomer);
+          }
+
+          router.back();
         }}
       >
         Select Customer

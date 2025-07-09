@@ -2,8 +2,9 @@ import { useMedusaSdk } from '@/contexts/auth';
 import { useSettings } from '@/contexts/settings';
 import {
   AdminAddDraftOrderItems,
+  AdminCustomer,
   AdminDraftOrderPreviewResponse,
-  AdminUpdateDraftOrder,
+  AdminDraftOrderResponse,
   AdminUpdateDraftOrderItem,
 } from '@medusajs/types';
 import { useMutation, UseMutationOptions, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -13,9 +14,37 @@ import * as React from 'react';
 const DRAFT_ORDER_ID_STORAGE_KEY = 'draft_order_id';
 export const DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL = 'noreply+pos-guest@agilo.com';
 
+const useGetOrSetDefaultCustomer = () => {
+  const sdk = useMedusaSdk();
+
+  return React.useCallback(async () => {
+    const existingCustomer = await sdk.admin.customer.list({
+      email: DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL,
+      fields: 'id',
+      limit: 1,
+    });
+
+    if (existingCustomer.customers.length > 0) {
+      return existingCustomer.customers[0].id;
+    }
+
+    const newCustomer = await sdk.admin.customer.create(
+      {
+        email: DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL,
+      },
+      {
+        fields: 'id',
+      },
+    );
+
+    return newCustomer.customer.id;
+  }, [sdk]);
+};
+
 const useGetOrSetDraftOrderId = () => {
   const sdk = useMedusaSdk();
   const settings = useSettings();
+  const getOrSetDefaultCustomer = useGetOrSetDefaultCustomer();
 
   return React.useCallback(async () => {
     const draftOrderId = await SecureStore.getItemAsync(DRAFT_ORDER_ID_STORAGE_KEY);
@@ -32,16 +61,18 @@ const useGetOrSetDraftOrderId = () => {
       throw new Error('Sales Channel ID is not set in settings');
     }
 
+    const defaultCustomerId = await getOrSetDefaultCustomer();
+
     const newDraftOrder = await sdk.admin.draftOrder.create({
       region_id: settings.data?.region?.id,
       sales_channel_id: settings.data?.sales_channel?.id,
-      email: DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL,
+      customer_id: defaultCustomerId,
     });
 
     await SecureStore.setItemAsync(DRAFT_ORDER_ID_STORAGE_KEY, newDraftOrder.draft_order.id);
 
     return newDraftOrder.draft_order.id;
-  }, [sdk, settings.data?.region?.id, settings.data?.sales_channel?.id]);
+  }, [getOrSetDefaultCustomer, sdk, settings.data?.region?.id, settings.data?.sales_channel?.id]);
 };
 
 export const useDraftOrder = () => {
@@ -57,7 +88,8 @@ export const useDraftOrder = () => {
       }
 
       return sdk.admin.draftOrder.retrieve(draftOrderId, {
-        fields: '+tax_total,+subtotal,+total,+items.variant.inventory_quantity,+customer.*',
+        fields:
+          '+tax_total,+subtotal,+total,+items.variant.options.*,+items.variant.options.option.*,+items.variant.inventory_quantity,+customer.*',
       });
     },
   });
@@ -150,6 +182,56 @@ export const useUpdateDraftOrderItem = (
       return sdk.admin.draftOrder.confirmEdit(draftOrderId);
     },
     ...options,
+    onMutate(variables) {
+      options?.onMutate?.(variables);
+
+      const cachedDraftOrder = queryClient.getQueryData<AdminDraftOrderResponse>(['draft-order']);
+      if (cachedDraftOrder) {
+        const updatedDraftOrder: AdminDraftOrderResponse = {
+          ...cachedDraftOrder,
+          draft_order: {
+            ...cachedDraftOrder.draft_order,
+            items:
+              variables.update.quantity === 0
+                ? cachedDraftOrder.draft_order.items.filter((item) => item.id !== variables.id)
+                : cachedDraftOrder.draft_order.items.map((item) =>
+                    item.id === variables.id
+                      ? {
+                          ...item,
+                          ...variables.update,
+                          compare_at_unit_price:
+                            typeof variables.update.compare_at_unit_price === 'number'
+                              ? variables.update.compare_at_unit_price
+                              : item.compare_at_unit_price,
+                          unit_price:
+                            typeof variables.update.unit_price === 'number'
+                              ? variables.update.unit_price
+                              : item.unit_price,
+                        }
+                      : item,
+                  ),
+          },
+        };
+
+        queryClient.setQueryData(['draft-order'], updatedDraftOrder);
+
+        return { previousDraftOrder: cachedDraftOrder };
+      }
+
+      return { previousDraftOrder: undefined };
+    },
+    onError: (error, variables, context) => {
+      if (context?.previousDraftOrder) {
+        queryClient.setQueryData(['draft-order'], context.previousDraftOrder);
+      }
+
+      queryClient.invalidateQueries({
+        queryKey: ['draft-order'],
+        exact: false,
+      });
+
+      return options?.onError?.(error, variables, context);
+    },
     onSuccess: async (...args) => {
       await queryClient.invalidateQueries({
         queryKey: ['draft-order'],
@@ -235,9 +317,9 @@ export const useRemovePromotion = (
   });
 };
 
-export const useUpdateDraftOrder = (
+export const useUpdateDraftOrderCustomer = (
   options?: Omit<
-    UseMutationOptions<AdminDraftOrderPreviewResponse, Error, AdminUpdateDraftOrder, unknown>,
+    UseMutationOptions<AdminDraftOrderPreviewResponse, Error, AdminCustomer | undefined, unknown>,
     'mutationKey' | 'mutationFn'
   >,
 ) => {
@@ -247,16 +329,46 @@ export const useUpdateDraftOrder = (
 
   return useMutation({
     mutationKey: ['update-draft-order'],
-    mutationFn: async (data: AdminUpdateDraftOrder) => {
+    mutationFn: async (data) => {
       const draftOrderId = await getOrSetDraftOrderId();
       await sdk.admin.draftOrder.beginEdit(draftOrderId);
-      await sdk.admin.draftOrder.update(draftOrderId, data).catch(async (error) => {
+      await sdk.admin.draftOrder.update(draftOrderId, { customer_id: data?.id }).catch(async (error) => {
         await sdk.admin.draftOrder.cancelEdit(draftOrderId);
         throw error;
       });
       return sdk.admin.draftOrder.confirmEdit(draftOrderId);
     },
     ...options,
+    onMutate(data) {
+      options?.onMutate?.(data);
+
+      const cachedDraftOrder = queryClient.getQueryData<AdminDraftOrderResponse>(['draft-order']);
+
+      if (cachedDraftOrder) {
+        const updatedDraftOrder: AdminDraftOrderResponse = {
+          ...cachedDraftOrder,
+          draft_order: {
+            ...cachedDraftOrder.draft_order,
+            customer_id: data?.id ?? null,
+            customer: data,
+          },
+        };
+
+        queryClient.setQueryData(['draft-order'], updatedDraftOrder);
+
+        return { previousDraftOrder: cachedDraftOrder };
+      }
+
+      return { previousDraftOrder: undefined };
+    },
+    onError(error, variables, context) {
+      queryClient.setQueryData(['draft-order'], context?.previousDraftOrder);
+      queryClient.invalidateQueries({
+        queryKey: ['draft-order'],
+        exact: false,
+      });
+      return options?.onError?.(error, variables, context);
+    },
     onSuccess: async (...args) => {
       await queryClient.invalidateQueries({
         queryKey: ['draft-order'],
