@@ -1,5 +1,6 @@
 import { ChevronDown } from '@/components/icons/chevron-down';
 import { X } from '@/components/icons/x';
+import { Button } from '@/components/ui/Button';
 import { clx } from '@/utils/clx';
 import React, { useEffect, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
@@ -21,6 +22,7 @@ interface MultiSelectFieldProps {
   modalClassName?: string;
   searchable?: boolean;
   floatingPlaceholder?: boolean;
+  variant?: 'primary' | 'secondary';
 }
 
 export function MultiSelectField({
@@ -33,6 +35,7 @@ export function MultiSelectField({
   modalClassName = '',
   searchable = false,
   floatingPlaceholder = false,
+  variant = 'primary',
 }: MultiSelectFieldProps) {
   const { control } = useFormContext();
   const {
@@ -51,7 +54,7 @@ export function MultiSelectField({
     ? options.filter((option) => option.label.toLowerCase().includes(searchQuery.toLowerCase()))
     : options;
 
-  const showFloating = floatingPlaceholder && (isVisible || selectedOptions.length > 0);
+  const showFloating = floatingPlaceholder && (isVisible || selectedOptions.length > 0) && variant == 'primary';
   const floatingPlaceholderTranslateY = useSharedValue(0);
   const floatingPlaceholderScale = useSharedValue(1);
 
@@ -99,12 +102,12 @@ export function MultiSelectField({
     >
       <Text
         className={clx('text-base', {
-          'text-blue font-medium': isSelected,
+          'text-blue-dark font-medium': isSelected,
         })}
       >
         {option.label}
       </Text>
-      {isSelected && <Text className="text-blue text-lg">✓</Text>}
+      {isSelected && <Text className="text-blue-dark text-base">✓</Text>}
     </TouchableOpacity>
   );
 
@@ -118,12 +121,14 @@ export function MultiSelectField({
             {
               'border-red': error,
               [buttonClassName]: buttonClassName,
-              'pt-6 pb-4': floatingPlaceholder,
+              'pt-6 pb-4': floatingPlaceholder && variant == 'primary',
+              'bg-black': selectedOptions.length > 0 && variant == 'secondary',
+              'rounded-full py-3 justify-center': variant == 'secondary',
             },
           )}
         >
           <View>
-            {selectedOptions.length > 0 ? (
+            {selectedOptions.length > 0 && variant == 'primary' ? (
               <View className="flex flex-row flex-wrap gap-1">
                 {selectedOptions.map((option) => (
                   <View key={option.value} className="bg-gray-100 rounded-lg px-2 py-1 flex-row items-center mr-1 mb-1">
@@ -140,18 +145,30 @@ export function MultiSelectField({
                   </View>
                 ))}
               </View>
+            ) : selectedOptions.length > 0 && variant == 'secondary' ? (
+              <View className="flex-row gap-3 items-center">
+                <Text className="text-lg text-white">{placeholder}</Text>
+                <View className="bg-white rounded-full mt-0.5 items-center px-1 justify-center aspect-square">
+                  <Text className="text-xs font-bold">{selectedOptions.length}</Text>
+                </View>
+              </View>
             ) : (
-              <Text
-                className={clx('text-lg', {
-                  'text-gray': !selectedOptions.length,
-                })}
-              >
-                {!floatingPlaceholder ? placeholder : null}
-              </Text>
+              <View className="flex-row items-center gap-2">
+                <Text
+                  className={clx('text-lg', {
+                    'text-gray': !selectedOptions.length && variant === 'primary',
+                  })}
+                >
+                  {!floatingPlaceholder ? placeholder : null}
+                </Text>
+                {variant === 'secondary' && <ChevronDown size={24} className="mt-1" />}
+              </View>
             )}
           </View>
         </TouchableOpacity>
-        <ChevronDown size={24} className="text-gray absolute top-1/2 -translate-y-1/2 right-4" />
+        {variant === 'primary' && (
+          <ChevronDown size={24} className="text-gray absolute top-1/2 -translate-y-1/2 right-4" />
+        )}
 
         {floatingPlaceholder && (
           <Animated.Text
@@ -168,17 +185,7 @@ export function MultiSelectField({
 
       <Modal visible={isVisible} animationType="slide" transparent={true} onRequestClose={() => setIsVisible(false)}>
         <View className="flex-1 bg-black/50 justify-end">
-          <View className={clx('bg-white rounded-t-3xl max-h-[80%] pb-safe', modalClassName)}>
-            <View className="p-4 border-b border-gray-200 flex-row justify-between items-center">
-              <Text className="text-lg font-semibold">Select Options</Text>
-              <TouchableOpacity
-                className="w-8 h-8 rounded-full bg-gray-light items-center justify-center"
-                onPress={() => setIsVisible(false)}
-              >
-                <Text className="text-gray-dark text-lg">✕</Text>
-              </TouchableOpacity>
-            </View>
-
+          <View className={clx('bg-white overflow-hidden rounded-t-3xl max-h-[80%] pb-safe', modalClassName)}>
             {searchable && (
               <View className="p-4 border-b border-border">
                 <TextInput
@@ -209,6 +216,15 @@ export function MultiSelectField({
                 </View>
               }
             />
+
+            <Button
+              className="rounded-none"
+              onPress={() => {
+                setIsVisible(false);
+              }}
+            >
+              Done
+            </Button>
           </View>
         </View>
       </Modal>
