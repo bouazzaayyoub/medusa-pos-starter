@@ -100,7 +100,7 @@ export const useCancelDraftOrder = (options?: Omit<UseMutationOptions<void>, 'mu
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationKey: ['cancel-draft-order'],
+    mutationKey: ['draft-order', 'cancel'],
     mutationFn: async () => {
       const draftOrderId = await SecureStore.getItemAsync(DRAFT_ORDER_ID_STORAGE_KEY);
       if (!draftOrderId) {
@@ -112,10 +112,12 @@ export const useCancelDraftOrder = (options?: Omit<UseMutationOptions<void>, 'mu
     },
     ...options,
     onSuccess: async (...args) => {
-      await queryClient.invalidateQueries({
-        queryKey: ['draft-order'],
-        exact: false,
-      });
+      if (queryClient.isMutating({ mutationKey: ['draft-order'], exact: false }) === 1) {
+        await queryClient.invalidateQueries({
+          queryKey: ['draft-order'],
+          exact: false,
+        });
+      }
 
       return options?.onSuccess?.(...args);
     },
@@ -133,7 +135,7 @@ export const useAddToDraftOrder = (
   const getOrSetDraftOrderId = useGetOrSetDraftOrderId();
 
   return useMutation({
-    mutationKey: ['add-to-draft-order'],
+    mutationKey: ['draft-order', 'items', 'add'],
     mutationFn: async (items: AdminAddDraftOrderItems) => {
       const draftOrderId = await getOrSetDraftOrderId();
       await sdk.admin.draftOrder.beginEdit(draftOrderId);
@@ -145,22 +147,35 @@ export const useAddToDraftOrder = (
     },
     ...options,
     onSuccess: async (...args) => {
-      await queryClient.invalidateQueries({
-        queryKey: ['draft-order'],
-        exact: false,
-      });
+      if (queryClient.isMutating({ mutationKey: ['draft-order'], exact: false }) === 1) {
+        await queryClient.invalidateQueries({
+          queryKey: ['draft-order'],
+          exact: false,
+        });
+      }
 
       return options?.onSuccess?.(...args);
     },
   });
 };
 
+const updateDraftOrderItemActions = new Map<
+  string,
+  {
+    update: Pick<AdminUpdateDraftOrderItem, 'quantity'>;
+    resolvers: ((value: AdminDraftOrderPreviewResponse) => void)[];
+    rejecters: ((reason: unknown) => void)[];
+  }
+>();
+
+const debounceTimeouts = new Map<string, ReturnType<typeof setTimeout>>();
+
 export const useUpdateDraftOrderItem = (
   options?: Omit<
     UseMutationOptions<
       AdminDraftOrderPreviewResponse,
       Error,
-      { id: string; update: AdminUpdateDraftOrderItem },
+      { id: string; update: Pick<AdminUpdateDraftOrderItem, 'quantity'> },
       unknown
     >,
     'mutationKey' | 'mutationFn'
@@ -171,19 +186,65 @@ export const useUpdateDraftOrderItem = (
   const getOrSetDraftOrderId = useGetOrSetDraftOrderId();
 
   return useMutation({
-    mutationKey: ['update-draft-order-item'],
-    mutationFn: async (item: { id: string; update: AdminUpdateDraftOrderItem }) => {
-      const draftOrderId = await getOrSetDraftOrderId();
-      await sdk.admin.draftOrder.beginEdit(draftOrderId);
-      await sdk.admin.draftOrder.updateItem(draftOrderId, item.id, item.update).catch(async (error) => {
-        await sdk.admin.draftOrder.cancelEdit(draftOrderId);
-        throw error;
+    mutationKey: ['draft-order', 'items', 'update'],
+    mutationFn: async (item: { id: string; update: Pick<AdminUpdateDraftOrderItem, 'quantity'> }) => {
+      return new Promise<AdminDraftOrderPreviewResponse>((resolve, reject) => {
+        if (debounceTimeouts.has(item.id)) {
+          clearTimeout(debounceTimeouts.get(item.id)!);
+          debounceTimeouts.delete(item.id);
+        }
+
+        const existingItem = updateDraftOrderItemActions.get(item.id);
+        if (existingItem) {
+          existingItem.update.quantity = item.update.quantity;
+          existingItem.resolvers.push(resolve);
+          existingItem.rejecters.push(reject);
+        } else {
+          updateDraftOrderItemActions.set(item.id, {
+            update: item.update,
+            resolvers: [resolve],
+            rejecters: [reject],
+          });
+        }
+
+        debounceTimeouts.set(
+          item.id,
+          setTimeout(async () => {
+            debounceTimeouts.delete(item.id);
+            const queueItem = updateDraftOrderItemActions.get(item.id);
+
+            if (!queueItem) {
+              throw new Error(`Item with ID ${item.id} not found in update queue`);
+            }
+
+            updateDraftOrderItemActions.delete(item.id);
+
+            try {
+              const draftOrderId = await getOrSetDraftOrderId();
+              await sdk.admin.draftOrder.beginEdit(draftOrderId);
+
+              await sdk.admin.draftOrder.updateItem(draftOrderId, item.id, queueItem.update).catch(async (error) => {
+                await sdk.admin.draftOrder.cancelEdit(draftOrderId);
+                throw error;
+              });
+              const result = await sdk.admin.draftOrder.confirmEdit(draftOrderId);
+
+              queueItem.resolvers.forEach((resolveFn) => resolveFn(result));
+            } catch (error) {
+              queueItem.rejecters.forEach((rejectFn) => rejectFn(error));
+            }
+          }, 300),
+        );
       });
-      return sdk.admin.draftOrder.confirmEdit(draftOrderId);
     },
     ...options,
     onMutate(variables) {
       options?.onMutate?.(variables);
+
+      queryClient.cancelQueries({
+        queryKey: ['draft-order'],
+        exact: false,
+      });
 
       const cachedDraftOrder = queryClient.getQueryData<AdminDraftOrderResponse>(['draft-order']);
       if (cachedDraftOrder) {
@@ -199,14 +260,6 @@ export const useUpdateDraftOrderItem = (
                       ? {
                           ...item,
                           ...variables.update,
-                          compare_at_unit_price:
-                            typeof variables.update.compare_at_unit_price === 'number'
-                              ? variables.update.compare_at_unit_price
-                              : item.compare_at_unit_price,
-                          unit_price:
-                            typeof variables.update.unit_price === 'number'
-                              ? variables.update.unit_price
-                              : item.unit_price,
                         }
                       : item,
                   ),
@@ -225,18 +278,22 @@ export const useUpdateDraftOrderItem = (
         queryClient.setQueryData(['draft-order'], context.previousDraftOrder);
       }
 
-      queryClient.invalidateQueries({
-        queryKey: ['draft-order'],
-        exact: false,
-      });
+      if (queryClient.isMutating({ mutationKey: ['draft-order'], exact: false }) === 1) {
+        queryClient.invalidateQueries({
+          queryKey: ['draft-order'],
+          exact: false,
+        });
+      }
 
       return options?.onError?.(error, variables, context);
     },
     onSuccess: async (...args) => {
-      await queryClient.invalidateQueries({
-        queryKey: ['draft-order'],
-        exact: false,
-      });
+      if (queryClient.isMutating({ mutationKey: ['draft-order'], exact: false }) === 1) {
+        await queryClient.invalidateQueries({
+          queryKey: ['draft-order'],
+          exact: false,
+        });
+      }
 
       return options?.onSuccess?.(...args);
     },
@@ -254,7 +311,7 @@ export const useAddPromotion = (
   const getOrSetDraftOrderId = useGetOrSetDraftOrderId();
 
   return useMutation({
-    mutationKey: ['add-promotion'],
+    mutationKey: ['draft-order', 'promotions', 'add'],
     mutationFn: async (promotionCode: string) => {
       const draftOrderId = await getOrSetDraftOrderId();
       await sdk.admin.draftOrder.beginEdit(draftOrderId);
@@ -270,10 +327,12 @@ export const useAddPromotion = (
     },
     ...options,
     onSuccess: async (...args) => {
-      await queryClient.invalidateQueries({
-        queryKey: ['draft-order'],
-        exact: false,
-      });
+      if (queryClient.isMutating({ mutationKey: ['draft-order'], exact: false }) === 1) {
+        await queryClient.invalidateQueries({
+          queryKey: ['draft-order'],
+          exact: false,
+        });
+      }
 
       return options?.onSuccess?.(...args);
     },
@@ -291,7 +350,7 @@ export const useRemovePromotion = (
   const getOrSetDraftOrderId = useGetOrSetDraftOrderId();
 
   return useMutation({
-    mutationKey: ['remove-promotion'],
+    mutationKey: ['draft-order', 'promotions', 'remove'],
     mutationFn: async (promotionCode: string) => {
       const draftOrderId = await getOrSetDraftOrderId();
       await sdk.admin.draftOrder.beginEdit(draftOrderId);
@@ -307,10 +366,12 @@ export const useRemovePromotion = (
     },
     ...options,
     onSuccess: async (...args) => {
-      await queryClient.invalidateQueries({
-        queryKey: ['draft-order'],
-        exact: false,
-      });
+      if (queryClient.isMutating({ mutationKey: ['draft-order'], exact: false }) === 1) {
+        await queryClient.invalidateQueries({
+          queryKey: ['draft-order'],
+          exact: false,
+        });
+      }
 
       return options?.onSuccess?.(...args);
     },
@@ -328,7 +389,7 @@ export const useUpdateDraftOrderCustomer = (
   const getOrSetDraftOrderId = useGetOrSetDraftOrderId();
 
   return useMutation({
-    mutationKey: ['update-draft-order'],
+    mutationKey: ['draft-order', 'customer', 'update'],
     mutationFn: async (data) => {
       const draftOrderId = await getOrSetDraftOrderId();
       await sdk.admin.draftOrder.beginEdit(draftOrderId);
@@ -363,17 +424,21 @@ export const useUpdateDraftOrderCustomer = (
     },
     onError(error, variables, context) {
       queryClient.setQueryData(['draft-order'], context?.previousDraftOrder);
-      queryClient.invalidateQueries({
-        queryKey: ['draft-order'],
-        exact: false,
-      });
+      if (queryClient.isMutating({ mutationKey: ['draft-order'], exact: false }) === 1) {
+        queryClient.invalidateQueries({
+          queryKey: ['draft-order'],
+          exact: false,
+        });
+      }
       return options?.onError?.(error, variables, context);
     },
     onSuccess: async (...args) => {
-      await queryClient.invalidateQueries({
-        queryKey: ['draft-order'],
-        exact: false,
-      });
+      if (queryClient.isMutating({ mutationKey: ['draft-order'], exact: false }) === 1) {
+        await queryClient.invalidateQueries({
+          queryKey: ['draft-order'],
+          exact: false,
+        });
+      }
 
       return options?.onSuccess?.(...args);
     },
