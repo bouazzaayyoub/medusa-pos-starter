@@ -96,12 +96,12 @@ export function SelectField({
     >
       <Text
         className={clx('text-base', {
-          'text-blue font-medium': isSelected,
+          'text-blue-dark font-medium': isSelected,
         })}
       >
         {option.label}
       </Text>
-      {isSelected && <Text className="text-blue text-lg">✓</Text>}
+      {isSelected && <Text className="text-blue-dark text-base">✓</Text>}
     </TouchableOpacity>
   );
 
