@@ -1,28 +1,26 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import React from 'react';
-import {
-  FieldValues,
-  FormProvider,
-  SubmitHandler,
-  useForm,
-  UseFormProps,
-} from 'react-hook-form';
+import { FieldValues, FormProvider, useForm, UseFormProps, UseFormReturn } from 'react-hook-form';
 import { View } from 'react-native';
 import * as z from 'zod/v4';
 
 interface FormProps<T extends FieldValues, Output> {
   schema: z.ZodType<Output, T>;
-  onSubmit: SubmitHandler<Output>;
+  onSubmit: (
+    data: Output,
+    form: UseFormReturn<T, unknown, Output>,
+    event?: React.BaseSyntheticEvent,
+  ) => unknown | Promise<unknown>;
   defaultValues?: UseFormProps<T>['defaultValues'];
   children: React.ReactNode;
   className?: string;
 }
 
-interface CustomFormContext {
+interface CustomFormContextType {
   handleSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
 }
 
-const CustomFormContext = React.createContext<CustomFormContext>({
+const CustomFormContext = React.createContext<CustomFormContextType>({
   handleSubmit: () => Promise.reject(new Error('handleSubmit not implemented')),
 });
 
@@ -47,7 +45,9 @@ export function Form<T extends FieldValues, Output>({
     mode: 'onChange',
   });
 
-  const handleSubmit = methods.handleSubmit(onSubmit);
+  const handleSubmit = methods.handleSubmit((data, event) => {
+    return onSubmit(data, methods, event);
+  });
 
   return (
     <FormProvider {...methods}>
@@ -57,5 +57,3 @@ export function Form<T extends FieldValues, Output>({
     </FormProvider>
   );
 }
-
-export default Form;

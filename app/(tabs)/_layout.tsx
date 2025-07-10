@@ -14,6 +14,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: '#000',
+        tabBarInactiveTintColor: '#888',
         headerShown: false,
         tabBarButton: HapticTab,
         // tabBarBackground: TabBarBackground,
@@ -35,6 +36,13 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="orders"
+        options={{
+          title: 'Orders',
+          tabBarIcon: ({ color }) => <ShoppingCart size={28} color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="scan"
         options={{
           title: 'Scan',
@@ -47,13 +55,6 @@ export default function TabLayout() {
         options={{
           title: 'Cart',
           tabBarIcon: ({ color }) => <ShoppingBag size={28} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="orders"
-        options={{
-          title: 'Orders',
-          tabBarIcon: ({ color }) => <ShoppingCart size={28} color={color} />,
         }}
       />
       <Tabs.Screen

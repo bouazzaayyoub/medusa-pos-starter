@@ -11,13 +11,7 @@ interface SwitchFieldProps {
   disabled?: boolean;
 }
 
-export function SwitchField({
-  name,
-  label,
-  description,
-  className = '',
-  disabled = false,
-}: SwitchFieldProps) {
+export function SwitchField({ name, label, description, className = '', disabled = false }: SwitchFieldProps) {
   const { control } = useFormContext();
   const {
     field: { onChange, value = false },
@@ -32,31 +26,24 @@ export function SwitchField({
       <TouchableOpacity
         onPress={() => !disabled && onChange(!value)}
         disabled={disabled}
-        className={clx(
-          'flex-row items-center justify-between py-4 px-4 rounded-xl border border-gray-300 bg-white',
-          {
-            'opacity-50': disabled,
-            'border-red-500': error,
-          },
-        )}
+        className={clx('flex-row items-center justify-between py-4 px-4 rounded-xl border border-border bg-white', {
+          'opacity-50': disabled,
+          'border-red': error,
+        })}
       >
         <View className="flex-1 mr-4">
-          <Text className="text-base font-medium text-gray-900">{label}</Text>
-          {description && (
-            <Text className="text-sm text-gray-500 mt-1">{description}</Text>
-          )}
+          <Text className="text-base font-medium">{label}</Text>
+          {description && <Text className="text-sm text-gray-500 mt-1">{description}</Text>}
         </View>
         <Switch
           value={value}
           onValueChange={onChange}
           disabled={disabled}
-          trackColor={{ false: '#E5E5E5', true: '#000000' }}
+          trackColor={{ false: '#E5E5E5', true: '#282828' }}
           thumbColor={value ? '#FFFFFF' : '#FFFFFF'}
         />
       </TouchableOpacity>
-      {error && (
-        <Text className="text-red-500 text-sm mt-1">{error.message}</Text>
-      )}
+      {error && <Text className="text-red text-sm mt-1">{error.message}</Text>}
     </View>
   );
 }

@@ -5,5 +5,16 @@ import React from 'react';
 export const AppStatusBar = () => {
   const pathname = usePathname();
 
-  return <StatusBar style={pathname === '/scan' ? 'light' : 'auto'} />;
+  return (
+    <StatusBar
+      style={
+        pathname.startsWith('/scan') ||
+        pathname.startsWith('/product-details') ||
+        pathname.startsWith('/order-details') ||
+        pathname.startsWith('/customer-lookup')
+          ? 'light'
+          : 'auto'
+      }
+    />
+  );
 };

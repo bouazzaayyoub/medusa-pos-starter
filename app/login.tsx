@@ -1,6 +1,6 @@
-import Form from '@/components/form/Form';
-import FormButton from '@/components/form/FormButton';
-import TextField from '@/components/form/TextField';
+import { Form } from '@/components/form/Form';
+import { FormButton } from '@/components/form/FormButton';
+import { TextField } from '@/components/form/TextField';
 import { CircleAlert } from '@/components/icons/circle-alert';
 import { useAuthCtx } from '@/contexts/auth';
 import React, { useState } from 'react';
@@ -67,11 +67,9 @@ const loginSchema = z.object({
       },
       {
         message: 'Please enter a valid Medusa shop URL',
-      }
+      },
     ),
-  email: z
-    .email('Please enter a valid email address')
-    .min(3, 'Email is required'),
+  email: z.email('Please enter a valid email address').min(3, 'Email is required'),
   password: z.string().min(1, 'Password is required'),
 });
 
@@ -93,8 +91,7 @@ export default function LoginScreen() {
   };
 
   const defaultValues: Partial<LoginFormData> = {
-    medusaUrl:
-      auth.state.status !== 'loading' ? (auth.state.medusaUrl ?? '') : '',
+    medusaUrl: auth.state.status !== 'loading' ? (auth.state.medusaUrl ?? '') : '',
     email: '',
     password: '',
   };
@@ -103,18 +100,13 @@ export default function LoginScreen() {
     <SafeAreaView className="flex-1 p-4 pt-6 bg-white gap-7">
       <Text className="text-4xl font-semibold">Login</Text>
       {error && (
-        <View className="flex-row bg-[#FFDFDF] p-4 rounded-xl items-center gap-3">
+        <View className="flex-row bg-red-light p-4 rounded-xl items-center gap-3">
           <CircleAlert size={16} color="#ef4444" />
-          <Text className="text-red-500 text-base">{error}</Text>
+          <Text className="text-red text-base">{error}</Text>
         </View>
       )}
       <View className="w-full flex-1">
-        <Form
-          schema={loginSchema}
-          onSubmit={handleLogin}
-          defaultValues={defaultValues}
-          className="gap-6"
-        >
+        <Form schema={loginSchema} onSubmit={handleLogin} defaultValues={defaultValues} className="gap-6">
           <TextField
             name="medusaUrl"
             floatingPlaceholder
@@ -144,12 +136,7 @@ export default function LoginScreen() {
             readOnly={auth.state.status === 'loading'}
           />
 
-          <FormButton
-            loading={auth.state.status === 'loading'}
-            className="bg-gray-700 mt-auto"
-          >
-            Sign In
-          </FormButton>
+          <FormButton isPending={auth.state.status === 'loading'}>Sign In</FormButton>
         </Form>
       </View>
     </SafeAreaView>

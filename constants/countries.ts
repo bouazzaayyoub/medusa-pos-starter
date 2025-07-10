@@ -441,7 +441,5 @@ export const COUNTRIES: Country[] = [
 ];
 
 export const getCountryByAlpha2 = (alpha2: string): Country | undefined => {
-  return COUNTRIES.find(
-    (country) => country.alpha2.toLowerCase() === alpha2.toLowerCase(),
-  );
+  return COUNTRIES.find((country) => country.alpha2.toLowerCase() === alpha2.toLowerCase());
 };

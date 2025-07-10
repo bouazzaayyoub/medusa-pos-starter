@@ -13,9 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 const isPlaceholderProduct = (
   product: AdminProduct | { id: `placeholder_${string}` },
 ): product is { id: `placeholder_${string}` } => {
-  return (
-    typeof product.id === 'string' && product.id.startsWith('placeholder_')
-  );
+  return typeof product.id === 'string' && product.id.startsWith('placeholder_');
 };
 
 export default function ProductsScreen() {
@@ -52,10 +50,7 @@ export default function ProductsScreen() {
       const thumbnail = item.thumbnail || item.images?.[0]?.url;
       const variantPrices = (item.variants ?? [])
         .flatMap((variant) =>
-          variant.prices?.filter(
-            (price) =>
-              price.currency_code === settings.data?.region?.currency_code,
-          ),
+          variant.prices?.filter((price) => price.currency_code === settings.data?.region?.currency_code),
         )
         .filter((price) => typeof price !== 'undefined');
       const currencyCode = variantPrices[0]?.currency_code ?? undefined;
@@ -65,48 +60,38 @@ export default function ProductsScreen() {
 
       return (
         <View className="px-1 w-full">
-          <TouchableOpacity
-            className="flex w-full gap-4"
-            onPress={() => handleProductPress(item)}
-            activeOpacity={0.7}
-          >
+          <TouchableOpacity className="flex w-full gap-4" onPress={() => handleProductPress(item)} activeOpacity={0.7}>
             <View className="bg-gray-200 aspect-square rounded-lg overflow-hidden">
-              {thumbnail && (
-                <Image
-                  source={{ uri: thumbnail }}
-                  className="w-full h-full object-cover"
-                />
-              )}
+              {thumbnail && <Image source={{ uri: thumbnail }} className="w-full h-full object-cover" />}
             </View>
             <View>
               <Text className="mb-1 font-light">{item.title}</Text>
               {/* TODO: display discounted price */}
               <Text className="font-bold">
-                {amounts.length === 0 ||
-                (typeof minPrice !== 'number' && typeof maxPrice !== 'number')
+                {amounts.length === 0 || (typeof minPrice !== 'number' && typeof maxPrice !== 'number')
                   ? 'No price available'
                   : minPrice === maxPrice
-                  ? minPrice?.toLocaleString('en-US', {
-                      style: 'currency',
-                      currency: currencyCode,
-                      currencyDisplay: 'narrowSymbol',
-                    })
-                  : `${minPrice?.toLocaleString('en-US', {
-                      style: 'currency',
-                      currency: currencyCode,
-                      currencyDisplay: 'narrowSymbol',
-                    })} — ${maxPrice?.toLocaleString('en-US', {
-                      style: 'currency',
-                      currency: currencyCode,
-                      currencyDisplay: 'narrowSymbol',
-                    })}`}
+                    ? minPrice?.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: currencyCode,
+                        currencyDisplay: 'narrowSymbol',
+                      })
+                    : `${minPrice?.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: currencyCode,
+                        currencyDisplay: 'narrowSymbol',
+                      })} — ${maxPrice?.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: currencyCode,
+                        currencyDisplay: 'narrowSymbol',
+                      })}`}
               </Text>
             </View>
           </TouchableOpacity>
         </View>
       );
     },
-    [settings.data?.region?.currency_code],
+    [handleProductPress, settings.data?.region?.currency_code],
   );
 
   const data = React.useMemo(() => {
@@ -122,15 +107,13 @@ export default function ProductsScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="m-4 mb-6 relative">
-        <Search
-          size={16}
-          className="absolute left-4 top-1/2 -translate-y-[50%] text-gray"
-        />
+        <Search size={16} className="absolute left-4 top-1/2 -translate-y-[50%] text-gray" />
         <TextInput
-          className="rounded-full leading-snug pb-3 pt-2 pr-4 pl-10 text-base border placeholder:text-gray border-border"
+          className="rounded-full py-3 pr-4 pl-10 text-base leading-5 border placeholder:text-gray border-border"
           placeholder="Search products..."
           value={searchQuery}
           onChangeText={setSearchQuery}
+          inputMode="search"
         />
       </View>
 
@@ -146,9 +129,7 @@ export default function ProductsScreen() {
           ListEmptyComponent={
             <View className="flex-1 mt-60 items-center">
               <CircleAlert size={24} />
-              <Text className="text-center text-xl mt-1">
-                No products match{'\n'}the search
-              </Text>
+              <Text className="text-center text-xl mt-1">No products match{'\n'}the search</Text>
             </View>
           }
           contentContainerStyle={{
@@ -236,10 +217,7 @@ export default function ProductsScreen() {
             productsQuery.refetch();
           }}
           onEndReached={() => {
-            if (
-              productsQuery.hasNextPage &&
-              !productsQuery.isFetchingNextPage
-            ) {
+            if (productsQuery.hasNextPage && !productsQuery.isFetchingNextPage) {
               productsQuery.fetchNextPage();
             }
           }}

@@ -5,12 +5,12 @@ import { AdminRegion } from '@medusajs/types';
 import React from 'react';
 import { Alert } from 'react-native';
 import * as z from 'zod/v4';
-import Form from './form/Form';
-import FormButton from './form/FormButton';
+import { Form } from './form/Form';
+import { FormButton } from './form/FormButton';
 import { MultiSelectField } from './form/MultiSelectField';
-import SelectField from './form/SelectField';
+import { SelectField } from './form/SelectField';
 import { SwitchField } from './form/SwitchField';
-import TextField from './form/TextField';
+import { TextField } from './form/TextField';
 
 interface RegionCreateFormProps {
   onRegionCreated: (region: AdminRegion) => void;
@@ -69,12 +69,7 @@ const RegionCreateForm: React.FC<RegionCreateFormProps> = ({
   }));
 
   return (
-    <Form
-      schema={regionSchema}
-      onSubmit={handleCreateRegion}
-      defaultValues={defaultValues}
-      className="flex-1"
-    >
+    <Form schema={regionSchema} onSubmit={handleCreateRegion} defaultValues={defaultValues} className="flex-1">
       <TextField name="name" floatingPlaceholder placeholder="Region Name" />
 
       <SelectField
@@ -106,11 +101,7 @@ const RegionCreateForm: React.FC<RegionCreateFormProps> = ({
         description="Prices include taxes (tax-inclusive) vs. taxes added at checkout (tax-exclusive)"
       />
 
-      <FormButton
-        loading={createRegion.isPending}
-        disabled={createRegion.isPending}
-        className="mt-auto"
-      >
+      <FormButton isPending={createRegion.isPending} disabled={createRegion.isPending} className="mt-auto">
         Create Region
       </FormButton>
     </Form>

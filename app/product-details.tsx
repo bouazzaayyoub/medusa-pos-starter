@@ -2,8 +2,8 @@ import { useAddToDraftOrder } from '@/api/hooks/draft-orders';
 import { useProduct } from '@/api/hooks/products';
 import { ProductDetailsSkeleton } from '@/components/skeletons/ProductDetailsSkeleton';
 import { Button } from '@/components/ui/Button';
-import OptionPicker from '@/components/ui/OptionPicker';
-import QuantityPicker from '@/components/ui/QuantityPicker';
+import { OptionPicker } from '@/components/ui/OptionPicker';
+import { QuantityPicker } from '@/components/ui/QuantityPicker';
 import { useSettings } from '@/contexts/settings';
 import { AdminProductImage } from '@medusajs/types';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -11,18 +11,12 @@ import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { Dimensions, Image, ScrollView, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSharedValue } from 'react-native-reanimated';
-import Carousel, {
-  CarouselRenderItem,
-  ICarouselInstance,
-  Pagination,
-} from 'react-native-reanimated-carousel';
+import Carousel, { CarouselRenderItem, ICarouselInstance, Pagination } from 'react-native-reanimated-carousel';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const windowWidth = Dimensions.get('window').width;
 
-const ProductImagesCarousel: React.FC<{ images: AdminProductImage[] }> = ({
-  images,
-}) => {
+const ProductImagesCarousel: React.FC<{ images: AdminProductImage[] }> = ({ images }) => {
   const targetRef = React.useRef<View>(null);
   const carouselRef = React.useRef<ICarouselInstance>(null);
   const progress = useSharedValue<number>(0);
@@ -35,24 +29,19 @@ const ProductImagesCarousel: React.FC<{ images: AdminProductImage[] }> = ({
     });
   }, []);
 
-  const renderItem = React.useCallback<CarouselRenderItem<AdminProductImage>>(
-    ({ item }) => {
-      return (
-        <Image
-          source={{ uri: item.url }}
-          className="w-full h-full object-cover"
-        />
-      );
-    },
-    [],
-  );
-
-  const onPressPagination = React.useCallback((index: number) => {
-    carouselRef.current?.scrollTo({
-      count: index - progress.value,
-      animated: true,
-    });
+  const renderItem = React.useCallback<CarouselRenderItem<AdminProductImage>>(({ item }) => {
+    return <Image source={{ uri: item.url }} className="w-full h-full object-cover" />;
   }, []);
+
+  const onPressPagination = React.useCallback(
+    (index: number) => {
+      carouselRef.current?.scrollTo({
+        count: index - progress.value,
+        animated: true,
+      });
+    },
+    [progress],
+  );
 
   return (
     <View ref={targetRef}>
@@ -102,16 +91,13 @@ const ProductImagesCarousel: React.FC<{ images: AdminProductImage[] }> = ({
 export default function ProductDetailsScreen() {
   const settings = useSettings();
   const [quantity, setQuantity] = useState(1);
-  const [selectedOptions, setSelectedOptions] = useState<
-    Record<string, string>
-  >({});
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
 
   const params = useLocalSearchParams<{
     productId: string;
     productName: string;
   }>();
-  const { productId, productName /* barcode, scannedProduct, manualEntry */ } =
-    params;
+  const { productId, productName /* barcode, scannedProduct, manualEntry */ } = params;
   const productQuery = useProduct(productId);
   const addToDraftOrder = useAddToDraftOrder({
     onSuccess: (data) => {
@@ -125,16 +111,18 @@ export default function ProductDetailsScreen() {
   useEffect(() => {
     if (productQuery.data) {
       const firstVariant = productQuery.data.product.variants?.[0];
-      console.log({ firstVariant });
 
       if (firstVariant) {
         const initialOptions =
-          firstVariant.options?.reduce((acc, option) => {
-            if (option.value && option.option_id) {
-              acc[option.option_id] = option.value;
-            }
-            return acc;
-          }, {} as Record<string, string>) ?? {};
+          firstVariant.options?.reduce(
+            (acc, option) => {
+              if (option.value && option.option_id) {
+                acc[option.option_id] = option.value;
+              }
+              return acc;
+            },
+            {} as Record<string, string>,
+          ) ?? {};
 
         setSelectedOptions(initialOptions);
       }
@@ -161,34 +149,22 @@ export default function ProductDetailsScreen() {
     );
   }
 
-  const selectedVariant = productQuery.data.product.variants?.find(
-    (variant) => {
-      return Object.entries(selectedOptions).every(([optionId, value]) =>
-        variant.options?.some(
-          (option) => option.option_id === optionId && option.value === value,
-        ),
-      );
-    },
-  );
+  const selectedVariant = productQuery.data.product.variants?.find((variant) => {
+    return Object.entries(selectedOptions).every(([optionId, value]) =>
+      variant.options?.some((option) => option.option_id === optionId && option.value === value),
+    );
+  });
 
   const currencyCode = settings.data?.region?.currency_code || 'eur';
-  const price = selectedVariant?.prices?.find(
-    (price) => price.currency_code === currencyCode,
-  );
+  const price = selectedVariant?.prices?.find((price) => price.currency_code === currencyCode);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
       <GestureHandlerRootView>
-        <ScrollView
-          className="flex-1 px-4 pb-4"
-          showsVerticalScrollIndicator={false}
-        >
+        <ScrollView className="flex-1 px-4 pb-4" showsVerticalScrollIndicator={false}>
           <View className="mb-5 bg-gray-100 rounded-xl overflow-hidden">
-            {productQuery.data.product.images &&
-            productQuery.data.product.images.length ? (
-              <ProductImagesCarousel
-                images={productQuery.data.product.images}
-              />
+            {productQuery.data.product.images && productQuery.data.product.images.length ? (
+              <ProductImagesCarousel images={productQuery.data.product.images} />
             ) : (
               <View className="flex-1 justify-center items-center bg-gray-300">
                 <Text className="text-base text-gray-500">No Image</Text>
@@ -219,9 +195,7 @@ export default function ProductDetailsScreen() {
             )}
           </View>
 
-          <Text className="text-gray-400 mb-6">
-            {productQuery.data.product.description}
-          </Text>
+          <Text className="text-gray-400 mb-6">{productQuery.data.product.description}</Text>
 
           {productQuery.data.product.options && (
             <View className="gap-6 mb-4">
@@ -267,12 +241,7 @@ export default function ProductDetailsScreen() {
           /> */}
 
           <View className="flex-row items-center gap-4">
-            <QuantityPicker
-              quantity={quantity}
-              onQuantityChange={setQuantity}
-              min={1}
-              variant="ghost"
-            />
+            <QuantityPicker quantity={quantity} onQuantityChange={setQuantity} min={1} variant="ghost" />
 
             <Button
               size="lg"

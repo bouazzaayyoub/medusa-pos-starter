@@ -1,11 +1,5 @@
 import Medusa from '@medusajs/js-sdk';
-import {
-  DefaultError,
-  useMutation,
-  UseMutationOptions,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { DefaultError, useMutation, UseMutationOptions, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as SecureStore from 'expo-secure-store';
 import { useAuthCtx } from './auth';
 
@@ -39,12 +33,8 @@ export const useSettings = () => {
         },
       });
 
-      const sales_channel_id = await SecureStore.getItemAsync(
-        'sales_channel_id',
-      );
-      const stock_location_id = await SecureStore.getItemAsync(
-        'stock_location_id',
-      );
+      const sales_channel_id = await SecureStore.getItemAsync('sales_channel_id');
+      const stock_location_id = await SecureStore.getItemAsync('stock_location_id');
       const region_id = await SecureStore.getItemAsync('region_id');
 
       if (!sales_channel_id && !stock_location_id && !region_id) {
@@ -52,20 +42,16 @@ export const useSettings = () => {
       }
 
       const sales_channel_response = sales_channel_id
-        ? await sdk.admin.salesChannel
-            .retrieve(sales_channel_id)
-            .catch((error) => {
-              console.error(error);
-              return undefined;
-            })
+        ? await sdk.admin.salesChannel.retrieve(sales_channel_id).catch((error) => {
+            console.error(error);
+            return undefined;
+          })
         : undefined;
       const stock_location_response = stock_location_id
-        ? await sdk.admin.stockLocation
-            .retrieve(stock_location_id)
-            .catch((error) => {
-              console.error(error);
-              return undefined;
-            })
+        ? await sdk.admin.stockLocation.retrieve(stock_location_id).catch((error) => {
+            console.error(error);
+            return undefined;
+          })
         : undefined;
       const region_response = region_id
         ? await sdk.admin.region.retrieve(region_id).catch((error) => {
@@ -85,24 +71,15 @@ export const useSettings = () => {
 };
 
 export const useUpdateSettings = (
-  options?: Omit<
-    UseMutationOptions<SettingsStateType, DefaultError, SettingsStateType>,
-    'mutationKey' | 'mutationFn'
-  >,
+  options?: Omit<UseMutationOptions<SettingsStateType, DefaultError, SettingsStateType>, 'mutationKey' | 'mutationFn'>,
 ) => {
   const client = useQueryClient();
 
   return useMutation({
     mutationKey: ['update-settings'],
     mutationFn: async (settings) => {
-      await SecureStore.setItemAsync(
-        'sales_channel_id',
-        settings.sales_channel_id,
-      );
-      await SecureStore.setItemAsync(
-        'stock_location_id',
-        settings.stock_location_id,
-      );
+      await SecureStore.setItemAsync('sales_channel_id', settings.sales_channel_id);
+      await SecureStore.setItemAsync('stock_location_id', settings.stock_location_id);
       await SecureStore.setItemAsync('region_id', settings.region_id);
       return settings;
     },

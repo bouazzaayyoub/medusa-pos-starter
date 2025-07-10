@@ -3,9 +3,9 @@ import { AdminSalesChannel } from '@medusajs/types';
 import React from 'react';
 import { Alert } from 'react-native';
 import * as z from 'zod/v4';
-import Form from './form/Form';
-import FormButton from './form/FormButton';
-import TextField from './form/TextField';
+import { Form } from './form/Form';
+import { FormButton } from './form/FormButton';
+import { TextField } from './form/TextField';
 
 interface SalesChannelCreateFormProps {
   onSalesChannelCreated: (salesChannel: AdminSalesChannel) => void;
@@ -56,11 +56,7 @@ const SalesChannelCreateForm: React.FC<SalesChannelCreateFormProps> = ({
         numberOfLines={3}
       />
 
-      <FormButton
-        loading={createSalesChannel.isPending}
-        disabled={createSalesChannel.isPending}
-        className="mt-auto"
-      >
+      <FormButton isPending={createSalesChannel.isPending} disabled={createSalesChannel.isPending} className="mt-auto">
         Create Channel
       </FormButton>
     </Form>

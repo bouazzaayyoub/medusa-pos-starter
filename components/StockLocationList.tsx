@@ -5,7 +5,7 @@ import { MapPin } from '@/components/icons/map-pin';
 import { getCountryByAlpha2 } from '@/constants/countries';
 import { findProvinceByCode } from '@/constants/provinces';
 import { clx } from '@/utils/clx';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 
 interface StockLocationListProps {
@@ -21,22 +21,18 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
 
   if (stockLocationsQuery.isLoading) {
     return (
-      <View className="flex-row mb-auto border rounded-xl border-[#E5E5E5] justify-between items-center p-4">
-        <Text className="text-base text-[#B5B5B5]">
-          Loading stock locations...
-        </Text>
-        <Loader size={16} className="text-[#B5B5B5] animate-spin" />
+      <View className="flex-row mb-auto border rounded-xl border-border justify-between items-center p-4">
+        <Text className="text-base text-gray">Loading stock locations...</Text>
+        <Loader size={16} color="#B5B5B5" className="animate-spin" />
       </View>
     );
   }
 
   if (stockLocationsQuery.isError) {
     return (
-      <View className="flex-row mb-auto bg-[#F8EC9A] rounded-xl justify-between items-center p-4">
-        <Text className="text-base text-[#9B8435]">
-          Unable to load stock locations.
-        </Text>
-        <CircleAlert size={16} className="text-[#9B8435]" />
+      <View className="flex-row mb-auto bg-yellow-light rounded-xl justify-between items-center p-4">
+        <Text className="text-base text-yellow">Unable to load stock locations.</Text>
+        <CircleAlert size={16} className="text-yellow" />
       </View>
     );
   }
@@ -47,63 +43,50 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
         data={stockLocationsQuery.data?.pages?.[0]?.stock_locations || []}
         keyExtractor={(item) => item.id}
         contentContainerClassName="border rounded-xl border-b overflow-hidden border-[#EDEDED]"
-        renderItem={({ item, index }) => (
-          <Fragment key={item.id}>
-            <TouchableOpacity
-              className={clx(
-                'py-3 justify-between items-center flex-row px-4',
-                {
-                  'bg-black': selectedStockLocationId === item.id,
-                }
-              )}
-              onPress={() => onStockLocationSelect(item.id)}
-            >
-              <View>
-                <Text
-                  className={clx({
-                    'text-white': selectedStockLocationId === item.id,
-                  })}
-                >
-                  {item.name}
-                </Text>
-                {item.address && (
-                  <Text
-                    className={clx('text-sm text-gray-500', {
-                      'text-white': selectedStockLocationId === item.id,
-                    })}
-                  >
-                    {[
-                      item.address.address_1,
-                      item.address.address_2,
-                      [item.address.postal_code, item.address.city]
-                        .filter(Boolean)
-                        .join(' '),
-                      item.address.province
-                        ? findProvinceByCode(
-                            item.address.country_code,
-                            item.address.province
-                          )?.name || item.address.province
-                        : undefined,
-                      getCountryByAlpha2(item.address.country_code)?.name ||
-                        item.address.country_code,
-                    ]
-                      .filter(Boolean)
-                      .join(', ')}
-                  </Text>
-                )}
-              </View>
-              <MapPin
-                size={16}
+        ItemSeparatorComponent={() => <View className="h-px bg-border mx-4" />}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            className={clx('py-3 justify-between items-center flex-row px-4', {
+              'bg-black': selectedStockLocationId === item.id,
+            })}
+            onPress={() => onStockLocationSelect(item.id)}
+          >
+            <View>
+              <Text
                 className={clx({
                   'text-white': selectedStockLocationId === item.id,
                 })}
-              />
-            </TouchableOpacity>
-            {index <
-              (stockLocationsQuery.data?.pages?.[0]?.stock_locations.length ||
-                0) -
-                1 && <Text className="h-px bg-[#EDEDED] mx-4" />}
-          </Fragment>
+              >
+                {item.name}
+              </Text>
+              {item.address && (
+                <Text
+                  className={clx('text-sm text-gray', {
+                    'text-white': selectedStockLocationId === item.id,
+                  })}
+                >
+                  {[
+                    item.address.address_1,
+                    item.address.address_2,
+                    [item.address.postal_code, item.address.city].filter(Boolean).join(' '),
+                    item.address.province
+                      ? findProvinceByCode(item.address.country_code, item.address.province)?.name ||
+                        item.address.province
+                      : undefined,
+                    getCountryByAlpha2(item.address.country_code)?.name || item.address.country_code,
+                  ]
+                    .filter(Boolean)
+                    .join(', ')}
+                </Text>
+              )}
+            </View>
+            <MapPin
+              size={16}
+              className={clx({
+                'text-white': selectedStockLocationId === item.id,
+              })}
+            />
+          </TouchableOpacity>
         )}
       />
     </View>

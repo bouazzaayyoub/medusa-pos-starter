@@ -20,7 +20,7 @@ export function QuantityPicker({
   quantity,
   onQuantityChange,
   min = 1,
-  max = 999,
+  max = Infinity,
   disabled = false,
   isPending = false,
   variant = 'default',
@@ -62,7 +62,7 @@ export function QuantityPicker({
         className={clx(
           'flex-row overflow-hidden rounded-md',
           variant === 'default' ? 'h-8 border border-border' : 'h-10',
-          className
+          className,
         )}
       >
         <TouchableOpacity
@@ -72,27 +72,22 @@ export function QuantityPicker({
         >
           <Minus
             size={variant === 'default' ? 16 : 24}
-            className={clx(
-              variant === 'default' ? 'text-gray-dark' : 'text-black',
-              !canDecrement ? 'text-gray' : ''
-            )}
+            className={clx(variant === 'default' ? 'text-gray-dark' : 'text-black', !canDecrement ? 'text-gray' : '')}
           />
         </TouchableOpacity>
         <View
-          className={clx(
-            'items-center justify-center',
-            variant === 'default' ? 'border-x border-border w-8' : 'w-12'
-          )}
+          className={clx('items-center justify-center', variant === 'default' ? 'border-x border-border w-8' : 'w-12')}
         >
           <TextInput
             value={quantity.toString()}
             onChangeText={handleInputChange}
             keyboardType="numeric"
             textAlign="center"
+            verticalAlign="middle"
             className={clx(
-              'w-full h-full !leading-tight text-center text-black',
-              variant === 'default' ? 'text-base' : 'text-2xl',
-              disabled ? 'text-gray' : ''
+              'h-full w-full !p-0',
+              variant === 'default' ? '' : 'text-[1.5rem]',
+              disabled ? 'text-gray' : '',
             )}
             editable={!disabled}
             selectTextOnFocus
@@ -105,16 +100,11 @@ export function QuantityPicker({
         >
           <Plus
             size={variant === 'default' ? 16 : 24}
-            className={clx(
-              variant === 'default' ? 'text-gray-dark' : 'text-black',
-              !canIncrement ? 'text-gray' : ''
-            )}
+            className={clx(variant === 'default' ? 'text-gray-dark' : 'text-black', !canIncrement ? 'text-gray' : '')}
           />
         </TouchableOpacity>
       </View>
-      {isPending && (
-        <Loader size={16} color="#B5B5B5" className="animate-spin" />
-      )}
+      {isPending && <Loader size={16} color="#B5B5B5" className="animate-spin" />}
     </View>
   );
 }

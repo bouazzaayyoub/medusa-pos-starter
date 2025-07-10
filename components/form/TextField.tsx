@@ -4,27 +4,17 @@ import { EyeOff } from '@/components/icons/eye-off';
 import { clx } from '@/utils/clx';
 import React, { useEffect, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
-import {
-  Text,
-  TextInput,
-  TextInputProps,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import { Text, TextInput, TextInputProps, TouchableOpacity, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
-interface TextFieldProps
-  extends Omit<TextInputProps, 'value' | 'onChangeText'> {
+interface TextFieldProps extends Omit<TextInputProps, 'value' | 'onChangeText'> {
   name: string;
   placeholder?: string;
   floatingPlaceholder?: boolean;
   className?: string;
   inputClassName?: string;
   errorClassName?: string;
+  errorVariation?: 'default' | 'inline';
 }
 
 export function TextField({
@@ -34,6 +24,7 @@ export function TextField({
   className = '',
   inputClassName = '',
   errorClassName = '',
+  errorVariation = 'default',
   secureTextEntry,
   ...textInputProps
 }: TextFieldProps) {
@@ -75,17 +66,14 @@ export function TextField({
       floatingPlaceholderTranslateY.value = withTiming(0, { duration: 150 });
       floatingPlaceholderScale.value = withTiming(1, { duration: 150 });
     }
-  }, [showFloating]);
+  }, [floatingPlaceholderScale, floatingPlaceholderTranslateY, showFloating]);
 
   return (
     <View className={className}>
       <View className="relative">
         {floatingPlaceholder && (
           <Animated.Text
-            className={clx(
-              'absolute left-4 z-10 text-lg top-5',
-              error ? 'text-red-500' : 'text-[#b5b5b5]',
-            )}
+            className={clx('absolute left-4 z-10 text-lg top-5', error ? 'text-red' : 'text-gray')}
             style={floatingPlaceholderStyle}
             pointerEvents="none"
           >
@@ -94,10 +82,11 @@ export function TextField({
         )}
         <TextInput
           className={clx(
-            'bg-white rounded-xl px-4 py-5 text-lg leading-6 border border-gray-200',
+            'bg-white rounded-xl px-4 py-5 text-lg leading-6 border border-border',
             {
-              'border-red-500 bg-red-50': error,
+              'border-red': error,
               'pt-6 pb-4': floatingPlaceholder,
+              'pr-10': error && errorVariation === 'inline',
             },
             inputClassName,
           )}
@@ -119,29 +108,24 @@ export function TextField({
             onPress={() => setShowValue(!showValue)}
           >
             {showValue ? (
-              <Eye
-                size={16}
-                className={error ? 'text-red-500' : 'text-[#B5B5B5]'}
-              />
+              <Eye size={16} className={error ? 'text-red' : 'text-gray'} />
             ) : (
-              <EyeOff
-                size={16}
-                className={error ? 'text-red-500' : 'text-[#B5B5B5]'}
-              />
+              <EyeOff size={16} className={error ? 'text-red' : 'text-gray'} />
             )}
           </TouchableOpacity>
         )}
+        {error && errorVariation === 'inline' && (
+          <View className="absolute right-4 top-1/2 -translate-y-1/2">
+            <CircleAlert size={16} color="#ef4444" />
+          </View>
+        )}
       </View>
-      {error && (
+      {error && errorVariation === 'default' && (
         <View className="flex-row items-center mt-1 gap-1">
           <CircleAlert size={14} color="#ef4444" />
-          <Text className={`text-red-500 text-sm ${errorClassName}`}>
-            {error.message}
-          </Text>
+          <Text className={`text-red text-sm ${errorClassName}`}>{error.message}</Text>
         </View>
       )}
     </View>
   );
 }
-
-export default TextField;

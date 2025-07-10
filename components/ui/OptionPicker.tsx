@@ -3,7 +3,7 @@ import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
 interface OptionPickerProps {
-  values: Array<{ id: string; value: string }>;
+  values: { id: string; value: string }[];
   selectedValue?: string;
   onValueChange: (value: { id: string; value: string }) => void;
   label: string;

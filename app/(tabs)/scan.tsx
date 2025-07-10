@@ -90,16 +90,11 @@ export default function ScanScreen() {
   if (hasPermission === false) {
     return (
       <SafeAreaView className="flex-1 bg-black justify-center items-center p-5">
-        <Text className="text-white text-2xl mb-4 text-center">
-          Camera Access Required
-        </Text>
+        <Text className="text-white text-2xl mb-4 text-center">Camera Access Required</Text>
         <Text className="text-white text-base text-center opacity-70 mb-8">
           Please enable camera access in settings to scan barcodes
         </Text>
-        <TouchableOpacity
-          className="border border-white rounded-lg p-4 items-center"
-          onPress={handleGoBack}
-        >
+        <TouchableOpacity className="border border-white rounded-lg p-4 items-center" onPress={handleGoBack}>
           <Text className="text-white text-base font-semibold">Go Back</Text>
         </TouchableOpacity>
       </SafeAreaView>
@@ -115,15 +110,7 @@ export default function ScanScreen() {
         enableTorch={enableTorch}
         onBarcodeScanned={handleBarcodeScanned}
         barcodeScannerSettings={{
-          barcodeTypes: [
-            'ean13',
-            'ean8',
-            'upc_a',
-            'upc_e',
-            'code128',
-            'code93',
-            'code39',
-          ],
+          barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e', 'code128', 'code93', 'code39'],
         }}
         autofocus="on"
         active={pathname === '/scan'}
@@ -131,22 +118,12 @@ export default function ScanScreen() {
 
       {/* Top Navigation with Safe Area */}
       <View className="absolute top-0 left-0 right-0 z-30 px-6 flex-row justify-between items-center py-safe-offset-3">
-        <TouchableOpacity
-          className="w-12 h-12 justify-center items-center"
-          onPress={handleGoBack}
-        >
+        <TouchableOpacity className="w-12 h-12 justify-center items-center" onPress={handleGoBack}>
           <X size={32} color="white" />
         </TouchableOpacity>
 
-        <TouchableOpacity
-          className="w-12 h-12 justify-center items-center"
-          onPress={toggleTorch}
-        >
-          {enableTorch ? (
-            <Zap size={26} color="white" />
-          ) : (
-            <ZapOff size={26} color="white" />
-          )}
+        <TouchableOpacity className="w-12 h-12 justify-center items-center" onPress={toggleTorch}>
+          {enableTorch ? <Zap size={26} color="white" /> : <ZapOff size={26} color="white" />}
         </TouchableOpacity>
       </View>
 
@@ -176,14 +153,8 @@ export default function ScanScreen() {
 
           {/* Scan Text */}
           {!scanBarcodeMutation.isPending && (
-            <Animated.View
-              entering={FadeIn}
-              exiting={FadeOut}
-              className="absolute top-full mt-6"
-            >
-              <Text className="text-white text-xl text-center">
-                Scan barcode
-              </Text>
+            <Animated.View entering={FadeIn} exiting={FadeOut} className="absolute top-full mt-6">
+              <Text className="text-white text-xl text-center">Scan barcode</Text>
             </Animated.View>
           )}
         </View>
@@ -197,9 +168,7 @@ export default function ScanScreen() {
           className="absolute bottom-0 left-0 right-0 px-6 pb-safe-offset-4 flex items-center"
         >
           <View className="bg-white px-4 py-2 rounded-3xl">
-            <Text className="text-black text-center text-base">
-              Searching...
-            </Text>
+            <Text className="text-black text-center text-base">Searching...</Text>
           </View>
         </Animated.View>
       )}
@@ -211,15 +180,13 @@ export default function ScanScreen() {
           className="absolute bottom-0 left-0 right-0 px-6 pb-safe-offset-4 flex items-center z-50"
         >
           <TouchableOpacity
-            className="bg-red-500 px-4 py-2 rounded-3xl"
+            className="bg-red px-4 py-2 rounded-3xl"
             onPress={() => {
               setErrorMessage(null);
               scanBarcodeMutation.reset();
             }}
           >
-            <Text className="text-white text-center text-base">
-              {errorMessage}
-            </Text>
+            <Text className="text-white text-center text-base">{errorMessage}</Text>
           </TouchableOpacity>
         </Animated.View>
       )}

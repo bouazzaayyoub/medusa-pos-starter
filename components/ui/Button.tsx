@@ -17,8 +17,7 @@ const TEXT_SIZES = {
 
 const BUTTON_VARIANTS = {
   solid: 'bg-black disabled:bg-gray-light',
-  outline:
-    'border border-border bg-transparent disabled:bg-gray-light disabled:border-gray-light',
+  outline: 'border border-border bg-transparent disabled:bg-gray-light disabled:border-gray-light',
 } as const;
 
 const TEXT_VARIANTS = {
@@ -26,10 +25,11 @@ const TEXT_VARIANTS = {
   outline: 'text-black disabled:text-gray',
 } as const;
 
-type ButtonProps = TouchableOpacityProps & {
+export type ButtonProps = TouchableOpacityProps & {
   isPending?: boolean;
   size?: keyof typeof BUTTON_SIZES;
   variant?: keyof typeof BUTTON_VARIANTS;
+  icon?: React.ReactNode;
 };
 
 export const Button: React.FC<ButtonProps> = ({
@@ -38,6 +38,7 @@ export const Button: React.FC<ButtonProps> = ({
   isPending = false,
   size = 'md',
   variant = 'solid',
+  icon,
   ...props
 }) => {
   const buttonSizeClasses = BUTTON_SIZES[size];
@@ -53,19 +54,15 @@ export const Button: React.FC<ButtonProps> = ({
         'flex-row items-center justify-center gap-2 rounded-xl',
         buttonSizeClasses,
         buttonVariantClasses,
-        className
+        className,
       )}
       {...props}
     >
-      <Text
-        disabled={props.disabled || isPending}
-        className={clx(textSizeClasses, textVariantClasses)}
-      >
+      <Text disabled={props.disabled || isPending} className={clx(textSizeClasses, textVariantClasses)}>
         {children}
       </Text>
-      {isPending && (
-        <Loader size={16} color="#B5B5B5" className="animate-spin" />
-      )}
+      {isPending && <Loader size={16} color="#B5B5B5" className="animate-spin" />}
+      {typeof icon !== 'undefined' && !isPending ? icon : null}
     </TouchableOpacity>
   );
 };

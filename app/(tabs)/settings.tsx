@@ -1,5 +1,6 @@
 import { useAuthCtx } from '@/contexts/auth';
 import { useClearSettings, useSettings } from '@/contexts/settings';
+import { clx } from '@/utils/clx';
 import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import React from 'react';
@@ -32,28 +33,15 @@ export default function SettingsScreen() {
     description: string,
     onPress: () => void,
     style?: 'default' | 'destructive',
+    className?: string,
   ) => (
     <TouchableOpacity
-      className={`bg-white px-5 py-4 border-b border-gray-200 ${
-        style === 'destructive' ? '' : ''
-      }`}
+      className={clx('bg-white px-5 py-4 border-b border-border', style === 'destructive' ? '' : '', className)}
       onPress={onPress}
     >
       <View>
-        <Text
-          className={`text-base font-medium mb-1 ${
-            style === 'destructive' ? 'text-red-500' : ''
-          }`}
-        >
-          {title}
-        </Text>
-        <Text
-          className={`text-sm ${
-            style === 'destructive'
-              ? 'text-red-500 opacity-70'
-              : 'text-gray-600'
-          }`}
-        >
+        <Text className={`text-base font-medium mb-1 ${style === 'destructive' ? 'text-red' : ''}`}>{title}</Text>
+        <Text className={`text-sm ${style === 'destructive' ? 'text-red opacity-70' : 'text-gray-dark'}`}>
           {description}
         </Text>
       </View>
@@ -69,66 +57,50 @@ export default function SettingsScreen() {
 
         {/* Store Information */}
         <View className="mb-8">
-          <Text className="text-lg font-semibold mb-4 mx-5 text-gray-600">
-            Store Information
-          </Text>
+          <Text className="text-lg font-semibold mb-4 mx-5 text-gray-dark">Store Information</Text>
 
           <TouchableOpacity
-            className="bg-white px-5 py-4 border-b border-gray-200"
+            className="bg-white px-5 py-4 border-b border-border"
             onPress={() => {
               // TODO: Navigate to tax settings screen
-              Alert.alert(
-                'Tax Settings',
-                'Configure tax settings functionality',
-              );
+              Alert.alert('Tax Settings', 'Configure tax settings functionality');
             }}
           >
             <View>
               <Text className="text-base font-medium mb-1">Sales Channel</Text>
-              <Text className="text-sm text-gray-600">
-                {settings.data?.sales_channel?.name || '—'}
-              </Text>
+              <Text className="text-sm text-gray-dark">{settings.data?.sales_channel?.name || '—'}</Text>
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="bg-white px-5 py-4 border-b border-gray-200"
+            className="bg-white px-5 py-4 border-b border-border"
             onPress={() => {
               // TODO: Navigate to tax settings screen
-              Alert.alert(
-                'Tax Settings',
-                'Configure tax settings functionality',
-              );
+              Alert.alert('Tax Settings', 'Configure tax settings functionality');
             }}
           >
             <View>
               <Text className="text-base font-medium mb-1">Stock Location</Text>
-              <Text className="text-sm text-gray-600">
-                {settings.data?.stock_location?.name || '—'}
-              </Text>
+              <Text className="text-sm text-gray-dark">{settings.data?.stock_location?.name || '—'}</Text>
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="bg-white px-5 py-4 border-b border-gray-200"
+            className="bg-white px-5 py-4 border-b border-border"
             onPress={() => {
               clearSettings.mutate();
             }}
           >
             <View>
               <Text className="text-base font-medium mb-1">Clear Settings</Text>
-              <Text className="text-sm text-gray-600">
-                Reset settings to default
-              </Text>
+              <Text className="text-sm text-gray-dark">Reset settings to default</Text>
             </View>
           </TouchableOpacity>
         </View>
 
         {/* Support */}
         <View className="mb-8">
-          <Text className="text-lg font-semibold mb-4 mx-5 text-gray-600">
-            Support
-          </Text>
+          <Text className="text-lg font-semibold mb-4 mx-5 text-gray-dark">Support</Text>
 
           {renderMenuButton('Help & FAQ', 'Get help and find answers', () => {
             // TODO: Navigate to help screen
@@ -140,27 +112,16 @@ export default function SettingsScreen() {
             Alert.alert('Contact Support', 'Contact support functionality');
           })}
 
-          {renderMenuButton(
-            'About',
-            'App version and legal information',
-            () => {
-              Alert.alert('About', 'Agilo POS v1.0.0\n\nBuilt with Expo');
-            },
-          )}
+          {renderMenuButton('About', 'App version and legal information', () => {
+            Alert.alert('About', 'Agilo POS v1.0.0\n\nBuilt with Expo');
+          })}
         </View>
 
         {/* Account */}
-        <View className="mb-8">
-          <Text className="text-lg font-semibold mb-4 mx-5 text-gray-600">
-            Account
-          </Text>
+        <View className="mb-16">
+          <Text className="text-lg font-semibold mb-4 mx-5 text-gray-dark">Account</Text>
 
-          {renderMenuButton(
-            'Logout',
-            'Sign out of your account',
-            handleLogout,
-            'destructive',
-          )}
+          {renderMenuButton('Logout', 'Sign out of your account', handleLogout, 'destructive', 'border-0')}
         </View>
       </ScrollView>
     </SafeAreaView>
