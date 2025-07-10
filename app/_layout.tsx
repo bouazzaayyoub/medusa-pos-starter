@@ -81,8 +81,10 @@ function App() {
           <Stack.Screen
             name="order-details"
             options={{
-              presentation: 'modal',
+              presentation: 'transparentModal',
               title: 'Order Details',
+              headerShown: false,
+              animation: 'none',
             }}
           />
           <Stack.Screen

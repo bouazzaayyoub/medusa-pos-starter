@@ -1,9 +1,9 @@
 import { ChevronDown } from '@/components/icons/chevron-down';
-import { Button } from '@/components/ui/Button';
+import { Dialog } from '@/components/ui/Dialog';
 import { clx } from '@/utils/clx';
 import React, { useEffect, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
-import { Modal, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import DatePicker, { useDefaultStyles } from 'react-native-ui-datepicker';
 
 interface DateRangeFieldProps {
@@ -130,30 +130,23 @@ export const DateRangeField = ({
 
       {error && <Text className={clx('text-red text-sm mt-1', errorClassName)}>{error.message}</Text>}
 
-      <Modal visible={isVisible} transparent animationType="slide" onRequestClose={() => setIsVisible(false)}>
-        <View className="flex-1 bg-black/50 justify-end">
-          <View className={clx('rounded-t-3xl bg-white pb-safe', modalClassName)}>
-            <DatePicker
-              mode="range"
-              startDate={selectedRange.startDate}
-              endDate={selectedRange.endDate}
-              onChange={handleDateChange}
-              minDate={minDate}
-              maxDate={maxDate}
-              className="px-4 pt-4"
-              styles={{ ...defaultStyles, today: { backgroundColor: '#B1E4F2' } }}
-            />
-            <Button
-              className="rounded-none"
-              onPress={() => {
-                setIsVisible(false);
-              }}
-            >
-              Done
-            </Button>
-          </View>
-        </View>
-      </Modal>
+      <Dialog
+        open={isVisible}
+        onClose={() => setIsVisible(false)}
+        showCloseButton={false}
+        animationType="slide"
+        pinDown
+      >
+        <DatePicker
+          mode="range"
+          startDate={selectedRange.startDate}
+          endDate={selectedRange.endDate}
+          onChange={handleDateChange}
+          minDate={minDate}
+          maxDate={maxDate}
+          styles={{ ...defaultStyles, today: { backgroundColor: '#B1E4F2' } }}
+        />
+      </Dialog>
     </View>
   );
 };

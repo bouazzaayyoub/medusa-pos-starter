@@ -7,6 +7,7 @@ import { SearchInput } from '@/components/SearchInput';
 import { OrderStatus } from '@/components/ui/OrderStatus';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { FlashList } from '@shopify/flash-list';
+import { router } from 'expo-router';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -23,7 +24,10 @@ const ordersFilterSchema = z.object({
 });
 
 const renderItem = () => (
-  <TouchableOpacity className="p-4 border justify-between flex-row gap-4 border-border rounded-2xl">
+  <TouchableOpacity
+    onPress={() => router.push('/order-details')}
+    className="p-4 border justify-between flex-row gap-4 border-border rounded-2xl"
+  >
     <View className="gap-4">
       <Text className="text-xl font-medium flex-1 flex-wrap">Order #133232</Text>
       <View className="flex-row gap-1">

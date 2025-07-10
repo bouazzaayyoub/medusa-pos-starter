@@ -1,8 +1,9 @@
 import { ChevronDown } from '@/components/icons/chevron-down';
+import { Dialog } from '@/components/ui/Dialog';
 import { clx } from '@/utils/clx';
 import React, { useEffect, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
-import { FlatList, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 interface SelectOption {
@@ -140,56 +141,48 @@ export function SelectField({
       </View>
       {error && <Text className={clx('text-red text-sm mt-1', errorClassName)}>{error.message}</Text>}
 
-      <Modal visible={isVisible} animationType="slide" transparent={true} onRequestClose={() => setIsVisible(false)}>
-        <View className="flex-1 bg-black/50 justify-end">
-          <View className={clx('bg-white rounded-t-3xl max-h-[80%] pb-safe', modalClassName)}>
-            <View className="p-4 border-b border-border flex-row justify-between items-center">
-              <Text className="text-lg font-semibold">Select Option</Text>
-              <TouchableOpacity
-                className="w-8 h-8 rounded-full bg-gray-light items-center justify-center"
-                onPress={() => setIsVisible(false)}
-              >
-                <Text className="text-gray-dark text-lg">✕</Text>
-              </TouchableOpacity>
-            </View>
-
-            {searchable && (
-              <View className="p-4 border-b border-border">
-                <TextInput
-                  className="border border-border rounded-lg px-4 py-3 text-base"
-                  placeholder="Search options..."
-                  placeholderTextColor="#9CA3AF"
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
-              </View>
-            )}
-
-            <FlatList
-              data={filteredOptions}
-              keyExtractor={(item) => item.value}
-              showsVerticalScrollIndicator={false}
-              renderItem={({ item }) => {
-                const isSelected = item.value === value;
-                const renderedOption = renderOption
-                  ? renderOption(item, isSelected)
-                  : defaultRenderOption(item, isSelected);
-                return renderedOption as React.ReactElement;
-              }}
-              ListEmptyComponent={
-                <View className="p-8 items-center">
-                  <Text className="text-gray-500 text-base">
-                    {searchable && searchQuery ? 'No options found' : 'No options available'}
-                  </Text>
-                </View>
-              }
-              onEndReached={onEndReached}
+      <Dialog
+        open={isVisible}
+        onClose={() => setIsVisible(false)}
+        showCloseButton={false}
+        animationType="slide"
+        pinDown
+      >
+        {searchable && (
+          <View className="p-4 border-b border-border">
+            <TextInput
+              className="border border-border rounded-lg px-4 py-3 text-base"
+              placeholder="Search options..."
+              placeholderTextColor="#9CA3AF"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              autoCapitalize="none"
+              autoCorrect={false}
             />
           </View>
-        </View>
-      </Modal>
+        )}
+
+        <FlatList
+          data={filteredOptions}
+          keyExtractor={(item) => item.value}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => {
+            const isSelected = item.value === value;
+            const renderedOption = renderOption
+              ? renderOption(item, isSelected)
+              : defaultRenderOption(item, isSelected);
+            return renderedOption as React.ReactElement;
+          }}
+          ListEmptyComponent={
+            <View className="p-8 items-center">
+              <Text className="text-gray-500 text-base">
+                {searchable && searchQuery ? 'No options found' : 'No options available'}
+              </Text>
+            </View>
+          }
+          onEndReached={onEndReached}
+        />
+      </Dialog>
     </View>
   );
 }
