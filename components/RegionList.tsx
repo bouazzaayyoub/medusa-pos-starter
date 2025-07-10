@@ -18,7 +18,7 @@ const RegionList: React.FC<RegionListProps> = ({ selectedRegionId, onRegionSelec
     return (
       <View className="flex-row mb-auto border rounded-xl border-border justify-between items-center p-4">
         <Text className="text-base text-gray">Loading regions...</Text>
-        <Loader size={16} color="B5B5B5" className="animate-spin" />
+        <Loader size={16} color="#B5B5B5" className="animate-spin" />
       </View>
     );
   }
