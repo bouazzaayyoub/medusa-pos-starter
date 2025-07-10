@@ -1,5 +1,8 @@
-import { useCustomers } from '@/api/hooks/customers';
+import { useCreateCustomer, useCustomers } from '@/api/hooks/customers';
 import { useUpdateDraftOrderCustomer } from '@/api/hooks/draft-orders';
+import { Form } from '@/components/form/Form';
+import { FormButton } from '@/components/form/FormButton';
+import { TextField } from '@/components/form/TextField';
 import { CircleAlert } from '@/components/icons/circle-alert';
 import { Search } from '@/components/icons/search';
 import { Button } from '@/components/ui/Button';
@@ -9,6 +12,66 @@ import { AdminCustomer } from '@medusajs/types';
 import { router, useLocalSearchParams } from 'expo-router';
 import * as React from 'react';
 import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { z } from 'zod/v4';
+
+const customerFormSchema = z.object({
+  email: z.email(),
+  first_name: z.string().optional(),
+  last_name: z.string().optional(),
+  phone: z.string().optional(),
+});
+
+const AddNewCustomerButton: React.FC<{ onNewCustomer: (customer: AdminCustomer) => void }> = ({ onNewCustomer }) => {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const createCustomer = useCreateCustomer();
+
+  return (
+    <>
+      <Button
+        variant="outline"
+        onPress={() => {
+          setIsOpen(true);
+        }}
+      >
+        Add New Customer
+      </Button>
+
+      <Dialog
+        open={isOpen}
+        title="Add New Customer"
+        onClose={() => setIsOpen(false)}
+        dismissOnOverlayPress={true}
+        animationType="fade"
+        contentClassName="flex-shrink"
+      >
+        <Form
+          schema={customerFormSchema}
+          onSubmit={(data, form) => {
+            createCustomer.mutate(data, {
+              onSuccess: (res) => {
+                onNewCustomer(res.customer);
+                setIsOpen(false);
+                form.reset();
+              },
+            });
+          }}
+        >
+          <TextField
+            name="email"
+            placeholder="Email Address"
+            autoComplete="off"
+            autoCapitalize="none"
+            inputMode="email"
+          />
+          <TextField name="first_name" placeholder="First Name" autoComplete="off" autoCapitalize="words" />
+          <TextField name="last_name" placeholder="Last Name" autoComplete="off" autoCapitalize="words" />
+          <TextField name="phone" placeholder="Phone Number" autoComplete="off" autoCapitalize="none" inputMode="tel" />
+          <FormButton>Create Customer</FormButton>
+        </Form>
+      </Dialog>
+    </>
+  );
+};
 
 const isPlaceholderProduct = (
   product: AdminCustomer | { id: `placeholder_${string}` },
@@ -94,14 +157,17 @@ const CustomersList: React.FC<{
       data={data}
       renderItem={renderCustomer}
       keyExtractor={(item) => item.id}
-      // estimatedItemSize={70}
       refreshing={customersQuery.isRefetching}
       ItemSeparatorComponent={() => <View className="h-px bg-border mx-4" />}
       className="border overflow-hidden rounded-xl border-[#EDEDED]"
       ListEmptyComponent={
         <View className="flex-1 mt-60 items-center">
           <CircleAlert size={24} />
-          <Text className="text-center text-xl mt-1">No customers match{'\n'}the search</Text>
+          {q && q.length > 1 ? (
+            <Text className="text-center text-xl mt-1">No customers match{'\n'}the search</Text>
+          ) : (
+            <Text className="text-center text-xl mt-1">No customers found</Text>
+          )}
         </View>
       }
       ListFooterComponent={
@@ -191,7 +257,12 @@ export default function CustomerLookupScreen() {
       >
         Select Customer
       </Button>
-      <Button variant="outline">Add New Customer</Button>
+      <AddNewCustomerButton
+        onNewCustomer={(customer) => {
+          setSelectedCustomerId(customer.id);
+          setSelectedCustomer(customer);
+        }}
+      />
     </Dialog>
   );
 }

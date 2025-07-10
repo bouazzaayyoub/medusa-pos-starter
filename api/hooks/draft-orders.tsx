@@ -111,7 +111,7 @@ export const useCancelDraftOrder = (options?: Omit<UseMutationOptions<void>, 'mu
       await SecureStore.deleteItemAsync(DRAFT_ORDER_ID_STORAGE_KEY);
     },
     ...options,
-    onSuccess: async (...args) => {
+    onSettled: async (...args) => {
       if (queryClient.isMutating({ mutationKey: ['draft-order'], exact: false }) === 1) {
         await queryClient.invalidateQueries({
           queryKey: ['draft-order'],
@@ -119,7 +119,7 @@ export const useCancelDraftOrder = (options?: Omit<UseMutationOptions<void>, 'mu
         });
       }
 
-      return options?.onSuccess?.(...args);
+      return options?.onSettled?.(...args);
     },
   });
 };
@@ -146,7 +146,7 @@ export const useAddToDraftOrder = (
       return sdk.admin.draftOrder.confirmEdit(draftOrderId);
     },
     ...options,
-    onSuccess: async (...args) => {
+    onSettled: async (...args) => {
       if (queryClient.isMutating({ mutationKey: ['draft-order'], exact: false }) === 1) {
         await queryClient.invalidateQueries({
           queryKey: ['draft-order'],
@@ -154,30 +154,30 @@ export const useAddToDraftOrder = (
         });
       }
 
-      return options?.onSuccess?.(...args);
+      return options?.onSettled?.(...args);
     },
   });
 };
 
-const updateDraftOrderItemActions = new Map<
+const updateChains = new Map<
   string,
   {
-    update: Pick<AdminUpdateDraftOrderItem, 'quantity'>;
-    resolvers: ((value: AdminDraftOrderPreviewResponse) => void)[];
-    rejecters: ((reason: unknown) => void)[];
+    promise: Promise<void>;
+    abortController: AbortController;
   }
 >();
-
 const debounceTimeouts = new Map<string, ReturnType<typeof setTimeout>>();
+
+class UpdateDraftOrderItemAborted extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'UpdateDraftOrderItemAborted';
+  }
+}
 
 export const useUpdateDraftOrderItem = (
   options?: Omit<
-    UseMutationOptions<
-      AdminDraftOrderPreviewResponse,
-      Error,
-      { id: string; update: Pick<AdminUpdateDraftOrderItem, 'quantity'> },
-      unknown
-    >,
+    UseMutationOptions<void, Error, { id: string; update: Pick<AdminUpdateDraftOrderItem, 'quantity'> }, unknown>,
     'mutationKey' | 'mutationFn'
   >,
 ) => {
@@ -188,54 +188,94 @@ export const useUpdateDraftOrderItem = (
   return useMutation({
     mutationKey: ['draft-order', 'items', 'update'],
     mutationFn: async (item: { id: string; update: Pick<AdminUpdateDraftOrderItem, 'quantity'> }) => {
-      return new Promise<AdminDraftOrderPreviewResponse>((resolve, reject) => {
-        if (debounceTimeouts.has(item.id)) {
-          clearTimeout(debounceTimeouts.get(item.id)!);
-          debounceTimeouts.delete(item.id);
-        }
+      // Clear existing timeout for this item
+      if (debounceTimeouts.has(item.id)) {
+        clearTimeout(debounceTimeouts.get(item.id)!);
+        debounceTimeouts.delete(item.id);
+      }
 
-        const existingItem = updateDraftOrderItemActions.get(item.id);
-        if (existingItem) {
-          existingItem.update.quantity = item.update.quantity;
-          existingItem.resolvers.push(resolve);
-          existingItem.rejecters.push(reject);
-        } else {
-          updateDraftOrderItemActions.set(item.id, {
-            update: item.update,
-            resolvers: [resolve],
-            rejecters: [reject],
+      // Cancel any existing update for this item
+      const existingChain = updateChains.get(item.id);
+      if (existingChain) {
+        existingChain.abortController.abort();
+      }
+
+      // Create new abort controller for this update
+      const abortController = new AbortController();
+
+      // Create a new promise that chains after the existing one (if any)
+      const previousPromise = existingChain?.promise ?? Promise.resolve();
+
+      const updatePromise = previousPromise
+        .catch(() => {
+          // Ignore errors from previous updates in the chain
+        })
+        .then(async () => {
+          // Wait for debounce period
+          await new Promise<void>((debounceResolve) => {
+            const timeoutId = setTimeout(() => {
+              debounceTimeouts.delete(item.id);
+              debounceResolve();
+            }, 300);
+
+            debounceTimeouts.set(item.id, timeoutId);
+
+            // Handle abortion during debounce
+            if (abortController.signal.aborted) {
+              clearTimeout(timeoutId);
+              debounceTimeouts.delete(item.id);
+              throw new UpdateDraftOrderItemAborted(
+                `Update for item ${item.id} with ${item.update.quantity} quantity aborted`,
+              );
+            }
+
+            abortController.signal.addEventListener('abort', () => {
+              clearTimeout(timeoutId);
+              debounceTimeouts.delete(item.id);
+              debounceResolve(); // Resolve to allow chain to continue
+            });
           });
-        }
 
-        debounceTimeouts.set(
-          item.id,
-          setTimeout(async () => {
-            debounceTimeouts.delete(item.id);
-            const queueItem = updateDraftOrderItemActions.get(item.id);
+          // Check if aborted after debounce
+          if (abortController.signal.aborted) {
+            throw new UpdateDraftOrderItemAborted(
+              `Update for item ${item.id} with ${item.update.quantity} quantity aborted`,
+            );
+          }
 
-            if (!queueItem) {
-              throw new Error(`Item with ID ${item.id} not found in update queue`);
-            }
+          // Perform the actual update
+          const draftOrderId = await getOrSetDraftOrderId();
+          await sdk.admin.draftOrder.beginEdit(draftOrderId);
 
-            updateDraftOrderItemActions.delete(item.id);
+          try {
+            await sdk.admin.draftOrder.updateItem(draftOrderId, item.id, item.update);
+            await sdk.admin.draftOrder.confirmEdit(draftOrderId);
+          } catch (error) {
+            await sdk.admin.draftOrder.cancelEdit(draftOrderId);
+            throw error;
+          }
+        })
+        .catch((error) => {
+          // Only reject if not aborted (aborted updates should resolve silently)
+          if (!(error instanceof UpdateDraftOrderItemAborted)) {
+            throw error;
+          }
+        })
+        .finally(() => {
+          // Clean up chain if this was the latest update
+          const currentChain = updateChains.get(item.id);
+          if (currentChain?.abortController === abortController) {
+            updateChains.delete(item.id);
+          }
+        });
 
-            try {
-              const draftOrderId = await getOrSetDraftOrderId();
-              await sdk.admin.draftOrder.beginEdit(draftOrderId);
-
-              await sdk.admin.draftOrder.updateItem(draftOrderId, item.id, queueItem.update).catch(async (error) => {
-                await sdk.admin.draftOrder.cancelEdit(draftOrderId);
-                throw error;
-              });
-              const result = await sdk.admin.draftOrder.confirmEdit(draftOrderId);
-
-              queueItem.resolvers.forEach((resolveFn) => resolveFn(result));
-            } catch (error) {
-              queueItem.rejecters.forEach((rejectFn) => rejectFn(error));
-            }
-          }, 300),
-        );
+      // Store the new chain
+      updateChains.set(item.id, {
+        promise: updatePromise,
+        abortController,
       });
+
+      return updatePromise;
     },
     ...options,
     onMutate(variables) {
@@ -278,16 +318,9 @@ export const useUpdateDraftOrderItem = (
         queryClient.setQueryData(['draft-order'], context.previousDraftOrder);
       }
 
-      if (queryClient.isMutating({ mutationKey: ['draft-order'], exact: false }) === 1) {
-        queryClient.invalidateQueries({
-          queryKey: ['draft-order'],
-          exact: false,
-        });
-      }
-
       return options?.onError?.(error, variables, context);
     },
-    onSuccess: async (...args) => {
+    onSettled: async (...args) => {
       if (queryClient.isMutating({ mutationKey: ['draft-order'], exact: false }) === 1) {
         await queryClient.invalidateQueries({
           queryKey: ['draft-order'],
@@ -295,7 +328,7 @@ export const useUpdateDraftOrderItem = (
         });
       }
 
-      return options?.onSuccess?.(...args);
+      return options?.onSettled?.(...args);
     },
   });
 };
@@ -326,7 +359,7 @@ export const useAddPromotion = (
       return sdk.admin.draftOrder.confirmEdit(draftOrderId);
     },
     ...options,
-    onSuccess: async (...args) => {
+    onSettled: async (...args) => {
       if (queryClient.isMutating({ mutationKey: ['draft-order'], exact: false }) === 1) {
         await queryClient.invalidateQueries({
           queryKey: ['draft-order'],
@@ -334,7 +367,7 @@ export const useAddPromotion = (
         });
       }
 
-      return options?.onSuccess?.(...args);
+      return options?.onSettled?.(...args);
     },
   });
 };
@@ -365,7 +398,7 @@ export const useRemovePromotion = (
       return sdk.admin.draftOrder.confirmEdit(draftOrderId);
     },
     ...options,
-    onSuccess: async (...args) => {
+    onSettled: async (...args) => {
       if (queryClient.isMutating({ mutationKey: ['draft-order'], exact: false }) === 1) {
         await queryClient.invalidateQueries({
           queryKey: ['draft-order'],
@@ -373,7 +406,7 @@ export const useRemovePromotion = (
         });
       }
 
-      return options?.onSuccess?.(...args);
+      return options?.onSettled?.(...args);
     },
   });
 };
@@ -432,7 +465,7 @@ export const useUpdateDraftOrderCustomer = (
       }
       return options?.onError?.(error, variables, context);
     },
-    onSuccess: async (...args) => {
+    onSettled: async (...args) => {
       if (queryClient.isMutating({ mutationKey: ['draft-order'], exact: false }) === 1) {
         await queryClient.invalidateQueries({
           queryKey: ['draft-order'],
@@ -440,7 +473,7 @@ export const useUpdateDraftOrderCustomer = (
         });
       }
 
-      return options?.onSuccess?.(...args);
+      return options?.onSettled?.(...args);
     },
   });
 };

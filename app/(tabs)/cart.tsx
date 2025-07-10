@@ -11,6 +11,7 @@ import { Form } from '@/components/form/Form';
 import { FormButton } from '@/components/form/FormButton';
 import { TextField } from '@/components/form/TextField';
 import { ChevronDown } from '@/components/icons/chevron-down';
+import { CircleAlert } from '@/components/icons/circle-alert';
 import { ShoppingCart } from '@/components/icons/shopping-cart';
 import { Trash2 } from '@/components/icons/trash-2';
 import { UserRoundPlus } from '@/components/icons/user-round-plus';
@@ -26,8 +27,8 @@ import { AnimatedFlashList as FlashList, ListRenderItem } from '@shopify/flash-l
 import { useIsMutating } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import * as React from 'react';
-import { ActivityIndicator, Alert, Image, Pressable, Text, TouchableOpacity, View } from 'react-native';
-import Animated, { SequencedTransition, SlideInRight, SlideOutLeft } from 'react-native-reanimated';
+import { Alert, Image, Pressable, Text, TouchableOpacity, View } from 'react-native';
+import Animated, { SequencedTransition, SlideOutLeft } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as z from 'zod/v4';
 
@@ -36,7 +37,7 @@ const addPromotionFormSchema = z.object({
 });
 
 const ItemCell: FlashListProps<AdminOrderLineItem>['CellRendererComponent'] = (props) => {
-  return <Animated.View {...props} layout={SequencedTransition} exiting={SlideOutLeft} entering={SlideInRight} />;
+  return <Animated.View {...props} layout={SequencedTransition} exiting={SlideOutLeft} />;
 };
 
 const DraftOrderItem: React.FC<{ item: AdminOrderLineItem; onRemove?: (item: AdminOrderLineItem) => void }> = ({
@@ -189,12 +190,59 @@ export default function CartScreen() {
 
   if (draftOrder.isLoading || settings.isLoading) {
     return (
-      <SafeAreaView className="relative flex-1 px-4 bg-white">
-        <View className="py-4">
+      <SafeAreaView className="relative flex-1 bg-white" style={{ paddingBottom: bottomTabBarHeight }}>
+        <View className="p-4">
           <Text className="text-black text-[40px] font-semibold">Cart</Text>
         </View>
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" />
+
+        <View className="px-4">
+          <View className="flex-row mb-6 pb-6 border-b border-border justify-between items-center">
+            <View>
+              <View className="w-32 h-6 rounded-md bg-gray-200 mb-2" />
+              <View className="w-48 h-4 rounded-md bg-gray-200" />
+            </View>
+            <View className="w-8 h-8 rounded-md bg-gray-200" />
+          </View>
+        </View>
+
+        {[1, 2].map((index) => (
+          <View key={index} className="flex-row gap-4 px-4 bg-white py-6 border-b border-border">
+            <View className="h-[5.25rem] w-[5.25rem] rounded-xl bg-gray-200" />
+            <View className="flex-col gap-2 flex-1">
+              <View className="w-3/4 h-5 rounded-md bg-gray-200" />
+              <View className="w-1/2 h-4 rounded-md bg-gray-200" />
+              <View className="w-20 h-8 rounded-md bg-gray-200" />
+            </View>
+            <View className="w-16 h-5 rounded-md bg-gray-200 ml-auto" />
+          </View>
+        ))}
+
+        <View className="mt-6 mb-20 px-4">
+          <View className="flex-row gap-2 items-start mb-6">
+            <View className="w-[60%] h-[3.125rem] rounded-md bg-gray-200" />
+            <View className="flex-1 h-[3.125rem] rounded-md bg-gray-200" />
+          </View>
+
+          <View className="flex-row mb-2 justify-between">
+            <View className="w-16 h-4 rounded-md bg-gray-200" />
+            <View className="w-20 h-4 rounded-md bg-gray-200" />
+          </View>
+          <View className="flex-row justify-between">
+            <View className="w-20 h-4 rounded-md bg-gray-200" />
+            <View className="w-24 h-4 rounded-md bg-gray-200" />
+          </View>
+
+          <View className="h-px bg-border my-4" />
+
+          <View className="flex-row justify-between mb-6">
+            <View className="w-16 h-7 rounded-md bg-gray-200" />
+            <View className="w-24 h-7 rounded-md bg-gray-200" />
+          </View>
+
+          <View className="flex-row gap-2">
+            <View className="flex-1 h-12 rounded-md bg-gray-200" />
+            <View className="flex-1 h-12 rounded-md bg-gray-200" />
+          </View>
         </View>
       </SafeAreaView>
     );
@@ -202,12 +250,25 @@ export default function CartScreen() {
 
   if (draftOrder.isError || settings.isError) {
     return (
-      <SafeAreaView className="relative flex-1 px-4 bg-white">
+      <SafeAreaView className="relative flex-1 px-4 bg-white" style={{ paddingBottom: bottomTabBarHeight }}>
         <View className="py-4">
           <Text className="text-black text-[40px] font-semibold">Cart</Text>
         </View>
         <View className="flex-1 items-center justify-center">
-          <Text className="text-red-500">Failed to load cart data.</Text>
+          <View className="flex-row gap-2 mb-2 items-center">
+            <CircleAlert size={24} className="text-red" />
+            <Text className="text-xl text-red">Failed to load cart</Text>
+          </View>
+          <Button
+            onPress={() => {
+              draftOrder.refetch();
+            }}
+            isPending={draftOrder.isRefetching}
+            size="sm"
+            variant="outline"
+          >
+            Try Again
+          </Button>
         </View>
       </SafeAreaView>
     );
@@ -215,13 +276,22 @@ export default function CartScreen() {
 
   if (!draftOrder.data?.draft_order) {
     return (
-      <SafeAreaView className="relative flex-1 px-4 bg-white">
+      <SafeAreaView className="relative flex-1 px-4 bg-white" style={{ paddingBottom: bottomTabBarHeight }}>
         <View className="py-4">
           <Text className="text-black text-[40px] font-semibold">Cart</Text>
         </View>
-
         <View className="flex-1 items-center justify-center">
-          <Text className="text-gray-dark">Cart is not created.</Text>
+          <ShoppingCart size={24} className="mb-1" />
+          <Text className="text-xl mb-1">Your cart is empty</Text>
+          <Text className="text-gray text-base">Add products to begin</Text>
+        </View>
+        <View className="flex-row gap-2">
+          <Button variant="outline" className="flex-1" disabled>
+            Cancel Cart
+          </Button>
+          <Button className="flex-1" disabled>
+            Checkout
+          </Button>
         </View>
       </SafeAreaView>
     );
