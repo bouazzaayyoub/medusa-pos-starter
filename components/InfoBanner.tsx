@@ -58,7 +58,7 @@ export const InfoBanner = ({
       )}
     >
       <Text className={clx('text-base', textColorSchemeClassNames)}>{children}</Text>
-      {showIcon && <CircleAlert size={16} color={iconColorSchemeColor} />}
+      <CircleAlert size={16} color={iconColorSchemeColor} />
     </View>
   );
 };

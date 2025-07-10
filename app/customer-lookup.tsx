@@ -1,14 +1,78 @@
-import { useCustomers } from '@/api/hooks/customers';
-import { useUpdateDraftOrder } from '@/api/hooks/draft-orders';
+import { useCreateCustomer, useCustomers } from '@/api/hooks/customers';
+import { useUpdateDraftOrderCustomer } from '@/api/hooks/draft-orders';
+import { Form } from '@/components/form/Form';
+import { FormButton } from '@/components/form/FormButton';
+import { TextField } from '@/components/form/TextField';
 import { CircleAlert } from '@/components/icons/circle-alert';
 import { Search } from '@/components/icons/search';
+import { InfoBanner } from '@/components/InfoBanner';
 import { Button } from '@/components/ui/Button';
 import { Dialog } from '@/components/ui/Dialog';
 import { clx } from '@/utils/clx';
 import { AdminCustomer } from '@medusajs/types';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import * as React from 'react';
 import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { z } from 'zod/v4';
+
+const customerFormSchema = z.object({
+  email: z.email(),
+  first_name: z.string().optional(),
+  last_name: z.string().optional(),
+  phone: z.string().optional(),
+});
+
+const AddNewCustomerButton: React.FC<{ onNewCustomer: (customer: AdminCustomer) => void }> = ({ onNewCustomer }) => {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const createCustomer = useCreateCustomer();
+
+  return (
+    <>
+      <Button
+        variant="outline"
+        onPress={() => {
+          setIsOpen(true);
+        }}
+      >
+        Add New Customer
+      </Button>
+
+      <Dialog
+        open={isOpen}
+        title="Add New Customer"
+        onClose={() => setIsOpen(false)}
+        dismissOnOverlayPress={true}
+        animationType="fade"
+        contentClassName="flex-shrink"
+      >
+        <Form
+          schema={customerFormSchema}
+          onSubmit={(data, form) => {
+            createCustomer.mutate(data, {
+              onSuccess: (res) => {
+                onNewCustomer(res.customer);
+                setIsOpen(false);
+                form.reset();
+              },
+            });
+          }}
+        >
+          <TextField
+            name="email"
+            placeholder="Email Address"
+            autoComplete="off"
+            autoCapitalize="none"
+            inputMode="email"
+          />
+          <TextField name="first_name" placeholder="First Name" autoComplete="off" autoCapitalize="words" />
+          <TextField name="last_name" placeholder="Last Name" autoComplete="off" autoCapitalize="words" />
+          <TextField name="phone" placeholder="Phone Number" autoComplete="off" autoCapitalize="none" inputMode="tel" />
+          <FormButton>Create Customer</FormButton>
+        </Form>
+      </Dialog>
+    </>
+  );
+};
 
 const isPlaceholderProduct = (
   product: AdminCustomer | { id: `placeholder_${string}` },
@@ -25,11 +89,11 @@ const CustomerListPlaceholder: React.FC = () => {
   );
 };
 
-const CustomersList: React.FC<{ q?: string; selectedCustomerId?: string; onCustomerSelect: (id: string) => void }> = ({
-  q,
-  selectedCustomerId,
-  onCustomerSelect,
-}) => {
+const CustomersList: React.FC<{
+  q?: string;
+  selectedCustomerId?: string;
+  onCustomerSelect: (customer: AdminCustomer) => void;
+}> = ({ q, selectedCustomerId, onCustomerSelect }) => {
   const customersQuery = useCustomers({
     q,
     order: 'email',
@@ -48,7 +112,7 @@ const CustomersList: React.FC<{ q?: string; selectedCustomerId?: string; onCusto
           className={clx('py-3 justify-between items-center flex-row px-4 gap-4', {
             'bg-black': selectedCustomerId === item.id,
           })}
-          onPress={() => onCustomerSelect(item.id)}
+          onPress={() => onCustomerSelect(item)}
         >
           {customerName.length > 0 && (
             <Text
@@ -86,22 +150,35 @@ const CustomersList: React.FC<{ q?: string; selectedCustomerId?: string; onCusto
       }));
     }
 
-    return customersQuery.data?.pages.flatMap((page) => page.customers) || [];
+    const customers = customersQuery.data?.pages.flatMap((page) => page.customers) || [];
+
+    return customers.length > 0 ? customers : null;
   }, [customersQuery]);
+
+  if (customersQuery.isError) {
+    return (
+      <InfoBanner colorScheme="error" iconPosition="left">
+        Error loading customers. Please try again.
+      </InfoBanner>
+    );
+  }
 
   return (
     <FlatList
       data={data}
       renderItem={renderCustomer}
       keyExtractor={(item) => item.id}
-      // estimatedItemSize={70}
       refreshing={customersQuery.isRefetching}
       ItemSeparatorComponent={() => <View className="h-px bg-border mx-4" />}
       className="border overflow-hidden rounded-xl border-[#EDEDED]"
       ListEmptyComponent={
-        <View className="flex-1 mt-60 items-center">
+        <View className="py-10 px-4 justify-center items-center">
           <CircleAlert size={24} />
-          <Text className="text-center text-xl mt-1">No customers match{'\n'}the search</Text>
+          {typeof q === 'string' && q.length > 1 ? (
+            <Text className="text-center mt-1">No customers match{'\n'}the search</Text>
+          ) : (
+            <Text className="text-center mt-1">No customers found</Text>
+          )}
         </View>
       }
       ListFooterComponent={
@@ -138,13 +215,13 @@ const CustomersList: React.FC<{ q?: string; selectedCustomerId?: string; onCusto
 };
 
 export default function CustomerLookupScreen() {
+  const params = useLocalSearchParams<{
+    customerId?: string;
+  }>();
   const [searchQuery, setSearchQuery] = React.useState('');
-  const [selectedCustomerId, setSelectedCustomerId] = React.useState<string | undefined>(undefined);
-  const updateDraftOrder = useUpdateDraftOrder({
-    onSuccess: () => {
-      router.back();
-    },
-  });
+  const [selectedCustomerId, setSelectedCustomerId] = React.useState<string | undefined>(params.customerId);
+  const [selectedCustomer, setSelectedCustomer] = React.useState<AdminCustomer>();
+  const updateDraftOrderCustomer = useUpdateDraftOrderCustomer();
 
   return (
     <Dialog
@@ -158,17 +235,21 @@ export default function CustomerLookupScreen() {
       <View className="mb-4 relative">
         <Search size={16} className="absolute left-4 top-1/2 -translate-y-[50%] text-gray" />
         <TextInput
-          className="rounded-full pb-3 pt-2 pr-4 pl-10 text-base border placeholder:text-gray border-border"
+          className="rounded-full py-3 pr-4 pl-10 text-base leading-5 border placeholder:text-gray border-border"
           placeholder="Search customers..."
           value={searchQuery}
           onChangeText={setSearchQuery}
+          inputMode="search"
         />
       </View>
 
       <CustomersList
         q={searchQuery ? searchQuery : undefined}
         selectedCustomerId={selectedCustomerId}
-        onCustomerSelect={setSelectedCustomerId}
+        onCustomerSelect={(customer) => {
+          setSelectedCustomerId(customer.id);
+          setSelectedCustomer(customer);
+        }}
       />
 
       <Button
@@ -179,14 +260,21 @@ export default function CustomerLookupScreen() {
             return;
           }
 
-          updateDraftOrder.mutate({
-            customer_id: selectedCustomerId,
-          });
+          if (selectedCustomer) {
+            updateDraftOrderCustomer.mutate(selectedCustomer);
+          }
+
+          router.back();
         }}
       >
-        Add Selected
+        Select Customer
       </Button>
-      <Button variant="outline">Add New Customer</Button>
+      <AddNewCustomerButton
+        onNewCustomer={(customer) => {
+          setSelectedCustomerId(customer.id);
+          setSelectedCustomer(customer);
+        }}
+      />
     </Dialog>
   );
 }
