@@ -15,5 +15,3 @@ export function FormButton({ children = 'Submit', disabled = false, isPending = 
     </Button>
   );
 }
-
-export default FormButton;

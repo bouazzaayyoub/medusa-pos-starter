@@ -57,5 +57,3 @@ export function Form<T extends FieldValues, Output>({
     </FormProvider>
   );
 }
-
-export default Form;
