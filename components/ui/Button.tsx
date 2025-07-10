@@ -30,6 +30,7 @@ export type ButtonProps = TouchableOpacityProps & {
   size?: keyof typeof BUTTON_SIZES;
   variant?: keyof typeof BUTTON_VARIANTS;
   icon?: React.ReactNode;
+  iconPosition?: 'left' | 'right';
 };
 
 export const Button: React.FC<ButtonProps> = ({
@@ -39,6 +40,7 @@ export const Button: React.FC<ButtonProps> = ({
   size = 'md',
   variant = 'solid',
   icon,
+  iconPosition = 'right',
   ...props
 }) => {
   const buttonSizeClasses = BUTTON_SIZES[size];
@@ -51,7 +53,8 @@ export const Button: React.FC<ButtonProps> = ({
       accessibilityRole="button"
       disabled={props.disabled || isPending}
       className={clx(
-        'flex-row items-center justify-center gap-2 rounded-xl',
+        'items-center justify-center gap-2 rounded-xl',
+        iconPosition === 'left' ? 'flex-row-reverse' : 'flex-row',
         buttonSizeClasses,
         buttonVariantClasses,
         className,

@@ -1,17 +1,19 @@
+import { Antenna } from '@/components/icons/antenna';
+import { Button } from '@/components/ui/Button';
 import { useAuthCtx } from '@/contexts/auth';
-import { useClearSettings, useSettings } from '@/contexts/settings';
-import { clx } from '@/utils/clx';
+import { useSettings } from '@/contexts/settings';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import React from 'react';
-import { Alert, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SettingsScreen() {
   const queryClient = useQueryClient();
   const auth = useAuthCtx();
   const settings = useSettings();
-  const clearSettings = useClearSettings();
+  const bottomTabBarHeight = useBottomTabBarHeight();
 
   const handleLogout = () => {
     Alert.alert('Logout', 'Are you sure you want to logout?', [
@@ -28,102 +30,38 @@ export default function SettingsScreen() {
     ]);
   };
 
-  const renderMenuButton = (
-    title: string,
-    description: string,
-    onPress: () => void,
-    style?: 'default' | 'destructive',
-    className?: string,
-  ) => (
-    <TouchableOpacity
-      className={clx('bg-white px-5 py-4 border-b border-border', style === 'destructive' ? '' : '', className)}
-      onPress={onPress}
-    >
-      <View>
-        <Text className={`text-base font-medium mb-1 ${style === 'destructive' ? 'text-red' : ''}`}>{title}</Text>
-        <Text className={`text-sm ${style === 'destructive' ? 'text-red opacity-70' : 'text-gray-dark'}`}>
-          {description}
-        </Text>
-      </View>
-    </TouchableOpacity>
-  );
-
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        <View className="p-5 pt-15">
-          <Text className="text-3xl">Settings</Text>
-        </View>
+    <SafeAreaView className="flex-1 bg-white px-4 pt-safe" style={{ paddingBottom: bottomTabBarHeight }}>
+      <Text className="text-black text-[40px] font-semibold mb-6">Settings</Text>
 
-        {/* Store Information */}
-        <View className="mb-8">
-          <Text className="text-lg font-semibold mb-4 mx-5 text-gray-dark">Store Information</Text>
+      <Text className="text-2xl mb-4">Sales Channel</Text>
+      <Button
+        onPress={() => router.push('/setup-wizard')}
+        variant="outline"
+        icon={<Antenna size={16} />}
+        iconPosition="left"
+        className="mb-8 justify-end"
+      >
+        {settings.data?.sales_channel?.name || '—'}
+      </Button>
 
-          <TouchableOpacity
-            className="bg-white px-5 py-4 border-b border-border"
-            onPress={() => {
-              // TODO: Navigate to tax settings screen
-              Alert.alert('Tax Settings', 'Configure tax settings functionality');
-            }}
-          >
-            <View>
-              <Text className="text-base font-medium mb-1">Sales Channel</Text>
-              <Text className="text-sm text-gray-dark">{settings.data?.sales_channel?.name || '—'}</Text>
-            </View>
-          </TouchableOpacity>
+      <Text className="text-2xl mb-4">Stock location</Text>
+      <Button
+        onPress={() => router.push('/setup-wizard')}
+        variant="outline"
+        icon={<Antenna size={16} />}
+        iconPosition="left"
+        className="mb-8 justify-end"
+      >
+        {settings.data?.stock_location?.name || '—'}
+      </Button>
 
-          <TouchableOpacity
-            className="bg-white px-5 py-4 border-b border-border"
-            onPress={() => {
-              // TODO: Navigate to tax settings screen
-              Alert.alert('Tax Settings', 'Configure tax settings functionality');
-            }}
-          >
-            <View>
-              <Text className="text-base font-medium mb-1">Stock Location</Text>
-              <Text className="text-sm text-gray-dark">{settings.data?.stock_location?.name || '—'}</Text>
-            </View>
-          </TouchableOpacity>
+      <Text className="text-2xl mb-4">Account</Text>
+      <Button onPress={handleLogout} className="mb-4">
+        Log Out
+      </Button>
 
-          <TouchableOpacity
-            className="bg-white px-5 py-4 border-b border-border"
-            onPress={() => {
-              clearSettings.mutate();
-            }}
-          >
-            <View>
-              <Text className="text-base font-medium mb-1">Clear Settings</Text>
-              <Text className="text-sm text-gray-dark">Reset settings to default</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-        {/* Support */}
-        <View className="mb-8">
-          <Text className="text-lg font-semibold mb-4 mx-5 text-gray-dark">Support</Text>
-
-          {renderMenuButton('Help & FAQ', 'Get help and find answers', () => {
-            // TODO: Navigate to help screen
-            Alert.alert('Help & FAQ', 'Help and FAQ functionality');
-          })}
-
-          {renderMenuButton('Contact Support', 'Get technical support', () => {
-            // TODO: Navigate to contact support screen
-            Alert.alert('Contact Support', 'Contact support functionality');
-          })}
-
-          {renderMenuButton('About', 'App version and legal information', () => {
-            Alert.alert('About', 'Agilo POS v1.0.0\n\nBuilt with Expo');
-          })}
-        </View>
-
-        {/* Account */}
-        <View className="mb-16">
-          <Text className="text-lg font-semibold mb-4 mx-5 text-gray-dark">Account</Text>
-
-          {renderMenuButton('Logout', 'Sign out of your account', handleLogout, 'destructive', 'border-0')}
-        </View>
-      </ScrollView>
+      <Text className="text-gray">You will be signed out of your account.</Text>
     </SafeAreaView>
   );
 }
