@@ -5,6 +5,7 @@ import { FormButton } from '@/components/form/FormButton';
 import { TextField } from '@/components/form/TextField';
 import { CircleAlert } from '@/components/icons/circle-alert';
 import { Search } from '@/components/icons/search';
+import { InfoBanner } from '@/components/InfoBanner';
 import { Button } from '@/components/ui/Button';
 import { Dialog } from '@/components/ui/Dialog';
 import { clx } from '@/utils/clx';
@@ -149,8 +150,18 @@ const CustomersList: React.FC<{
       }));
     }
 
-    return customersQuery.data?.pages.flatMap((page) => page.customers) || [];
+    const customers = customersQuery.data?.pages.flatMap((page) => page.customers) || [];
+
+    return customers.length > 0 ? customers : null;
   }, [customersQuery]);
+
+  if (customersQuery.isError) {
+    return (
+      <InfoBanner colorScheme="error" iconPosition="left">
+        Error loading customers. Please try again.
+      </InfoBanner>
+    );
+  }
 
   return (
     <FlatList
@@ -161,12 +172,12 @@ const CustomersList: React.FC<{
       ItemSeparatorComponent={() => <View className="h-px bg-border mx-4" />}
       className="border overflow-hidden rounded-xl border-[#EDEDED]"
       ListEmptyComponent={
-        <View className="flex-1 mt-60 items-center">
+        <View className="py-10 px-4 justify-center items-center">
           <CircleAlert size={24} />
-          {q && q.length > 1 ? (
-            <Text className="text-center text-xl mt-1">No customers match{'\n'}the search</Text>
+          {typeof q === 'string' && q.length > 1 ? (
+            <Text className="text-center mt-1">No customers match{'\n'}the search</Text>
           ) : (
-            <Text className="text-center text-xl mt-1">No customers found</Text>
+            <Text className="text-center mt-1">No customers found</Text>
           )}
         </View>
       }
