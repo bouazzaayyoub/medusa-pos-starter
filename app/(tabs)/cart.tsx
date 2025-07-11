@@ -51,18 +51,20 @@ const DraftOrderItem: React.FC<{ item: AdminOrderLineItem; onRemove?: (item: Adm
 
   return (
     <SwipeableListItem
-      rightClassName="bg-red-500"
-      rightWidth={60}
+      rightClassName="bg-white"
+      rightWidth={80}
       rightContent={(reset) => (
-        <Pressable
-          className="flex-1 w-full h-full justify-center items-center"
-          onPress={() => {
-            reset();
-            onRemove?.(item);
-          }}
-        >
-          <Trash2 size={24} color="white" />
-        </Pressable>
+        <View className="flex-1 w-full h-full justify-center items-center p-2">
+          <Pressable
+            className="flex-1 w-full h-full justify-center items-center rounded-xl bg-red"
+            onPress={() => {
+              reset();
+              onRemove?.(item);
+            }}
+          >
+            <Trash2 size={24} color="white" />
+          </Pressable>
+        </View>
       )}
     >
       <View className="flex-row gap-4 px-4 bg-white py-6">
