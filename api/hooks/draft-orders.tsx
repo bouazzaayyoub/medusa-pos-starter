@@ -426,10 +426,12 @@ export const useUpdateDraftOrderCustomer = (
     mutationFn: async (data) => {
       const draftOrderId = await getOrSetDraftOrderId();
       await sdk.admin.draftOrder.beginEdit(draftOrderId);
-      await sdk.admin.draftOrder.update(draftOrderId, { customer_id: data?.id }).catch(async (error) => {
-        await sdk.admin.draftOrder.cancelEdit(draftOrderId);
-        throw error;
-      });
+      await sdk.admin.draftOrder
+        .update(draftOrderId, { customer_id: data?.id, email: data?.email })
+        .catch(async (error) => {
+          await sdk.admin.draftOrder.cancelEdit(draftOrderId);
+          throw error;
+        });
       return sdk.admin.draftOrder.confirmEdit(draftOrderId);
     },
     ...options,
@@ -443,6 +445,7 @@ export const useUpdateDraftOrderCustomer = (
           ...cachedDraftOrder,
           draft_order: {
             ...cachedDraftOrder.draft_order,
+            email: data?.email ?? null,
             customer_id: data?.id ?? null,
             customer: data,
           },
