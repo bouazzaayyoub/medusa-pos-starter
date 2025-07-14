@@ -350,7 +350,7 @@ export default function CartScreen() {
         disableAutoLayout
       />
 
-      <View className="mt-6 mb-20 px-4">
+      <View className="mt-6 px-4">
         <Form
           schema={addPromotionFormSchema}
           onSubmit={(data, form) => {
