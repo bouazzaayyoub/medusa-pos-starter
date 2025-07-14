@@ -211,15 +211,26 @@ export const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
           accessible={!!leftContent}
           accessibilityElementsHidden={!leftContent}
         >
-          <View
-            className={leftClassName}
-            style={{
-              width: leftWidth,
-              height: '100%',
-            }}
+          <Animated.View
+            style={[
+              {
+                width: leftWidth,
+                height: '100%',
+              },
+              {
+                transform: [
+                  {
+                    translateX: translateX.current.interpolate({
+                      inputRange: [0, leftWidth],
+                      outputRange: [-leftWidth, 0],
+                    }),
+                  },
+                ],
+              },
+            ]}
           >
             {typeof leftContent === 'function' ? leftContent(resetCallBack) : leftContent}
-          </View>
+          </Animated.View>
         </View>
         <View className="flex-none" />
         <View
@@ -227,15 +238,26 @@ export const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
           accessible={!!rightContent}
           accessibilityElementsHidden={!rightContent}
         >
-          <View
-            className={rightClassName}
-            style={{
-              width: rightWidth,
-              height: '100%',
-            }}
+          <Animated.View
+            style={[
+              {
+                width: rightWidth,
+                height: '100%',
+              },
+              {
+                transform: [
+                  {
+                    translateX: translateX.current.interpolate({
+                      inputRange: [-rightWidth, 0],
+                      outputRange: [0, rightWidth],
+                    }),
+                  },
+                ],
+              },
+            ]}
           >
             {typeof rightContent === 'function' ? rightContent(resetCallBack) : rightContent}
-          </View>
+          </Animated.View>
         </View>
       </View>
       <Animated.View
