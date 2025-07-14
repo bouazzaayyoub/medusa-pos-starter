@@ -3,7 +3,7 @@ import {
   DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL,
   useAddPromotion,
   useCancelDraftOrder,
-  useDraftOrder,
+  useCurrentDraftOrder,
   useUpdateDraftOrderCustomer,
   useUpdateDraftOrderItem,
 } from '@/api/hooks/draft-orders';
@@ -45,7 +45,7 @@ const DraftOrderItem: React.FC<{ item: AdminOrderLineItem; onRemove?: (item: Adm
   onRemove,
 }) => {
   const settings = useSettings();
-  const draftOrder = useDraftOrder();
+  const draftOrder = useCurrentDraftOrder();
   const updateDraftOrderItem = useUpdateDraftOrderItem();
   const thumbnail = item.thumbnail || item.product?.thumbnail || item.product?.images?.[0]?.url;
 
@@ -169,7 +169,7 @@ const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({ cu
 
 export default function CartScreen() {
   const settings = useSettings();
-  const draftOrder = useDraftOrder();
+  const draftOrder = useCurrentDraftOrder();
   const addPromotion = useAddPromotion();
   const cancelDraftOrder = useCancelDraftOrder();
   const updateDraftOrderItem = useUpdateDraftOrderItem();
@@ -480,7 +480,11 @@ export default function CartScreen() {
               draftOrder.data.draft_order.items.length === 0 || draftOrder.isFetching || isUpdatingDraftOrder > 0
             }
             onPress={() => {
-              router.push('/checkout');
+              if (!draftOrder.data?.draft_order.id) {
+                return;
+              }
+
+              router.push(`/checkout/${draftOrder.data.draft_order.id}`);
             }}
           >
             Checkout

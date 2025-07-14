@@ -66,16 +66,7 @@ function App() {
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
           {/* Checkout Flow */}
-          <Stack.Screen name="checkout" options={{ title: 'Checkout', headerShown: false }} />
-          <Stack.Screen
-            name="order-confirmation"
-            options={{
-              presentation: 'transparentModal',
-              title: 'Order Confirmation',
-              headerShown: false,
-              animation: 'none',
-            }}
-          />
+          <Stack.Screen name="checkout/[draftOrderId]" options={{ title: 'Checkout', headerShown: false }} />
 
           {/* Modal Dialogs */}
           <Stack.Screen

@@ -1,11 +1,18 @@
 import { X } from '@/components/icons/x';
 import { clx } from '@/utils/clx';
 import React from 'react';
-import { Modal, ModalProps, SafeAreaView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import {
+  GestureResponderEvent,
+  Modal,
+  ModalProps,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 
 export interface DialogProps extends ModalProps {
-  open: boolean;
-  onClose: () => void;
   title?: string;
   showCloseButton?: boolean;
   dismissOnOverlayPress?: boolean;
@@ -13,11 +20,12 @@ export interface DialogProps extends ModalProps {
   contentClassName?: string;
   headerClassName?: string;
   overlayTint?: string;
+  onClose?: () => void;
+  onOverlayPress?: (event: GestureResponderEvent) => void;
+  onCloseIconPress?: (event: GestureResponderEvent) => void;
 }
 
 export const Dialog: React.FC<DialogProps> = ({
-  open,
-  onClose,
   title,
   children,
   showCloseButton = true,
@@ -26,16 +34,48 @@ export const Dialog: React.FC<DialogProps> = ({
   contentClassName,
   headerClassName,
   overlayTint = 'bg-black/50',
+  onClose,
+  onOverlayPress,
+  onCloseIconPress,
   ...modalProps
 }) => {
-  const handleOverlayPress = () => {
-    if (dismissOnOverlayPress) {
-      onClose();
-    }
-  };
+  const onRequestClose = React.useCallback<Exclude<ModalProps['onRequestClose'], undefined>>(
+    (event) => {
+      if (modalProps.onRequestClose) {
+        return modalProps.onRequestClose(event);
+      }
+
+      onClose?.();
+    },
+    [modalProps, onClose],
+  );
+
+  const handleOverlayPress = React.useCallback(
+    (event: GestureResponderEvent) => {
+      if (dismissOnOverlayPress) {
+        if (onOverlayPress) {
+          return onOverlayPress(event);
+        }
+
+        onClose?.();
+      }
+    },
+    [dismissOnOverlayPress, onOverlayPress, onClose],
+  );
+
+  const handleCloseIconPress = React.useCallback(
+    (event: GestureResponderEvent) => {
+      if (onCloseIconPress) {
+        return onCloseIconPress(event);
+      }
+
+      onClose?.();
+    },
+    [onClose, onCloseIconPress],
+  );
 
   return (
-    <Modal visible={open} transparent={true} onRequestClose={onClose} statusBarTranslucent {...modalProps}>
+    <Modal transparent={true} statusBarTranslucent {...modalProps} onRequestClose={onRequestClose}>
       <SafeAreaView className={clx('flex-1 justify-center items-center', overlayTint)}>
         <TouchableWithoutFeedback onPress={handleOverlayPress}>
           <View className="absolute inset-0" />
@@ -47,7 +87,7 @@ export const Dialog: React.FC<DialogProps> = ({
               <View className={clx('flex-row mb-4 justify-between gap-2 items-center', headerClassName)}>
                 {title && <Text className="text-base">{title}</Text>}
                 {showCloseButton && (
-                  <TouchableOpacity onPress={onClose} accessibilityLabel="Close dialog">
+                  <TouchableOpacity onPress={handleCloseIconPress} accessibilityLabel="Close dialog">
                     <X size={20} />
                   </TouchableOpacity>
                 )}

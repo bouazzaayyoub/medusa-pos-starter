@@ -75,7 +75,31 @@ const useGetOrSetDraftOrderId = () => {
   }, [getOrSetDefaultCustomer, sdk, settings.data?.region?.id, settings.data?.sales_channel?.id]);
 };
 
-export const useDraftOrder = () => {
+export const useDraftOrderOrOrder = (draftOrderId: string) => {
+  const sdk = useMedusaSdk();
+
+  return useQuery({
+    queryKey: ['draft-order', draftOrderId],
+    queryFn: async () => {
+      return sdk.admin.draftOrder
+        .retrieve(draftOrderId, {
+          fields:
+            '+tax_total,+discount_total,+subtotal,+total,+items.variant.options.*,+items.variant.options.option.*,+items.variant.inventory_quantity,+customer.*',
+        })
+        .then((res) => res.draft_order)
+        .catch(async () => {
+          const res = await sdk.admin.order.retrieve(draftOrderId, {
+            fields:
+              '+tax_total,+discount_total,+subtotal,+total,+items.variant.options.*,+items.variant.options.option.*,+items.variant.inventory_quantity,+customer.*',
+          });
+          return res.order;
+        });
+    },
+    enabled: !!draftOrderId,
+  });
+};
+
+export const useCurrentDraftOrder = () => {
   const sdk = useMedusaSdk();
 
   return useQuery({
@@ -475,6 +499,37 @@ export const useUpdateDraftOrderCustomer = (
           exact: false,
         });
       }
+
+      return options?.onSettled?.(...args);
+    },
+  });
+};
+
+export const useCompleteDraftOrder = (
+  draftOrderId: string,
+  options?: Omit<UseMutationOptions<void, Error, void, unknown>, 'mutationKey' | 'mutationFn'>,
+) => {
+  const sdk = useMedusaSdk();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationKey: ['draft-order', 'complete'],
+    mutationFn: async () => {
+      if (!draftOrderId) {
+        throw new Error('Draft order ID is required to complete the order');
+      }
+
+      await sdk.admin.draftOrder.convertToOrder(draftOrderId);
+      await sdk.client.fetch(`/admin/orders/${draftOrderId}/complete`, {
+        method: 'POST',
+      });
+      await SecureStore.deleteItemAsync(DRAFT_ORDER_ID_STORAGE_KEY);
+    },
+    onSettled: async (...args) => {
+      await queryClient.invalidateQueries({
+        queryKey: ['draft-order'],
+        exact: false,
+      });
 
       return options?.onSettled?.(...args);
     },
