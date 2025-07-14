@@ -109,7 +109,7 @@ export default function ProductsScreen() {
       <View className="m-4 mb-6 relative">
         <Search size={16} className="absolute left-4 top-1/2 -translate-y-[50%] text-gray" />
         <TextInput
-          className="rounded-full py-3 pr-4 pl-10 text-base leading-5 border placeholder:text-gray border-border"
+          className="rounded-full py-3 pr-4 pl-10 text-base leading-5 focus:border-blue border placeholder:text-gray border-border"
           placeholder="Search products..."
           value={searchQuery}
           onChangeText={setSearchQuery}
