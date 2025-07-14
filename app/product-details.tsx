@@ -111,7 +111,6 @@ export default function ProductDetailsScreen() {
   useEffect(() => {
     if (productQuery.data) {
       const firstVariant = productQuery.data.product.variants?.[0];
-      console.log({ firstVariant });
 
       if (firstVariant) {
         const initialOptions =

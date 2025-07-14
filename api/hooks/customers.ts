@@ -1,6 +1,12 @@
 import { useMedusaSdk } from '@/contexts/auth';
-import { AdminCustomerFilters, AdminCustomerListResponse } from '@medusajs/types';
-import { InfiniteData, UndefinedInitialDataInfiniteOptions, useInfiniteQuery } from '@tanstack/react-query';
+import { AdminCreateCustomer, AdminCustomerFilters, AdminCustomerListResponse } from '@medusajs/types';
+import {
+  InfiniteData,
+  UndefinedInitialDataInfiniteOptions,
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
 
 const PER_PAGE = 20;
 
@@ -39,5 +45,23 @@ export const useCustomers = (
       return prevPage >= 1 ? prevPage : undefined;
     },
     ...options,
+  });
+};
+
+export const useCreateCustomer = () => {
+  const sdk = useMedusaSdk();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationKey: ['customers', 'create'],
+    mutationFn: async (data: AdminCreateCustomer) => {
+      return sdk.admin.customer.create(data);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['customers'],
+        exact: false,
+      });
+    },
   });
 };
