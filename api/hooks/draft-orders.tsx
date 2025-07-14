@@ -513,7 +513,7 @@ export const useCompleteDraftOrder = (
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationKey: ['draft-order', 'complete'],
+    mutationKey: ['draft-order', draftOrderId, 'complete'],
     mutationFn: async () => {
       if (!draftOrderId) {
         throw new Error('Draft order ID is required to complete the order');
@@ -525,6 +525,7 @@ export const useCompleteDraftOrder = (
       });
       await SecureStore.deleteItemAsync(DRAFT_ORDER_ID_STORAGE_KEY);
     },
+    ...options,
     onSettled: async (...args) => {
       await queryClient.invalidateQueries({
         queryKey: ['draft-order'],
