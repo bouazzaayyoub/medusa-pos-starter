@@ -1,26 +1,34 @@
+import { useCustomers } from '@/api/hooks/customers';
 import {
   DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL,
   useAddPromotion,
   useCancelDraftOrder,
-  useDraftOrder,
+  useCurrentDraftOrder,
+  useUpdateDraftOrderCustomer,
   useUpdateDraftOrderItem,
 } from '@/api/hooks/draft-orders';
 import { Form } from '@/components/form/Form';
 import { FormButton } from '@/components/form/FormButton';
 import { TextField } from '@/components/form/TextField';
 import { ChevronDown } from '@/components/icons/chevron-down';
+import { CircleAlert } from '@/components/icons/circle-alert';
 import { ShoppingCart } from '@/components/icons/shopping-cart';
+import { Trash2 } from '@/components/icons/trash-2';
 import { UserRoundPlus } from '@/components/icons/user-round-plus';
 import { X } from '@/components/icons/x';
+import { SwipeableListItem } from '@/components/SwipeableListItem';
 import { Button } from '@/components/ui/Button';
 import { QuantityPicker } from '@/components/ui/QuantityPicker';
 import { useSettings } from '@/contexts/settings';
 import { AdminDraftOrder, AdminOrderLineItem } from '@medusajs/types';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { FlashList, ListRenderItem } from '@shopify/flash-list';
+import type { FlashListProps, FlashList as FlashListType } from '@shopify/flash-list';
+import { AnimatedFlashList as FlashList, ListRenderItem } from '@shopify/flash-list';
+import { useIsMutating } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import * as React from 'react';
-import { ActivityIndicator, Alert, Image, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Pressable, Text, TouchableOpacity, View } from 'react-native';
+import Animated, { SequencedTransition, SlideOutLeft } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as z from 'zod/v4';
 
@@ -28,56 +36,83 @@ const addPromotionFormSchema = z.object({
   promotionCode: z.string().min(1, 'Promotion code is required'),
 });
 
-const DraftOrderItem: React.FC<{ item: AdminOrderLineItem }> = ({ item }) => {
+const ItemCell: FlashListProps<AdminOrderLineItem>['CellRendererComponent'] = (props) => {
+  return <Animated.View {...props} layout={SequencedTransition} exiting={SlideOutLeft} />;
+};
+
+const DraftOrderItem: React.FC<{ item: AdminOrderLineItem; onRemove?: (item: AdminOrderLineItem) => void }> = ({
+  item,
+  onRemove,
+}) => {
   const settings = useSettings();
-  const draftOrder = useDraftOrder();
+  const draftOrder = useCurrentDraftOrder();
   const updateDraftOrderItem = useUpdateDraftOrderItem();
   const thumbnail = item.thumbnail || item.product?.thumbnail || item.product?.images?.[0]?.url;
 
   return (
-    <View className="flex-row gap-4">
-      <View className="h-[5.25rem] w-[5.25rem] rounded-xl bg-border overflow-hidden">
-        {thumbnail && <Image source={{ uri: thumbnail }} className="w-full h-full object-cover" />}
+    <SwipeableListItem
+      rightClassName="bg-white"
+      rightWidth={80}
+      rightContent={(reset) => (
+        <View className="flex-1 w-full h-full justify-center items-center p-2">
+          <Pressable
+            className="flex-1 w-full h-full justify-center items-center rounded-xl bg-red"
+            onPress={() => {
+              reset();
+              onRemove?.(item);
+            }}
+          >
+            <Trash2 size={24} color="white" />
+          </Pressable>
+        </View>
+      )}
+    >
+      <View className="flex-row gap-4 px-4 bg-white py-6">
+        <View className="h-[5.25rem] w-[5.25rem] rounded-xl bg-border overflow-hidden">
+          {thumbnail && <Image source={{ uri: thumbnail }} className="w-full h-full object-cover" />}
+        </View>
+        <View className="flex-col gap-2 flex-1">
+          <Text className="font-medium">{item.product_title}</Text>
+          {item.variant && item.variant.options && item.variant.options.length > 0 && (
+            <View className="flex-row flex-wrap items-center gap-x-2 gap-y-1">
+              {item.variant.options.map((option) => (
+                <View className="flex-row" key={option.id}>
+                  <Text className="text-gray-dark text-sm">{option.option?.title || option.option_id}:</Text>
+                  <Text className="text-sm">{option.value}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+          <QuantityPicker
+            quantity={item.quantity}
+            max={item.variant?.inventory_quantity}
+            onQuantityChange={(quantity) =>
+              updateDraftOrderItem.mutate({
+                id: item.id,
+                update: {
+                  quantity,
+                },
+              })
+            }
+            className="self-start"
+          />
+        </View>
+        <Text className="font-medium ml-auto">
+          {item.unit_price.toLocaleString('en-US', {
+            style: 'currency',
+            currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
+            currencyDisplay: 'narrowSymbol',
+          })}
+        </Text>
       </View>
-      <View>
-        <Text className="font-medium mb-2">{item.product_title}</Text>
-        {item.variant && item.variant.options && item.variant.options.length > 0 && (
-          <View className="flex-row items-center mb-2 gap-4">
-            {item.variant.options.map((option) => (
-              <View className="flex-row" key={option.id}>
-                <Text className="text-gray-dark text-sm">{option.option?.title || option.option_id}:</Text>
-                <Text className="text-sm">{option.value}</Text>
-              </View>
-            ))}
-          </View>
-        )}
-        <QuantityPicker
-          quantity={item.quantity}
-          max={item.variant?.inventory_quantity}
-          onQuantityChange={(quantity) =>
-            updateDraftOrderItem.mutate({
-              id: item.id,
-              update: {
-                quantity,
-              },
-            })
-          }
-          className="self-start"
-          isPending={updateDraftOrderItem.isPending}
-        />
-      </View>
-      <Text className="font-medium ml-auto">
-        {item.unit_price.toLocaleString('en-US', {
-          style: 'currency',
-          currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
-          currencyDisplay: 'narrowSymbol',
-        })}
-      </Text>
-    </View>
+    </SwipeableListItem>
   );
 };
 
 const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({ customer }) => {
+  const updateDraftOrder = useUpdateDraftOrderCustomer();
+  const defaultCustomer = useCustomers({ email: DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL }, 1);
+
   if (!customer || customer.email === DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL) {
     return (
       <Button
@@ -96,7 +131,12 @@ const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({ cu
   return (
     <TouchableOpacity
       onPress={() => {
-        router.push('/customer-lookup');
+        router.push({
+          pathname: '/customer-lookup',
+          params: {
+            customerId: customer.id,
+          },
+        });
       }}
       className="flex-row mb-6 pb-6 border-b border-border justify-between items-center"
     >
@@ -112,9 +152,16 @@ const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({ cu
         </View>
       )}
 
-      <View className="flex-row gap-4">
-        <ChevronDown size={24} />
-        <X size={24} />
+      <View className="flex-row">
+        <View className="p-2">
+          <ChevronDown size={24} />
+        </View>
+        <TouchableOpacity
+          onPress={() => updateDraftOrder.mutate(defaultCustomer.data?.pages[0].customers?.[0])}
+          className="p-2"
+        >
+          <X size={24} />
+        </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );
@@ -122,24 +169,82 @@ const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({ cu
 
 export default function CartScreen() {
   const settings = useSettings();
-  const draftOrder = useDraftOrder();
+  const draftOrder = useCurrentDraftOrder();
   const addPromotion = useAddPromotion();
   const cancelDraftOrder = useCancelDraftOrder();
+  const updateDraftOrderItem = useUpdateDraftOrderItem();
+  const isUpdatingDraftOrder = useIsMutating({ mutationKey: ['draft-order'], exact: false });
   const bottomTabBarHeight = useBottomTabBarHeight();
+  const itemsListRef = React.useRef<FlashListType<AdminOrderLineItem>>(null);
+
+  const onItemRemove = React.useCallback(
+    (item: AdminOrderLineItem) => {
+      updateDraftOrderItem.mutate({ id: item.id, update: { quantity: 0 } });
+      itemsListRef.current?.prepareForLayoutAnimationRender();
+    },
+    [updateDraftOrderItem],
+  );
 
   const renderItem = React.useCallback<ListRenderItem<AdminOrderLineItem>>(
-    ({ item }) => <DraftOrderItem item={item} />,
-    [],
+    ({ item }) => <DraftOrderItem item={item} onRemove={onItemRemove} />,
+    [onItemRemove],
   );
 
   if (draftOrder.isLoading || settings.isLoading) {
     return (
-      <SafeAreaView className="relative flex-1 px-4 bg-white">
-        <View className="py-4">
+      <SafeAreaView className="relative flex-1 bg-white" style={{ paddingBottom: bottomTabBarHeight }}>
+        <View className="p-4">
           <Text className="text-black text-[40px] font-semibold">Cart</Text>
         </View>
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" />
+
+        <View className="px-4">
+          <View className="flex-row mb-6 pb-6 border-b border-border justify-between items-center">
+            <View>
+              <View className="w-32 h-6 rounded-md bg-gray-200 mb-2" />
+              <View className="w-48 h-4 rounded-md bg-gray-200" />
+            </View>
+            <View className="w-8 h-8 rounded-md bg-gray-200" />
+          </View>
+        </View>
+
+        {[1, 2].map((index) => (
+          <View key={index} className="flex-row gap-4 px-4 bg-white py-6 border-b border-border">
+            <View className="h-[5.25rem] w-[5.25rem] rounded-xl bg-gray-200" />
+            <View className="flex-col gap-2 flex-1">
+              <View className="w-3/4 h-5 rounded-md bg-gray-200" />
+              <View className="w-1/2 h-4 rounded-md bg-gray-200" />
+              <View className="w-20 h-8 rounded-md bg-gray-200" />
+            </View>
+            <View className="w-16 h-5 rounded-md bg-gray-200 ml-auto" />
+          </View>
+        ))}
+
+        <View className="mt-6 mb-20 px-4">
+          <View className="flex-row gap-2 items-start mb-6">
+            <View className="w-[60%] h-[3.125rem] rounded-md bg-gray-200" />
+            <View className="flex-1 h-[3.125rem] rounded-md bg-gray-200" />
+          </View>
+
+          <View className="flex-row mb-2 justify-between">
+            <View className="w-16 h-4 rounded-md bg-gray-200" />
+            <View className="w-20 h-4 rounded-md bg-gray-200" />
+          </View>
+          <View className="flex-row justify-between">
+            <View className="w-20 h-4 rounded-md bg-gray-200" />
+            <View className="w-24 h-4 rounded-md bg-gray-200" />
+          </View>
+
+          <View className="h-px bg-border my-4" />
+
+          <View className="flex-row justify-between mb-6">
+            <View className="w-16 h-7 rounded-md bg-gray-200" />
+            <View className="w-24 h-7 rounded-md bg-gray-200" />
+          </View>
+
+          <View className="flex-row gap-2">
+            <View className="flex-1 h-12 rounded-md bg-gray-200" />
+            <View className="flex-1 h-12 rounded-md bg-gray-200" />
+          </View>
         </View>
       </SafeAreaView>
     );
@@ -147,12 +252,26 @@ export default function CartScreen() {
 
   if (draftOrder.isError || settings.isError) {
     return (
-      <SafeAreaView className="relative flex-1 px-4 bg-white">
+      <SafeAreaView className="relative flex-1 px-4 bg-white" style={{ paddingBottom: bottomTabBarHeight }}>
         <View className="py-4">
           <Text className="text-black text-[40px] font-semibold">Cart</Text>
         </View>
         <View className="flex-1 items-center justify-center">
-          <Text className="text-red-500">Failed to load cart data.</Text>
+          <View className="flex-row gap-2 mb-2 items-center">
+            <CircleAlert size={24} className="text-red" />
+            <Text className="text-xl text-red">Failed to load cart</Text>
+          </View>
+          <Button
+            onPress={() => {
+              draftOrder.refetch();
+              settings.refetch();
+            }}
+            isPending={draftOrder.isRefetching || settings.isRefetching}
+            size="sm"
+            variant="outline"
+          >
+            Try Again
+          </Button>
         </View>
       </SafeAreaView>
     );
@@ -160,19 +279,28 @@ export default function CartScreen() {
 
   if (!draftOrder.data?.draft_order) {
     return (
-      <SafeAreaView className="relative flex-1 px-4 bg-white">
+      <SafeAreaView className="relative flex-1 px-4 bg-white" style={{ paddingBottom: bottomTabBarHeight }}>
         <View className="py-4">
           <Text className="text-black text-[40px] font-semibold">Cart</Text>
         </View>
-
         <View className="flex-1 items-center justify-center">
-          <Text className="text-gray-dark">Cart is not created.</Text>
+          <ShoppingCart size={24} className="mb-1" />
+          <Text className="text-xl mb-1">Your cart is empty</Text>
+          <Text className="text-gray text-base">Add products to begin</Text>
+        </View>
+        <View className="flex-row gap-2">
+          <Button variant="outline" className="flex-1" disabled>
+            Cancel Cart
+          </Button>
+          <Button className="flex-1" disabled>
+            Checkout
+          </Button>
         </View>
       </SafeAreaView>
     );
   }
 
-  if (draftOrder.data?.draft_order.items.length === 0) {
+  if (!draftOrder.data?.draft_order.items.length) {
     return (
       <SafeAreaView className="relative flex-1 px-4 bg-white" style={{ paddingBottom: bottomTabBarHeight }}>
         <View className="py-4">
@@ -202,26 +330,33 @@ export default function CartScreen() {
     );
   }
 
+  const items = draftOrder.data.draft_order.items;
+
   return (
-    <SafeAreaView className="relative flex-1 px-4 bg-white">
-      <View className="py-4">
+    <SafeAreaView className="relative flex-1 bg-white">
+      <View className="p-4">
         <Text className="text-black text-[40px] font-semibold">Cart</Text>
       </View>
 
-      <CustomerBadge customer={draftOrder.data.draft_order.customer} />
+      <View className="px-4">
+        <CustomerBadge customer={draftOrder.data.draft_order.customer} />
+      </View>
 
       <FlashList
-        data={draftOrder.data?.draft_order.items || []}
-        estimatedItemSize={86}
+        ref={itemsListRef}
+        data={items}
+        keyExtractor={(item) => item.id}
+        estimatedItemSize={132}
         renderItem={renderItem}
-        ItemSeparatorComponent={() => <View className="h-px bg-border my-6" />}
+        ItemSeparatorComponent={() => <View className="h-px bg-border" />}
+        CellRendererComponent={ItemCell}
+        disableAutoLayout
       />
 
-      <View className="mt-6 mb-20">
+      <View className="mt-6 mb-20 px-4">
         <Form
           schema={addPromotionFormSchema}
           onSubmit={(data, form) => {
-            console.log('Submitting promotion code:', data);
             addPromotion.mutate(data.promotionCode, {
               onSuccess: () => {
                 form.reset();
@@ -241,42 +376,77 @@ export default function CartScreen() {
             enterKeyHint="send"
             errorVariation="inline"
           />
-          <FormButton size="sm" className="flex-1 h-[3.125rem]" isPending={addPromotion.isPending}>
+          <FormButton
+            size="sm"
+            className="flex-1 h-[3.125rem]"
+            isPending={addPromotion.isPending}
+            disabled={draftOrder.isFetching || isUpdatingDraftOrder > 0}
+          >
             Submit
           </FormButton>
         </Form>
-        <View className="flex-row mb-2 justify-between">
-          <Text className="text-gray-dark">Taxes</Text>
-          <Text className="text-gray-dark">
-            {draftOrder.data?.draft_order.tax_total?.toLocaleString('en-US', {
-              style: 'currency',
-              currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
-              currencyDisplay: 'narrowSymbol',
-            })}
-          </Text>
-        </View>
-        <View className="flex-row justify-between">
-          <Text className="text-gray-dark">Subtotal</Text>
-          <Text className="text-gray-dark">
-            {draftOrder.data?.draft_order.subtotal?.toLocaleString('en-US', {
-              style: 'currency',
-              currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
-              currencyDisplay: 'narrowSymbol',
-            })}
-          </Text>
+        <View className="gap-2">
+          <View className="flex-row justify-between">
+            <Text className="text-gray-dark">Taxes</Text>
+            {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
+              <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
+            ) : (
+              <Text className="text-gray-dark">
+                {draftOrder.data.draft_order.tax_total?.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
+                  currencyDisplay: 'narrowSymbol',
+                })}
+              </Text>
+            )}
+          </View>
+          <View className="flex-row justify-between">
+            <Text className="text-gray-dark">Subtotal</Text>
+            {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
+              <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
+            ) : (
+              <Text className="text-gray-dark">
+                {draftOrder.data.draft_order.subtotal?.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: draftOrder.data.draft_order.region?.currency_code || settings.data?.region?.currency_code,
+                  currencyDisplay: 'narrowSymbol',
+                })}
+              </Text>
+            )}
+          </View>
+          {draftOrder.data.draft_order.discount_total > 0 && (
+            <View className="flex-row justify-between">
+              <Text className="text-gray-dark">Discount</Text>
+              {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
+                <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
+              ) : (
+                <Text className="text-gray-dark">
+                  {(draftOrder.data.draft_order.discount_total * -1)?.toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: draftOrder.data.draft_order.region?.currency_code || settings.data?.region?.currency_code,
+                    currencyDisplay: 'narrowSymbol',
+                  })}
+                </Text>
+              )}
+            </View>
+          )}
         </View>
 
         <View className="h-px bg-border my-4" />
 
         <View className="flex-row justify-between mb-6">
           <Text className="font-medium text-lg">Total</Text>
-          <Text className="font-medium text-lg">
-            {draftOrder.data?.draft_order.total?.toLocaleString('en-US', {
-              style: 'currency',
-              currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
-              currencyDisplay: 'narrowSymbol',
-            })}
-          </Text>
+          {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
+            <View className="w-1/4 h-7 rounded-md bg-gray-200" />
+          ) : (
+            <Text className="font-medium text-lg">
+              {draftOrder.data.draft_order.total?.toLocaleString('en-US', {
+                style: 'currency',
+                currency: draftOrder.data.draft_order.region?.currency_code || settings.data?.region?.currency_code,
+                currencyDisplay: 'narrowSymbol',
+              })}
+            </Text>
+          )}
         </View>
 
         <View className="flex-row gap-2">
@@ -300,14 +470,21 @@ export default function CartScreen() {
               ]);
             }}
             isPending={cancelDraftOrder.isPending}
+            disabled={draftOrder.isFetching || isUpdatingDraftOrder > 0}
           >
             Cancel Cart
           </Button>
           <Button
             className="flex-1"
-            disabled={cancelDraftOrder.isPending || draftOrder.data.draft_order.items.length === 0}
+            disabled={
+              draftOrder.data.draft_order.items.length === 0 || draftOrder.isFetching || isUpdatingDraftOrder > 0
+            }
             onPress={() => {
-              router.push('/checkout');
+              if (!draftOrder.data?.draft_order.id) {
+                return;
+              }
+
+              router.push(`/checkout/${draftOrder.data.draft_order.id}`);
             }}
           >
             Checkout

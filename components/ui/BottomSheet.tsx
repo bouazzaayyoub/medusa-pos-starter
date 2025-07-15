@@ -5,14 +5,14 @@ import {
   GestureResponderEvent,
   Modal,
   ModalProps,
-  SafeAreaView,
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-export interface DialogProps extends ModalProps {
+export interface BottomSheetProps extends ModalProps {
   title?: string;
   showCloseButton?: boolean;
   dismissOnOverlayPress?: boolean;
@@ -25,7 +25,7 @@ export interface DialogProps extends ModalProps {
   onCloseIconPress?: (event: GestureResponderEvent) => void;
 }
 
-export const Dialog: React.FC<DialogProps> = ({
+export const BottomSheet: React.FC<BottomSheetProps> = ({
   title,
   children,
   showCloseButton = true,
@@ -39,6 +39,8 @@ export const Dialog: React.FC<DialogProps> = ({
   onCloseIconPress,
   ...modalProps
 }) => {
+  const safeAreaInsets = useSafeAreaInsets();
+
   const onRequestClose = React.useCallback<Exclude<ModalProps['onRequestClose'], undefined>>(
     (event) => {
       if (modalProps.onRequestClose) {
@@ -76,13 +78,25 @@ export const Dialog: React.FC<DialogProps> = ({
 
   return (
     <Modal transparent={true} statusBarTranslucent {...modalProps} onRequestClose={onRequestClose}>
-      <SafeAreaView className={clx('flex-1 justify-center items-center bg-black/50', className)}>
+      <View
+        className={clx('flex-1 justify-end items-center bg-black/50', className)}
+        style={{
+          paddingTop: safeAreaInsets.top,
+          paddingLeft: safeAreaInsets.left,
+          paddingRight: safeAreaInsets.right,
+        }}
+      >
         <TouchableWithoutFeedback onPress={handleOverlayPress}>
           <View className="absolute inset-0" />
         </TouchableWithoutFeedback>
 
-        <View className="p-4 w-full max-h-full">
-          <View className={clx('bg-white rounded-2xl p-4 w-full overflow-hidden max-h-full', containerClassName)}>
+        <View className="w-full max-h-full">
+          <View
+            className={clx('bg-white rounded-2xl p-4 w-full overflow-hidden max-h-full', containerClassName)}
+            style={{
+              paddingBottom: safeAreaInsets.bottom,
+            }}
+          >
             {(title || showCloseButton) && (
               <View className={clx('flex-row mb-4 justify-between gap-2 items-center', headerClassName)}>
                 {title && <Text className="text-base">{title}</Text>}
@@ -97,7 +111,7 @@ export const Dialog: React.FC<DialogProps> = ({
             <View className={contentClassName}>{children}</View>
           </View>
         </View>
-      </SafeAreaView>
+      </View>
     </Modal>
   );
 };

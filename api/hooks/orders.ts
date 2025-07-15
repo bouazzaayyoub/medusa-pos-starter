@@ -1,23 +1,17 @@
 import { useMedusaSdk } from '@/contexts/auth';
-import { AdminCreateCustomer, AdminCustomerFilters, AdminCustomerListResponse } from '@medusajs/types';
-import {
-  InfiniteData,
-  UndefinedInitialDataInfiniteOptions,
-  useInfiniteQuery,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { AdminOrderFilters, AdminOrderListResponse } from '@medusajs/types';
+import { InfiniteData, UndefinedInitialDataInfiniteOptions, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 const PER_PAGE = 20;
 
-export const useCustomers = (
-  query?: Omit<AdminCustomerFilters, 'limit' | 'offset'>,
+export const useOrders = (
+  query?: Omit<AdminOrderFilters, 'limit' | 'offset'>,
   limit = PER_PAGE,
   options?: Omit<
     UndefinedInitialDataInfiniteOptions<
-      AdminCustomerListResponse,
+      AdminOrderListResponse,
       unknown,
-      InfiniteData<AdminCustomerListResponse>,
+      InfiniteData<AdminOrderListResponse>,
       readonly unknown[],
       number
     >,
@@ -27,9 +21,9 @@ export const useCustomers = (
   const sdk = useMedusaSdk();
 
   return useInfiniteQuery({
-    queryKey: ['customers', JSON.stringify(query ?? {})],
+    queryKey: ['orders', JSON.stringify(query ?? {})],
     queryFn: async ({ pageParam = 1 }) => {
-      return sdk.admin.customer.list({
+      return sdk.admin.order.list({
         ...query,
         limit,
         offset: (pageParam - 1) * limit,
@@ -48,20 +42,14 @@ export const useCustomers = (
   });
 };
 
-export const useCreateCustomer = () => {
+export const useOrder = (orderId: string) => {
   const sdk = useMedusaSdk();
-  const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationKey: ['customers', 'create'],
-    mutationFn: async (data: AdminCreateCustomer) => {
-      return sdk.admin.customer.create(data);
+  return useQuery({
+    queryKey: ['orders', 'order', orderId],
+    queryFn: async () => {
+      return sdk.admin.order.retrieve(orderId);
     },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ['customers'],
-        exact: false,
-      });
-    },
+    enabled: !!orderId,
   });
 };
