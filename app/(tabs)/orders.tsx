@@ -20,18 +20,25 @@ const isPlaceholderOrder = (
   return typeof order.id === 'string' && order.id.startsWith('placeholder_');
 };
 
+const allowedOrderStatuses = ['pending', 'completed', 'draft', 'archived', 'canceled', 'requires_action'] as const;
+
+const isValidOrderStatus = (status: string): status is (typeof allowedOrderStatuses)[number] => {
+  return allowedOrderStatuses.includes(status as (typeof allowedOrderStatuses)[number]);
+};
+
 export default function OrdersScreen() {
   const bottomTabBarHeight = useBottomTabBarHeight();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
   const [dateRange, setDateRange] = useState<{ startDate: Date; endDate: Date } | null>(null);
 
+  const validatedStatusFilter = statusFilter.filter(isValidOrderStatus);
+
   const ordersQuery = useOrders({
     q: searchQuery || undefined,
     fields: '+customer.*,+total,+currency_code',
     order: '-created_at',
-    // @ts-expect-error
-    status: statusFilter,
+    status: validatedStatusFilter.length > 0 ? validatedStatusFilter : undefined,
     created_at: dateRange
       ? {
           $gte: dateRange.startDate.toISOString(),
