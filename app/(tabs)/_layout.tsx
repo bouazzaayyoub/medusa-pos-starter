@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform, Text, View } from 'react-native';
+import { Platform } from 'react-native';
 
 import { useDraftOrder } from '@/api/hooks/draft-orders';
 import { HapticTab } from '@/components/HapticTab';
@@ -52,21 +52,15 @@ export default function TabLayout() {
         name="cart"
         options={{
           title: 'Cart',
-          tabBarIcon: ({ color }) => (
-            <View>
-              <ShoppingCart size={28} color={color} />
-              {draftOrder.data && draftOrder.data.draft_order.items.length > 0 && (
-                <View
-                  style={{ backgroundColor: color }}
-                  className="absolute -right-1 -top-0.5 w-3.5 h-3.5 rounded-full justify-center items-center"
-                >
-                  <Text className="text-white text-[0.5625rem] font-bold">
-                    {draftOrder.data.draft_order.items.length}
-                  </Text>
-                </View>
-              )}
-            </View>
-          ),
+          tabBarBadge:
+            draftOrder.data && draftOrder.data.draft_order.items.length > 0
+              ? draftOrder.data.draft_order.items.length
+              : undefined,
+          tabBarBadgeStyle: {
+            backgroundColor: '#282828',
+            fontWeight: '700',
+          },
+          tabBarIcon: ({ color }) => <ShoppingCart size={28} color={color} />,
         }}
       />
       <Tabs.Screen
