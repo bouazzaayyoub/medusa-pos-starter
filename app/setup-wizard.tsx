@@ -16,7 +16,7 @@ export default function SetupWizardScreen() {
   if (isLoading) {
     return (
       <SafeAreaView className="flex-1 bg-white justify-center items-center">
-        <ActivityIndicator size="large" className="text-blue" />
+        <ActivityIndicator size="large" className="text-blue-dark" />
         <Text className="mt-4 text-lg text-gray-600">Loading setup data...</Text>
       </SafeAreaView>
     );
