@@ -57,6 +57,10 @@ export default function TabLayout() {
               ? draftOrder.data.draft_order.items.length
               : undefined,
           tabBarBadgeStyle: {
+            maxWidth: 17.6,
+            maxHeight: 17.6,
+            fontSize: 9,
+            aspectRatio: 1,
             backgroundColor: '#282828',
             fontWeight: '700',
           },
