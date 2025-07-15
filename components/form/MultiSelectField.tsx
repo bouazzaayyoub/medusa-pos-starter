@@ -54,7 +54,7 @@ export function MultiSelectField({
     ? options.filter((option) => option.label.toLowerCase().includes(searchQuery.toLowerCase()))
     : options;
 
-  const showFloating = floatingPlaceholder && (isVisible || selectedOptions.length > 0) && variant == 'primary';
+  const showFloating = floatingPlaceholder && (isVisible || selectedOptions.length > 0) && variant === 'primary';
   const floatingPlaceholderTranslateY = useSharedValue(0);
   const floatingPlaceholderScale = useSharedValue(1);
 
@@ -121,14 +121,14 @@ export function MultiSelectField({
             {
               'border-red': error,
               [buttonClassName]: buttonClassName,
-              'pt-6 pb-4': floatingPlaceholder && variant == 'primary',
-              'bg-black': selectedOptions.length > 0 && variant == 'secondary',
-              'rounded-full py-3 justify-center': variant == 'secondary',
+              'pt-6 pb-4': floatingPlaceholder && variant === 'primary',
+              'bg-black': selectedOptions.length > 0 && variant === 'secondary',
+              'rounded-full py-3 justify-center': variant === 'secondary',
             },
           )}
         >
           <View>
-            {selectedOptions.length > 0 && variant == 'primary' ? (
+            {selectedOptions.length > 0 && variant === 'primary' ? (
               <View className="flex flex-row flex-wrap gap-1">
                 {selectedOptions.map((option) => (
                   <View key={option.value} className="bg-gray-100 rounded-lg px-2 py-1 flex-row items-center mr-1 mb-1">
@@ -145,7 +145,7 @@ export function MultiSelectField({
                   </View>
                 ))}
               </View>
-            ) : selectedOptions.length > 0 && variant == 'secondary' ? (
+            ) : selectedOptions.length > 0 && variant === 'secondary' ? (
               <View className="flex-row gap-3 items-center">
                 <Text className="text-lg text-white">{placeholder}</Text>
                 <View className="bg-white rounded-full mt-0.5 items-center px-1 justify-center aspect-square">
