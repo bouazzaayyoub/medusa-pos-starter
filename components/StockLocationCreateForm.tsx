@@ -89,8 +89,6 @@ const StockLocationCreateForm: React.FC<StockLocationCreateFormProps> = ({ onSto
 
       <TextField name="city" floatingPlaceholder placeholder="City (optional)" />
 
-      <ProvinceField name="province" countryFieldName="country_code" placeholder="Province/State (optional)" />
-
       <SelectField
         floatingPlaceholder
         name="country_code"
@@ -99,6 +97,8 @@ const StockLocationCreateForm: React.FC<StockLocationCreateFormProps> = ({ onSto
         searchable={true}
         className="mb-2"
       />
+
+      <ProvinceField name="province" countryFieldName="country_code" placeholder="Province/State (optional)" />
 
       <FormButton isPending={createStockLocation.isPending} disabled={createStockLocation.isPending}>
         Create Stock Location
