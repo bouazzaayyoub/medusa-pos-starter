@@ -48,7 +48,10 @@ export const useOrder = (orderId: string) => {
   return useQuery({
     queryKey: ['orders', 'order', orderId],
     queryFn: async () => {
-      return sdk.admin.order.retrieve(orderId);
+      return sdk.admin.order.retrieve(orderId, {
+        fields:
+          '+tax_total,+discount_total,+subtotal,+total,+items.variant.options.*,+items.variant.options.option.*,+items.variant.inventory_quantity,+customer.*',
+      });
     },
     enabled: !!orderId,
   });

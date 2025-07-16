@@ -330,7 +330,7 @@ export default function CheckoutScreen() {
           className="mb-2"
           onPress={() => {
             router.replace('/orders');
-            // router.push(`/order-details/${draftOrderId}`);
+            router.push(`/orders/${draftOrderId}`);
           }}
         >
           View Order

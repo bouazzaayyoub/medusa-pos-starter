@@ -1,10 +1,10 @@
 import { ChevronDown } from '@/components/icons/chevron-down';
-import { Dialog } from '@/components/ui/Dialog';
 import { clx } from '@/utils/clx';
 import React, { useEffect, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import { BottomSheet } from '../ui/BottomSheet';
 
 interface SelectOption {
   label: string;
@@ -18,11 +18,11 @@ interface SelectFieldProps {
   className?: string;
   buttonClassName?: string;
   errorClassName?: string;
-  modalClassName?: string;
   searchable?: boolean;
   renderOption?: (option: SelectOption, isSelected: boolean) => React.ReactNode;
   floatingPlaceholder?: boolean;
   onEndReached?: () => void;
+  isDisabled?: boolean;
 }
 
 export function SelectField({
@@ -32,11 +32,11 @@ export function SelectField({
   className = '',
   buttonClassName = '',
   errorClassName = '',
-  modalClassName = '',
   searchable = false,
   renderOption,
   floatingPlaceholder = false,
   onEndReached,
+  isDisabled = false,
 }: SelectFieldProps) {
   const { control } = useFormContext();
   const {
@@ -128,6 +128,7 @@ export function SelectField({
             },
           )}
           onPress={() => setIsVisible(true)}
+          disabled={isDisabled}
         >
           <Text
             className={clx('text-base', {
@@ -137,17 +138,11 @@ export function SelectField({
             {selectedOption ? selectedOption.label : !floatingPlaceholder ? placeholder : null}
           </Text>
         </TouchableOpacity>
-        <ChevronDown size={24} className="text-gray absolute top-1/2 -translate-y-1/2 right-4" />
+        {!isDisabled && <ChevronDown size={24} className="text-gray absolute top-1/2 -translate-y-1/2 right-4" />}
       </View>
       {error && <Text className={clx('text-red text-sm mt-1', errorClassName)}>{error.message}</Text>}
 
-      <Dialog
-        open={isVisible}
-        onClose={() => setIsVisible(false)}
-        showCloseButton={false}
-        animationType="slide"
-        pinDown
-      >
+      <BottomSheet visible={isVisible} onClose={() => setIsVisible(false)} showCloseButton={false}>
         {searchable && (
           <View className="p-4 border-b border-border">
             <TextInput
@@ -182,7 +177,7 @@ export function SelectField({
           }
           onEndReached={onEndReached}
         />
-      </Dialog>
+      </BottomSheet>
     </View>
   );
 }

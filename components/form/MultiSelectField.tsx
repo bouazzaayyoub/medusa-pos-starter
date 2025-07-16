@@ -1,11 +1,11 @@
 import { ChevronDown } from '@/components/icons/chevron-down';
 import { X } from '@/components/icons/x';
-import { Dialog } from '@/components/ui/Dialog';
 import { clx } from '@/utils/clx';
 import React, { useEffect, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import { BottomSheet } from '../ui/BottomSheet';
 
 interface MultiSelectOption {
   label: string;
@@ -183,13 +183,7 @@ export function MultiSelectField({
 
       {error && <Text className={clx('text-red text-sm mt-1', errorClassName)}>{error.message}</Text>}
 
-      <Dialog
-        open={isVisible}
-        onClose={() => setIsVisible(false)}
-        showCloseButton={false}
-        animationType="slide"
-        pinDown
-      >
+      <BottomSheet visible={isVisible} onClose={() => setIsVisible(false)} showCloseButton={false}>
         {searchable && (
           <View className="p-4 border-b border-border">
             <TextInput
@@ -220,7 +214,7 @@ export function MultiSelectField({
             </View>
           }
         />
-      </Dialog>
+      </BottomSheet>
     </View>
   );
 }

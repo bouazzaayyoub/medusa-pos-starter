@@ -78,12 +78,15 @@ function App() {
             }}
           />
           <Stack.Screen
-            name="order-details"
+            name="orders/[orderId]"
             options={{
               presentation: 'transparentModal',
               title: 'Order Details',
               headerShown: false,
               animation: 'none',
+              animationDuration: 0,
+              gestureEnabled: false,
+              fullScreenGestureShadowEnabled: false,
             }}
           />
           <Stack.Screen
