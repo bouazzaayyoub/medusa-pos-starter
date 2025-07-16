@@ -38,6 +38,9 @@ module.exports = {
           light: '#B9F1B2',
         },
       },
+      borderRadius: {
+        '4xl': '2rem',
+      },
     },
   },
   plugins: [],

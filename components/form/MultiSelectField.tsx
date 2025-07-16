@@ -1,11 +1,11 @@
 import { ChevronDown } from '@/components/icons/chevron-down';
 import { X } from '@/components/icons/x';
-import { Button } from '@/components/ui/Button';
 import { clx } from '@/utils/clx';
 import React, { useEffect, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
-import { FlatList, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import { BottomSheet } from '../ui/BottomSheet';
 
 interface MultiSelectOption {
   label: string;
@@ -19,7 +19,6 @@ interface MultiSelectFieldProps {
   className?: string;
   buttonClassName?: string;
   errorClassName?: string;
-  modalClassName?: string;
   searchable?: boolean;
   floatingPlaceholder?: boolean;
   variant?: 'primary' | 'secondary';
@@ -32,7 +31,6 @@ export function MultiSelectField({
   className = '',
   buttonClassName = '',
   errorClassName = '',
-  modalClassName = '',
   searchable = false,
   floatingPlaceholder = false,
   variant = 'primary',
@@ -183,51 +181,38 @@ export function MultiSelectField({
 
       {error && <Text className={clx('text-red text-sm mt-1', errorClassName)}>{error.message}</Text>}
 
-      <Modal visible={isVisible} animationType="slide" transparent={true} onRequestClose={() => setIsVisible(false)}>
-        <View className="flex-1 bg-black/50 justify-end">
-          <View className={clx('bg-white overflow-hidden rounded-t-3xl max-h-[80%] pb-safe', modalClassName)}>
-            {searchable && (
-              <View className="p-4 border-b border-border">
-                <TextInput
-                  className="border border-border rounded-lg px-4 py-3 text-base"
-                  placeholder="Search options..."
-                  placeholderTextColor="#9CA3AF"
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
-              </View>
-            )}
-
-            <FlatList
-              data={filteredOptions}
-              keyExtractor={(item) => item.value}
-              showsVerticalScrollIndicator={false}
-              renderItem={({ item }) => {
-                const isSelected = value.includes(item.value);
-                return defaultRenderOption(item, isSelected);
-              }}
-              ListEmptyComponent={
-                <View className="p-8 items-center">
-                  <Text className="text-gray-500 text-base">
-                    {searchable && searchQuery ? 'No options found' : 'No options available'}
-                  </Text>
-                </View>
-              }
+      <BottomSheet visible={isVisible} onClose={() => setIsVisible(false)} showCloseButton={false}>
+        {searchable && (
+          <View className="p-4 border-b border-border">
+            <TextInput
+              className="border border-border rounded-lg px-4 py-3 text-base"
+              placeholder="Search options..."
+              placeholderTextColor="#9CA3AF"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              autoCapitalize="none"
+              autoCorrect={false}
             />
-
-            <Button
-              className="rounded-none"
-              onPress={() => {
-                setIsVisible(false);
-              }}
-            >
-              Done
-            </Button>
           </View>
-        </View>
-      </Modal>
+        )}
+
+        <FlatList
+          data={filteredOptions}
+          keyExtractor={(item) => item.value}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => {
+            const isSelected = value.includes(item.value);
+            return defaultRenderOption(item, isSelected);
+          }}
+          ListEmptyComponent={
+            <View className="p-8 items-center">
+              <Text className="text-gray-500 text-base">
+                {searchable && searchQuery ? 'No options found' : 'No options available'}
+              </Text>
+            </View>
+          }
+        />
+      </BottomSheet>
     </View>
   );
 }

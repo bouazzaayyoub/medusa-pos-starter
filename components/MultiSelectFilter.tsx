@@ -128,12 +128,7 @@ export const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({
         )}
       </View>
 
-      <BottomSheet
-        visible={isVisible}
-        onClose={() => setIsVisible(false)}
-        animationType="slide"
-        showCloseButton={false}
-      >
+      <BottomSheet visible={isVisible} onClose={() => setIsVisible(false)} showCloseButton={false}>
         {searchable && (
           <View className="p-4 border-b border-border">
             <TextInput
@@ -165,52 +160,6 @@ export const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({
           }
         />
       </BottomSheet>
-
-      {/* <Modal visible={isVisible} animationType="slide" transparent={true} onRequestClose={() => setIsVisible(false)}>
-        <View className="flex-1 bg-black/50 justify-end">
-          <View className={clx('bg-white overflow-hidden rounded-t-3xl max-h-[80%] pb-safe', modalClassName)}>
-            {searchable && (
-              <View className="p-4 border-b border-border">
-                <TextInput
-                  className="border border-border rounded-lg px-4 py-3 text-base"
-                  placeholder="Search options..."
-                  placeholderTextColor="#9CA3AF"
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
-              </View>
-            )}
-
-            <FlatList
-              data={filteredOptions}
-              keyExtractor={(item) => item.value}
-              showsVerticalScrollIndicator={false}
-              renderItem={({ item }) => {
-                const isSelected = value.includes(item.value);
-                return defaultRenderOption(item, isSelected);
-              }}
-              ListEmptyComponent={
-                <View className="p-8 items-center">
-                  <Text className="text-gray-500 text-base">
-                    {searchable && searchQuery ? 'No options found' : 'No options available'}
-                  </Text>
-                </View>
-              }
-            />
-
-            <Button
-              className="rounded-none"
-              onPress={() => {
-                setIsVisible(false);
-              }}
-            >
-              Done
-            </Button>
-          </View>
-        </View>
-      </Modal> */}
     </View>
   );
 };

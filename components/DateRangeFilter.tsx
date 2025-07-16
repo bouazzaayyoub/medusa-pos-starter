@@ -116,12 +116,7 @@ export const DateRangeFilter = ({
         <ChevronDown size={24} className="mt-1" />
       </TouchableOpacity>
 
-      <BottomSheet
-        visible={isVisible}
-        onClose={() => setIsVisible(false)}
-        animationType="slide"
-        showCloseButton={false}
-      >
+      <BottomSheet visible={isVisible} onClose={() => setIsVisible(false)} showCloseButton={false}>
         <DatePicker
           mode="range"
           startDate={selectedRange.startDate}

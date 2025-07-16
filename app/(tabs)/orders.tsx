@@ -47,13 +47,6 @@ export default function OrdersScreen() {
       : undefined,
   });
 
-  const handleOrderPress = React.useCallback((order: AdminOrder) => {
-    router.push({
-      pathname: '/order-details',
-      params: { orderId: order.id, orderNumber: order.display_id },
-    });
-  }, []);
-
   const formatDate = (dateString: string | Date) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -63,13 +56,12 @@ export default function OrdersScreen() {
     });
   };
 
-  const formatPrice = (amount: number, currencyCode: string) => {
-    return (amount / 100).toLocaleString('en-US', {
-      style: 'currency',
-      currency: currencyCode,
-      currencyDisplay: 'narrowSymbol',
+  const handleOrderPress = React.useCallback((order: AdminOrder) => {
+    router.push({
+      pathname: '/orders/[orderId]',
+      params: { orderId: order.id, orderNumber: order.display_id, orderDate: formatDate(order.created_at) },
     });
-  };
+  }, []);
 
   const renderOrder = React.useCallback(
     ({ item }: { item: AdminOrder | { id: `placeholder_${string}` } }) => {
@@ -115,7 +107,13 @@ export default function OrdersScreen() {
                 </Text>
               </View>
             </View>
-            <Text>{formatPrice(item.total, item.currency_code)}</Text>
+            <Text>
+              {item.total.toLocaleString('en-US', {
+                style: 'currency',
+                currency: item.currency_code,
+                currencyDisplay: 'narrowSymbol',
+              })}
+            </Text>
           </View>
           <View className="gap-4">
             <Text className="text-gray mb-auto text-right flex-1 flex-wrap">{formatDate(item.created_at)}</Text>
