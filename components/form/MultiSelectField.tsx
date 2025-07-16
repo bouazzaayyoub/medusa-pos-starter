@@ -19,7 +19,6 @@ interface MultiSelectFieldProps {
   className?: string;
   buttonClassName?: string;
   errorClassName?: string;
-  modalClassName?: string;
   searchable?: boolean;
   floatingPlaceholder?: boolean;
   variant?: 'primary' | 'secondary';
@@ -32,7 +31,6 @@ export function MultiSelectField({
   className = '',
   buttonClassName = '',
   errorClassName = '',
-  modalClassName = '',
   searchable = false,
   floatingPlaceholder = false,
   variant = 'primary',
