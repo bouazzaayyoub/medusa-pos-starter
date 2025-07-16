@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-export interface BottomSheetProps extends Pick<ModalProps, 'visible' | 'onRequestClose' | 'children'> {
+export interface BottomSheetProps extends Pick<ModalProps, 'visible' | 'onRequestClose'> {
   title?: string;
   showCloseButton?: boolean;
   dismissOnOverlayPress?: boolean;
@@ -26,6 +26,7 @@ export interface BottomSheetProps extends Pick<ModalProps, 'visible' | 'onReques
   onClose?: () => void;
   onOverlayPress?: (event: PanResponderGestureState) => void;
   onCloseIconPress?: (event: GestureResponderEvent) => void;
+  children: React.ReactNode | ((props: { animateOut: (callback?: () => void) => void }) => React.ReactNode);
 }
 
 export const BottomSheet: React.FC<BottomSheetProps> = ({
@@ -117,60 +118,46 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
     ]).start();
   }, [translateY, overlayOpacity]);
 
-  const panResponder = React.useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: (_, gestureState) => {
-        return Math.abs(gestureState.dy) > 5;
-      },
-      onPanResponderGrant: () => {
-        translateY.stopAnimation();
-        overlayOpacity.stopAnimation();
-        isDragging.current = false;
-      },
-      onPanResponderMove: (_, gestureState) => {
-        if (gestureState.dy > 0) {
-          isDragging.current = true;
-          translateY.setValue(gestureState.dy);
-
-          const fadeOpacity = Math.max(0.3, 1 - gestureState.dy / 200);
-          overlayOpacity.setValue(fadeOpacity);
+  const handleOverlayPress = React.useCallback(
+    (event: PanResponderGestureState) => {
+      if (dismissOnOverlayPress) {
+        if (onOverlayPress) {
+          return onOverlayPress(event);
         }
-      },
-      onPanResponderRelease: (_, gestureState) => {
-        const shouldClose = gestureState.dy > 100;
 
-        if (shouldClose) {
-          animateOut(() => onClose?.());
-        } else {
-          animateSpringBack();
-        }
-      },
-    }),
-  ).current;
+        animateOut(() => onClose?.());
+      }
+    },
+    [dismissOnOverlayPress, onOverlayPress, onClose, animateOut],
+  );
 
-  const overlayPanResponder = React.useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: (_, gestureState) => {
-        return Math.abs(gestureState.dy) > 5;
-      },
-      onPanResponderGrant: () => {
-        translateY.stopAnimation();
-        overlayOpacity.stopAnimation();
-        isDragging.current = false;
-      },
-      onPanResponderMove: (_, gestureState) => {
-        if (gestureState.dy > 0) {
-          isDragging.current = true;
-          translateY.setValue(gestureState.dy);
+  const createPanResponder = React.useCallback(
+    (isOverlay = false) => {
+      return PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onMoveShouldSetPanResponder: (_, gestureState) => {
+          return Math.abs(gestureState.dy) > 5;
+        },
+        onPanResponderGrant: () => {
+          translateY.stopAnimation();
+          overlayOpacity.stopAnimation();
+          isDragging.current = false;
+        },
+        onPanResponderMove: (_, gestureState) => {
+          if (gestureState.dy > 0) {
+            isDragging.current = true;
+            translateY.setValue(gestureState.dy);
 
-          const fadeOpacity = Math.max(0.3, 1 - gestureState.dy / 200);
-          overlayOpacity.setValue(fadeOpacity);
-        }
-      },
-      onPanResponderRelease: (_, gestureState) => {
-        if (isDragging.current) {
+            const fadeOpacity = Math.max(0.3, 1 - gestureState.dy / 200);
+            overlayOpacity.setValue(fadeOpacity);
+          }
+        },
+        onPanResponderRelease: (_, gestureState) => {
+          if (!isDragging.current && isOverlay) {
+            handleOverlayPress(gestureState);
+            return;
+          }
+
           const shouldClose = gestureState.dy > 100;
 
           if (shouldClose) {
@@ -178,12 +165,14 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
           } else {
             animateSpringBack();
           }
-        } else {
-          handleOverlayPress(gestureState);
-        }
-      },
-    }),
-  ).current;
+        },
+      });
+    },
+    [translateY, overlayOpacity, handleOverlayPress, animateOut, onClose, animateSpringBack],
+  );
+
+  const panResponder = React.useRef(createPanResponder()).current;
+  const overlayPanResponder = React.useRef(createPanResponder(true)).current;
 
   React.useEffect(() => {
     if (modalProps.visible) {
@@ -200,19 +189,6 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
       onClose?.();
     },
     [modalProps, onClose],
-  );
-
-  const handleOverlayPress = React.useCallback(
-    (event: PanResponderGestureState) => {
-      if (dismissOnOverlayPress) {
-        if (onOverlayPress) {
-          return onOverlayPress(event);
-        }
-
-        animateOut(() => onClose?.());
-      }
-    },
-    [dismissOnOverlayPress, onOverlayPress, onClose, animateOut],
   );
 
   const handleCloseIconPress = React.useCallback(
@@ -283,7 +259,9 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
 
             {!title && !showCloseButton && <View {...panResponder.panHandlers} className="h-8 shrink-0 grow-0" />}
 
-            <View className={clx('px-4 pb-4 shrink grow-0', contentClassName)}>{children}</View>
+            <View className={clx('px-4 pb-4 shrink grow-0', contentClassName)}>
+              {typeof children === 'function' ? children({ animateOut }) : children}
+            </View>
           </View>
         </Animated.View>
       </Animated.View>
