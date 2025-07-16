@@ -1,48 +1,38 @@
 import { ChevronDown } from '@/components/icons/chevron-down';
 import { X } from '@/components/icons/x';
 import { clx } from '@/utils/clx';
-import React, { useEffect, useState } from 'react';
-import { useController, useFormContext } from 'react-hook-form';
+import React, { useState } from 'react';
 import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { BottomSheet } from '../ui/BottomSheet';
+import { BottomSheet } from './ui/BottomSheet';
 
 interface MultiSelectOption {
   label: string;
   value: string;
 }
 
-interface MultiSelectFieldProps {
-  name: string;
+interface MultiSelectFilterProps {
+  value: string[];
+  onChange: (value: string[]) => void;
   placeholder?: string;
   options: MultiSelectOption[];
   className?: string;
   buttonClassName?: string;
   errorClassName?: string;
   searchable?: boolean;
-  floatingPlaceholder?: boolean;
   variant?: 'primary' | 'secondary';
 }
 
-export function MultiSelectField({
-  name,
+export const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({
+  value = [],
+  onChange,
   placeholder = 'Select options',
   options,
   className = '',
   buttonClassName = '',
   errorClassName = '',
   searchable = false,
-  floatingPlaceholder = false,
   variant = 'primary',
-}: MultiSelectFieldProps) {
-  const { control } = useFormContext();
-  const {
-    field: { onChange, value = [] },
-    fieldState: { error },
-  } = useController({
-    name,
-    control,
-  });
+}) => {
   const [isVisible, setIsVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -51,34 +41,6 @@ export function MultiSelectField({
   const filteredOptions = searchable
     ? options.filter((option) => option.label.toLowerCase().includes(searchQuery.toLowerCase()))
     : options;
-
-  const showFloating = floatingPlaceholder && (isVisible || selectedOptions.length > 0) && variant === 'primary';
-  const floatingPlaceholderTranslateY = useSharedValue(0);
-  const floatingPlaceholderScale = useSharedValue(1);
-
-  const floatingPlaceholderStyle = useAnimatedStyle(() => {
-    return {
-      transformOrigin: 'top left',
-      transform: [
-        {
-          translateY: floatingPlaceholderTranslateY.value,
-        },
-        {
-          scale: floatingPlaceholderScale.value,
-        },
-      ],
-    };
-  });
-
-  useEffect(() => {
-    if (showFloating) {
-      floatingPlaceholderTranslateY.value = withTiming(-12, { duration: 150 });
-      floatingPlaceholderScale.value = withTiming(0.67, { duration: 150 });
-    } else {
-      floatingPlaceholderTranslateY.value = withTiming(0, { duration: 150 });
-      floatingPlaceholderScale.value = withTiming(1, { duration: 150 });
-    }
-  }, [floatingPlaceholderScale, floatingPlaceholderTranslateY, showFloating]);
 
   const toggleOption = (optionValue: string) => {
     const newValue = value.includes(optionValue)
@@ -100,12 +62,11 @@ export function MultiSelectField({
     >
       <Text
         className={clx('text-base', {
-          'text-blue-dark font-medium': isSelected,
+          'font-medium': isSelected,
         })}
       >
         {option.label}
       </Text>
-      {isSelected && <Text className="text-blue-dark text-base">✓</Text>}
     </TouchableOpacity>
   );
 
@@ -117,9 +78,7 @@ export function MultiSelectField({
           className={clx(
             'bg-white rounded-xl px-4 py-5 text-lg leading-6 border border-border flex-row justify-between items-center',
             {
-              'border-red': error,
               [buttonClassName]: buttonClassName,
-              'pt-6 pb-4': floatingPlaceholder && variant === 'primary',
               'bg-black': selectedOptions.length > 0 && variant === 'secondary',
               'rounded-full py-3 justify-center': variant === 'secondary',
             },
@@ -145,9 +104,9 @@ export function MultiSelectField({
               </View>
             ) : selectedOptions.length > 0 && variant === 'secondary' ? (
               <View className="flex-row gap-3 items-center">
-                <Text className="text-lg text-white">{placeholder}</Text>
-                <View className="bg-white rounded-full mt-0.5 items-center px-1 justify-center aspect-square">
-                  <Text className="text-xs font-bold">{selectedOptions.length}</Text>
+                <Text className="text-lg text-white leading-5">{placeholder}</Text>
+                <View className="bg-white rounded-full items-center px-1 justify-center aspect-square">
+                  <Text className="text-xs font-bold transform -translate-y-1/2 top-1/2">{selectedOptions.length}</Text>
                 </View>
               </View>
             ) : (
@@ -157,7 +116,7 @@ export function MultiSelectField({
                     'text-gray': !selectedOptions.length && variant === 'primary',
                   })}
                 >
-                  {!floatingPlaceholder ? placeholder : null}
+                  {placeholder}
                 </Text>
                 {variant === 'secondary' && <ChevronDown size={24} className="mt-1" />}
               </View>
@@ -167,19 +126,7 @@ export function MultiSelectField({
         {variant === 'primary' && (
           <ChevronDown size={24} className="text-gray absolute top-1/2 -translate-y-1/2 right-4" />
         )}
-
-        {floatingPlaceholder && (
-          <Animated.Text
-            className={clx('absolute left-4 z-10 text-lg top-5', error ? 'text-red' : 'text-gray')}
-            style={floatingPlaceholderStyle}
-            pointerEvents="none"
-          >
-            {placeholder}
-          </Animated.Text>
-        )}
       </View>
-
-      {error && <Text className={clx('text-red text-sm mt-1', errorClassName)}>{error.message}</Text>}
 
       <BottomSheet visible={isVisible} onClose={() => setIsVisible(false)} showCloseButton={false}>
         {searchable && (
@@ -215,4 +162,4 @@ export function MultiSelectField({
       </BottomSheet>
     </View>
   );
-}
+};

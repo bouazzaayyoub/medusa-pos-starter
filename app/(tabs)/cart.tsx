@@ -3,7 +3,7 @@ import {
   DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL,
   useAddPromotion,
   useCancelDraftOrder,
-  useDraftOrder,
+  useCurrentDraftOrder,
   useUpdateDraftOrderCustomer,
   useUpdateDraftOrderItem,
 } from '@/api/hooks/draft-orders';
@@ -45,24 +45,26 @@ const DraftOrderItem: React.FC<{ item: AdminOrderLineItem; onRemove?: (item: Adm
   onRemove,
 }) => {
   const settings = useSettings();
-  const draftOrder = useDraftOrder();
+  const draftOrder = useCurrentDraftOrder();
   const updateDraftOrderItem = useUpdateDraftOrderItem();
   const thumbnail = item.thumbnail || item.product?.thumbnail || item.product?.images?.[0]?.url;
 
   return (
     <SwipeableListItem
-      rightClassName="bg-red-500"
-      rightWidth={60}
+      rightClassName="bg-white"
+      rightWidth={80}
       rightContent={(reset) => (
-        <Pressable
-          className="flex-1 w-full h-full justify-center items-center"
-          onPress={() => {
-            reset();
-            onRemove?.(item);
-          }}
-        >
-          <Trash2 size={24} color="white" />
-        </Pressable>
+        <View className="flex-1 w-full h-full justify-center items-center p-2">
+          <Pressable
+            className="flex-1 w-full h-full justify-center items-center rounded-xl bg-red"
+            onPress={() => {
+              reset();
+              onRemove?.(item);
+            }}
+          >
+            <Trash2 size={24} color="white" />
+          </Pressable>
+        </View>
       )}
     >
       <View className="flex-row gap-4 px-4 bg-white py-6">
@@ -72,7 +74,7 @@ const DraftOrderItem: React.FC<{ item: AdminOrderLineItem; onRemove?: (item: Adm
         <View className="flex-col gap-2 flex-1">
           <Text className="font-medium">{item.product_title}</Text>
           {item.variant && item.variant.options && item.variant.options.length > 0 && (
-            <View className="flex-row flex-wrap items-center gap-x-4 gap-y-1">
+            <View className="flex-row flex-wrap items-center gap-x-2 gap-y-1">
               {item.variant.options.map((option) => (
                 <View className="flex-row" key={option.id}>
                   <Text className="text-gray-dark text-sm">{option.option?.title || option.option_id}:</Text>
@@ -167,7 +169,7 @@ const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({ cu
 
 export default function CartScreen() {
   const settings = useSettings();
-  const draftOrder = useDraftOrder();
+  const draftOrder = useCurrentDraftOrder();
   const addPromotion = useAddPromotion();
   const cancelDraftOrder = useCancelDraftOrder();
   const updateDraftOrderItem = useUpdateDraftOrderItem();
@@ -262,8 +264,9 @@ export default function CartScreen() {
           <Button
             onPress={() => {
               draftOrder.refetch();
+              settings.refetch();
             }}
-            isPending={draftOrder.isRefetching}
+            isPending={draftOrder.isRefetching || settings.isRefetching}
             size="sm"
             variant="outline"
           >
@@ -297,7 +300,7 @@ export default function CartScreen() {
     );
   }
 
-  if (draftOrder.data?.draft_order.items.length === 0) {
+  if (!draftOrder.data?.draft_order.items.length) {
     return (
       <SafeAreaView className="relative flex-1 px-4 bg-white" style={{ paddingBottom: bottomTabBarHeight }}>
         <View className="py-4">
@@ -382,32 +385,50 @@ export default function CartScreen() {
             Submit
           </FormButton>
         </Form>
-        <View className="flex-row mb-2 justify-between">
-          <Text className="text-gray-dark">Taxes</Text>
-          {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
-            <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
-          ) : (
-            <Text className="text-gray-dark">
-              {draftOrder.data?.draft_order.tax_total?.toLocaleString('en-US', {
-                style: 'currency',
-                currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
-                currencyDisplay: 'narrowSymbol',
-              })}
-            </Text>
-          )}
-        </View>
-        <View className="flex-row justify-between">
-          <Text className="text-gray-dark">Subtotal</Text>
-          {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
-            <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
-          ) : (
-            <Text className="text-gray-dark">
-              {draftOrder.data?.draft_order.subtotal?.toLocaleString('en-US', {
-                style: 'currency',
-                currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
-                currencyDisplay: 'narrowSymbol',
-              })}
-            </Text>
+        <View className="gap-2">
+          <View className="flex-row justify-between">
+            <Text className="text-gray-dark">Taxes</Text>
+            {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
+              <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
+            ) : (
+              <Text className="text-gray-dark">
+                {draftOrder.data.draft_order.tax_total?.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
+                  currencyDisplay: 'narrowSymbol',
+                })}
+              </Text>
+            )}
+          </View>
+          <View className="flex-row justify-between">
+            <Text className="text-gray-dark">Subtotal</Text>
+            {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
+              <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
+            ) : (
+              <Text className="text-gray-dark">
+                {draftOrder.data.draft_order.subtotal?.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: draftOrder.data.draft_order.region?.currency_code || settings.data?.region?.currency_code,
+                  currencyDisplay: 'narrowSymbol',
+                })}
+              </Text>
+            )}
+          </View>
+          {draftOrder.data.draft_order.discount_total > 0 && (
+            <View className="flex-row justify-between">
+              <Text className="text-gray-dark">Discount</Text>
+              {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
+                <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
+              ) : (
+                <Text className="text-gray-dark">
+                  {(draftOrder.data.draft_order.discount_total * -1)?.toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: draftOrder.data.draft_order.region?.currency_code || settings.data?.region?.currency_code,
+                    currencyDisplay: 'narrowSymbol',
+                  })}
+                </Text>
+              )}
+            </View>
           )}
         </View>
 
@@ -419,9 +440,9 @@ export default function CartScreen() {
             <View className="w-1/4 h-7 rounded-md bg-gray-200" />
           ) : (
             <Text className="font-medium text-lg">
-              {draftOrder.data?.draft_order.total?.toLocaleString('en-US', {
+              {draftOrder.data.draft_order.total?.toLocaleString('en-US', {
                 style: 'currency',
-                currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
+                currency: draftOrder.data.draft_order.region?.currency_code || settings.data?.region?.currency_code,
                 currencyDisplay: 'narrowSymbol',
               })}
             </Text>
@@ -459,7 +480,11 @@ export default function CartScreen() {
               draftOrder.data.draft_order.items.length === 0 || draftOrder.isFetching || isUpdatingDraftOrder > 0
             }
             onPress={() => {
-              router.push('/checkout');
+              if (!draftOrder.data?.draft_order.id) {
+                return;
+              }
+
+              router.push(`/checkout/${draftOrder.data.draft_order.id}`);
             }}
           >
             Checkout

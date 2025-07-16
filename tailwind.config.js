@@ -31,12 +31,15 @@ module.exports = {
           DEFAULT: '#9B8435',
           light: '#F8EC9A',
         },
-        blue: '#4E78E5',
+        blue: { dark: '#4E78E5', DEFAULT: '#2D788D', light: '#B1E4F2' },
         green: {
           dark: '#109D28',
           DEFAULT: '#33C320',
-          light: '#cbfcc5',
+          light: '#B9F1B2',
         },
+      },
+      borderRadius: {
+        '4xl': '2rem',
       },
     },
   },

@@ -19,8 +19,32 @@ export function ProvinceField({
   const { control } = useFormContext();
   const countryCode = useWatch({ control, name: countryFieldName });
 
-  if (!countryCode || !hasProvinces(countryCode)) {
-    return null;
+  if (!countryCode) {
+    return (
+      <SelectField
+        name={name}
+        floatingPlaceholder
+        placeholder="Select a country first"
+        options={[]}
+        searchable={true}
+        className={className}
+        isDisabled
+      />
+    );
+  }
+
+  if (!hasProvinces(countryCode)) {
+    return (
+      <SelectField
+        name={name}
+        floatingPlaceholder
+        placeholder="No provinces available"
+        options={[]}
+        searchable={true}
+        className={className}
+        isDisabled
+      />
+    );
   }
 
   const provinces = getProvincesForCountry(countryCode);
@@ -30,7 +54,17 @@ export function ProvinceField({
   }));
 
   if (provinceOptions.length === 0) {
-    return null;
+    return (
+      <SelectField
+        name={name}
+        floatingPlaceholder
+        placeholder="No provinces available"
+        options={[]}
+        searchable={true}
+        className={className}
+        isDisabled
+      />
+    );
   }
 
   return (
