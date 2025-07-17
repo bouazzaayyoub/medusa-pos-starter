@@ -1,7 +1,7 @@
 import { useSalesChannels } from '@/api/hooks/sales-channel';
 import { Antenna } from '@/components/icons/antenna';
-import { Loader } from '@/components/icons/loader';
 import { InfoBanner } from '@/components/InfoBanner';
+import { LoadingBanner } from '@/components/LoadingBanner';
 import { clx } from '@/utils/clx';
 import React from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
@@ -15,12 +15,7 @@ const SalesChannelList: React.FC<SalesChannelListProps> = ({ selectedSalesChanne
   const salesChannelsQuery = useSalesChannels();
 
   if (salesChannelsQuery.isLoading) {
-    return (
-      <View className="flex-row mb-auto border rounded-xl border-gray-200 justify-between items-center p-4">
-        <Text className="text-base text-gray-300">Loading sales channels...</Text>
-        <Loader size={16} color="#B5B5B5" className="animate-spin" />
-      </View>
-    );
+    return <LoadingBanner className="mb-auto">Loading sales channels...</LoadingBanner>;
   }
 
   if (salesChannelsQuery.isError) {

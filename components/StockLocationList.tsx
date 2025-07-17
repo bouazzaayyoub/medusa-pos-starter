@@ -1,7 +1,7 @@
 import { useStockLocations } from '@/api/hooks/stock-location';
-import { Loader } from '@/components/icons/loader';
 import { MapPin } from '@/components/icons/map-pin';
 import { InfoBanner } from '@/components/InfoBanner';
+import { LoadingBanner } from '@/components/LoadingBanner';
 import { getCountryByAlpha2 } from '@/constants/countries';
 import { findProvinceByCode } from '@/constants/provinces';
 import { clx } from '@/utils/clx';
@@ -20,12 +20,7 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
   const stockLocationsQuery = useStockLocations();
 
   if (stockLocationsQuery.isLoading) {
-    return (
-      <View className="flex-row mb-auto border rounded-xl border-gray-200 justify-between items-center p-4">
-        <Text className="text-base text-gray-300">Loading stock locations...</Text>
-        <Loader size={16} color="#B5B5B5" className="animate-spin" />
-      </View>
-    );
+    return <LoadingBanner className="mb-auto">Loading stock locations...</LoadingBanner>;
   }
 
   if (stockLocationsQuery.isError) {

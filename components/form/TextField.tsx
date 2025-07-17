@@ -83,7 +83,7 @@ export function TextField({
         )}
         <TextInput
           className={clx(
-            'bg-white rounded-xl px-4 py-5 leading-6 border border-gray-200 focus:border-active-500',
+            'bg-white rounded-xl px-4 py-5 border border-gray-200 focus:border-active-500',
             {
               '!border-error-500': error,
               'pt-6 pb-4': floatingPlaceholder,
