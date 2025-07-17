@@ -1,5 +1,5 @@
+import { Loader } from '@/components/icons/loader';
 import { clx } from '@/utils/clx';
-import { Loader } from 'lucide-react-native';
 import { Text, View } from 'react-native';
 
 type LoadingBannerProps = {

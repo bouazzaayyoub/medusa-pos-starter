@@ -1,6 +1,7 @@
+import { Check } from '@/components/icons/check';
 import { CircleAlert } from '@/components/icons/circle-alert';
+import { TriangleAlert } from '@/components/icons/triangle-alert';
 import { clx } from '@/utils/clx';
-import { Check, TriangleAlert } from 'lucide-react-native';
 import { Text, View } from 'react-native';
 
 type InfoBannerProps = {

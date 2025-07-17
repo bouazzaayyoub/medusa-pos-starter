@@ -1,6 +1,6 @@
+import { Check } from '@/components/icons/check';
 import { ChevronDown } from '@/components/icons/chevron-down';
 import { clx } from '@/utils/clx';
-import { Check } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
