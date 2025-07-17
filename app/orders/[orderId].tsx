@@ -1,5 +1,6 @@
 import { DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL } from '@/api/hooks/draft-orders';
 import { useOrder } from '@/api/hooks/orders';
+import { LoadingBanner } from '@/components/LoadingBanner';
 import { BottomSheet } from '@/components/ui/BottomSheet';
 import { Button } from '@/components/ui/Button';
 import { useSettings } from '@/contexts/settings';
@@ -117,70 +118,76 @@ export default function OrderDetailsScreen() {
             <Text className="text-2xl">Order #{orderNumber}</Text>
             <Text className="text-gray-300">{orderDate}</Text>
           </View>
-          <FlatList
-            data={orderQuery.data?.order.items}
-            renderItem={renderItem}
-            ItemSeparatorComponent={() => <View className="w-full h-px bg-gray-200 my-6" />}
-            contentContainerClassName="pt-4 grow-0"
-            className="grow-0 shrink"
-            ListFooterComponent={() =>
-              orderQuery.isSuccess && settings.isSuccess ? (
-                <>
-                  <CustomerInformation order={orderQuery.data.order} />
-                  <Text className="mb-4 text-xl">Price</Text>
-                  <View className="gap-2">
-                    <View className="flex-row justify-between gap-4 items-center">
-                      <Text className="text-gray-300 flex-1 text-sm">Taxes</Text>
-                      <Text className="flex-1 text-sm flex-wrap text-right">
-                        {orderQuery.data.order.tax_total.toLocaleString('en-US', {
-                          style: 'currency',
-                          currency,
-                          currencyDisplay: 'narrowSymbol',
-                        })}
-                      </Text>
-                    </View>
-                    <View className="flex-row justify-between gap-4 items-center">
-                      <Text className="text-gray-300 flex-1 text-sm">Subtotal</Text>
-                      <Text className="flex-1 text-sm flex-wrap text-right">
-                        {orderQuery.data.order.subtotal.toLocaleString('en-US', {
-                          style: 'currency',
-                          currency,
-                          currencyDisplay: 'narrowSymbol',
-                        })}
-                      </Text>
-                    </View>
-                    {orderQuery.data.order.discount_total > 0 && (
+          {orderQuery.isLoading || settings.isLoading ? (
+            <LoadingBanner variant="ghost" className="my-11">
+              Fetching order details...
+            </LoadingBanner>
+          ) : (
+            <FlatList
+              data={orderQuery.data?.order.items}
+              renderItem={renderItem}
+              ItemSeparatorComponent={() => <View className="w-full h-px bg-gray-200 my-6" />}
+              contentContainerClassName="pt-4 grow-0"
+              className="grow-0 shrink"
+              ListFooterComponent={() =>
+                orderQuery.isSuccess && settings.isSuccess ? (
+                  <>
+                    <CustomerInformation order={orderQuery.data.order} />
+                    <Text className="mb-4 text-xl">Price</Text>
+                    <View className="gap-2">
                       <View className="flex-row justify-between gap-4 items-center">
-                        <Text className="text-gray-300 flex-1 text-sm">Discount</Text>
+                        <Text className="text-gray-300 flex-1 text-sm">Taxes</Text>
                         <Text className="flex-1 text-sm flex-wrap text-right">
-                          {(orderQuery.data.order.discount_total * -1).toLocaleString('en-US', {
+                          {orderQuery.data.order.tax_total.toLocaleString('en-US', {
                             style: 'currency',
                             currency,
                             currencyDisplay: 'narrowSymbol',
                           })}
                         </Text>
                       </View>
-                    )}
-                  </View>
-                  <View className="h-px bg-gray-200 my-4 w-full" />
-                  <View className="flex-row justify-between gap-4 mb-4 items-center">
-                    <Text className="flex-1 text-lg">Total</Text>
-                    <Text className="flex-1 text-lg flex-wrap text-right">
-                      {orderQuery.data.order.total.toLocaleString('en-US', {
-                        style: 'currency',
-                        currency: orderQuery.data.order.region?.currency_code || settings.data?.region?.currency_code,
-                        currencyDisplay: 'narrowSymbol',
-                      })}
-                    </Text>
-                  </View>
-                  <Button size="lg" variant="outline" onPress={() => animateOut(() => router.back())}>
-                    Close
-                  </Button>
-                </>
-              ) : null
-            }
-            ListFooterComponentClassName="mt-14"
-          />
+                      <View className="flex-row justify-between gap-4 items-center">
+                        <Text className="text-gray-300 flex-1 text-sm">Subtotal</Text>
+                        <Text className="flex-1 text-sm flex-wrap text-right">
+                          {orderQuery.data.order.subtotal.toLocaleString('en-US', {
+                            style: 'currency',
+                            currency,
+                            currencyDisplay: 'narrowSymbol',
+                          })}
+                        </Text>
+                      </View>
+                      {orderQuery.data.order.discount_total > 0 && (
+                        <View className="flex-row justify-between gap-4 items-center">
+                          <Text className="text-gray-300 flex-1 text-sm">Discount</Text>
+                          <Text className="flex-1 text-sm flex-wrap text-right">
+                            {(orderQuery.data.order.discount_total * -1).toLocaleString('en-US', {
+                              style: 'currency',
+                              currency,
+                              currencyDisplay: 'narrowSymbol',
+                            })}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                    <View className="h-px bg-gray-200 my-4 w-full" />
+                    <View className="flex-row justify-between gap-4 mb-4 items-center">
+                      <Text className="flex-1 text-lg">Total</Text>
+                      <Text className="flex-1 text-lg flex-wrap text-right">
+                        {orderQuery.data.order.total.toLocaleString('en-US', {
+                          style: 'currency',
+                          currency: orderQuery.data.order.region?.currency_code || settings.data?.region?.currency_code,
+                          currencyDisplay: 'narrowSymbol',
+                        })}
+                      </Text>
+                    </View>
+                  </>
+                ) : null
+              }
+              ListFooterComponentClassName="mt-14"
+            />
+          )}
+          <Button size="lg" variant="outline" onPress={() => animateOut(() => router.back())}>
+            Close
+          </Button>
         </>
       )}
     </BottomSheet>
