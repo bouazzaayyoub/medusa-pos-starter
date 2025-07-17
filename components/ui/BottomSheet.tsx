@@ -237,15 +237,15 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
             transform: [{ translateY }],
           }}
         >
-          <View className="w-full items-center pb-2 shrink-0 grow-0" {...panResponder.panHandlers}>
-            <View className="bg-white/50 w-20 h-1 rounded-full" />
-          </View>
           <View
             className={clx('bg-white rounded-2xl w-full overflow-hidden shrink grow-0', containerClassName)}
             style={{
               paddingBottom: safeAreaInsets.bottom,
             }}
           >
+            <View className="w-full items-center py-2 shrink-0 grow-0" {...panResponder.panHandlers}>
+              <View className="bg-gray-200 w-10 h-1 rounded-full" />
+            </View>
             {(title || showCloseButton) && (
               <View className={clx('flex-row p-4 justify-between gap-2 items-center shrink-0 grow-0', headerClassName)}>
                 <View className="flex-1">{title && <Text className="text-base">{title}</Text>}</View>
