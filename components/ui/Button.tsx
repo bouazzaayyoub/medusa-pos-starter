@@ -29,7 +29,7 @@ export const Button: React.FC<ButtonProps> = ({
       'p-4': size === 'md',
       'p-3': size === 'sm',
       'bg-black disabled:bg-gray-100': variant === 'solid',
-      'border border-gray-200 bg-transparent disabled:bg-gray-100 disabled:border-gray-200': variant === 'outline',
+      'border border-gray-200 bg-transparent disabled:bg-gray-100 disabled:border-gray-100': variant === 'outline',
     },
     className,
   );
