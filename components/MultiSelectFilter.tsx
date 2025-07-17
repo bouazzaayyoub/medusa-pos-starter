@@ -1,6 +1,7 @@
 import { ChevronDown } from '@/components/icons/chevron-down';
 import { X } from '@/components/icons/x';
 import { clx } from '@/utils/clx';
+import { Check } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { BottomSheet } from './ui/BottomSheet';
@@ -62,11 +63,12 @@ export const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({
     >
       <Text
         className={clx('text-base', {
-          'font-medium': isSelected,
+          'text-active-500 font-medium': isSelected,
         })}
       >
         {option.label}
       </Text>
+      {isSelected && <Check size={20} color="#4E78E5" />}
     </TouchableOpacity>
   );
 

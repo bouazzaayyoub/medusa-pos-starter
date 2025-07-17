@@ -1,6 +1,7 @@
 import { ChevronDown } from '@/components/icons/chevron-down';
 import { X } from '@/components/icons/x';
 import { clx } from '@/utils/clx';
+import { Check } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -105,7 +106,7 @@ export function MultiSelectField({
       >
         {option.label}
       </Text>
-      {isSelected && <Text className="text-active-500 text-lg">✓</Text>}
+      {isSelected && <Check size={20} color="#4E78E5" />}
     </TouchableOpacity>
   );
 
