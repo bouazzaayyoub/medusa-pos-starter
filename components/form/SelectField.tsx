@@ -93,7 +93,7 @@ export function SelectField({
   const defaultRenderOption = (option: SelectOption, isSelected: boolean) => (
     <TouchableOpacity
       key={option.value}
-      className={clx('p-4 border-b border-gray-200 flex-row justify-between items-center bg-white')}
+      className={clx('p-4 flex-row justify-between items-center bg-white')}
       onPress={() => handleSelect(option.value)}
     >
       <Text
@@ -103,7 +103,7 @@ export function SelectField({
       >
         {option.label}
       </Text>
-      {isSelected && <Check size={20} color="#4E78E5" />}
+      {isSelected && <Check size={16} color="#4E78E5" />}
     </TouchableOpacity>
   );
 
@@ -169,6 +169,7 @@ export function SelectField({
               : defaultRenderOption(item, isSelected);
             return renderedOption as React.ReactElement;
           }}
+          ItemSeparatorComponent={() => <View className="h-px bg-gray-200" />}
           ListEmptyComponent={
             <View className="p-8 items-center">
               <Text className="text-gray-500 text-base">

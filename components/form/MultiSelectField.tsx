@@ -96,7 +96,7 @@ export function MultiSelectField({
   const defaultRenderOption = (option: MultiSelectOption, isSelected: boolean) => (
     <TouchableOpacity
       key={option.value}
-      className={clx('p-4 border-b border-gray-200 flex-row justify-between items-center bg-white')}
+      className={clx('p-4 flex-row justify-between items-center bg-white')}
       onPress={() => toggleOption(option.value)}
     >
       <Text
@@ -106,7 +106,7 @@ export function MultiSelectField({
       >
         {option.label}
       </Text>
-      {isSelected && <Check size={20} color="#4E78E5" />}
+      {isSelected && <Check size={16} color="#4E78E5" />}
     </TouchableOpacity>
   );
 
@@ -200,6 +200,7 @@ export function MultiSelectField({
             const isSelected = value.includes(item.value);
             return defaultRenderOption(item, isSelected);
           }}
+          ItemSeparatorComponent={() => <View className="h-px bg-gray-200" />}
           ListEmptyComponent={
             <View className="p-8 items-center">
               <Text className="text-gray-500 text-base">
