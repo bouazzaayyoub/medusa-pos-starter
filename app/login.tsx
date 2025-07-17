@@ -1,7 +1,7 @@
 import { Form } from '@/components/form/Form';
 import { FormButton } from '@/components/form/FormButton';
 import { TextField } from '@/components/form/TextField';
-import { CircleAlert } from '@/components/icons/circle-alert';
+import { InfoBanner } from '@/components/InfoBanner';
 import { useAuthCtx } from '@/contexts/auth';
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
@@ -99,12 +99,7 @@ export default function LoginScreen() {
   return (
     <SafeAreaView className="flex-1 p-4 pt-6 bg-white gap-7">
       <Text className="text-4xl font-semibold">Login</Text>
-      {error && (
-        <View className="flex-row bg-error-200 p-4 rounded-xl items-center gap-3">
-          <CircleAlert size={16} color="#ef4444" />
-          <Text className="text-error-500 text-base">{error}</Text>
-        </View>
-      )}
+      {error && <InfoBanner colorScheme="error">{error}</InfoBanner>}
       <View className="w-full flex-1">
         <Form schema={loginSchema} onSubmit={handleLogin} defaultValues={defaultValues} className="gap-6">
           <TextField

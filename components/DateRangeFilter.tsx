@@ -101,7 +101,7 @@ export const DateRangeFilter = ({
     <View className={className}>
       <TouchableOpacity
         className={clx(
-          'bg-white rounded-full gap-2 p-3 justify-center border border-border flex-row items-center',
+          'bg-white rounded-full gap-2 p-3 justify-center border border-gray-200 flex-row items-center',
           buttonClassName,
         )}
         onPress={() => {

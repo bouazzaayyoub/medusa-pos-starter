@@ -67,7 +67,7 @@ export default function OrdersScreen() {
     ({ item }: { item: AdminOrder | { id: `placeholder_${string}` } }) => {
       if (isPlaceholderOrder(item)) {
         return (
-          <View className="p-4 border gap-2 border-border rounded-2xl">
+          <View className="p-4 border gap-2 border-gray-200 rounded-2xl">
             <View className="bg-gray-200 h-6 w-full rounded-md" />
             <View className="flex-row justify-between">
               <View className="gap-2">
@@ -89,7 +89,7 @@ export default function OrdersScreen() {
 
       return (
         <TouchableOpacity
-          className="p-4 border justify-between flex-row gap-4 border-border rounded-2xl"
+          className="p-4 border justify-between flex-row gap-4 border-gray-200 rounded-2xl"
           onPress={() => handleOrderPress(item)}
           activeOpacity={0.7}
         >
@@ -116,7 +116,7 @@ export default function OrdersScreen() {
             </Text>
           </View>
           <View className="gap-4">
-            <Text className="text-gray mb-auto text-right flex-1 flex-wrap">{formatDate(item.created_at)}</Text>
+            <Text className="text-gray-300 mb-auto text-right flex-1 flex-wrap">{formatDate(item.created_at)}</Text>
             <OrderStatus order={item} />
           </View>
         </TouchableOpacity>
@@ -138,13 +138,13 @@ export default function OrdersScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="mx-4 mt-6 mb-6">
-        <Text className="text-black text-[40px] font-semibold">My Orders</Text>
+        <Text className="text-black text-4xl font-semibold">My Orders</Text>
       </View>
 
       <View className="mx-4 mb-6 relative">
-        <Search size={16} className="absolute left-4 top-1/2 -translate-y-[50%] text-gray" />
+        <Search size={16} className="absolute left-4 top-1/2 -translate-y-[50%] text-gray-300" />
         <TextInput
-          className="rounded-full py-3 pr-4 pl-10 text-base leading-5 border placeholder:text-gray border-border"
+          className="rounded-full py-3 pr-4 pl-10 text-base leading-5 border placeholder:text-gray-300 border-gray-200"
           placeholder="Search for a specific order..."
           value={searchQuery}
           onChangeText={setSearchQuery}
@@ -195,7 +195,7 @@ export default function OrdersScreen() {
             ordersQuery.isFetchingNextPage ? (
               <View className="gap-4 mt-4">
                 {Array.from({ length: 3 }).map((_, index) => (
-                  <View key={index} className="p-4 border gap-2 border-border rounded-2xl">
+                  <View key={index} className="p-4 border gap-2 border-gray-200 rounded-2xl">
                     <View className="bg-gray-200 h-6 w-full rounded-md" />
                     <View className="flex-row justify-between">
                       <View className="gap-2">

@@ -79,27 +79,27 @@ export const OrderStatus: React.FC<OrderStatusProps> = ({ order, className }) =>
 
   if (order.status === 'requires_action') {
     return (
-      <View className={clx('px-4 flex-row rounded-full bg-yellow-light py-2 gap-2', className)}>
+      <View className={clx('px-4 flex-row rounded-full bg-warning-200 py-2 gap-2', className)}>
         <AlertCircle size={16} color="#9B8435" />
-        <Text className="text-yellow">Requires action</Text>
+        <Text className="text-warning-500">Requires action</Text>
       </View>
     );
   }
 
   if (order.status === 'draft') {
     return (
-      <View className={clx('px-4 flex-row rounded-full bg-blue-light py-2 gap-2', className)}>
-        <FilePen size={16} color="#2D788D" />
-        <Text className="text-blue">Draft</Text>
+      <View className={clx('px-4 flex-row rounded-full bg-active-200 py-2 gap-2', className)}>
+        <FilePen size={16} color="#4E78E5" />
+        <Text className="text-active-500">Draft</Text>
       </View>
     );
   }
 
   if (order.status === 'archived') {
     return (
-      <View className={clx('px-4 flex-row rounded-full bg-gray-light py-2 gap-2', className)}>
-        <Archive size={16} color="#A0AEC0" />
-        <Text className="text-gray">Archived</Text>
+      <View className={clx('px-4 flex-row rounded-full bg-gray-100 py-2 gap-2', className)}>
+        <Archive size={16} color="#6b7280" />
+        <Text className="text-gray-500">Archived</Text>
       </View>
     );
   }
@@ -108,9 +108,9 @@ export const OrderStatus: React.FC<OrderStatusProps> = ({ order, className }) =>
 
   if (!fulfillmentStatus) {
     return (
-      <View className={clx('px-4 flex-row rounded-full bg-gray-light py-2 gap-2', className)}>
-        <HelpCircle size={16} color="#A0AEC0" />
-        <Text className="text-gray">Unknown</Text>
+      <View className={clx('px-4 flex-row rounded-full bg-gray-100 py-2 gap-2', className)}>
+        <HelpCircle size={16} color="#6b7280" />
+        <Text className="text-gray-500">Unknown</Text>
       </View>
     );
   }
@@ -120,16 +120,16 @@ export const OrderStatus: React.FC<OrderStatusProps> = ({ order, className }) =>
   switch (fulfillmentStatus.color) {
     case 'yellow':
       return (
-        <View className={clx('px-4 flex-row rounded-full bg-yellow-light py-2 gap-2', className)}>
+        <View className={clx('px-4 flex-row rounded-full bg-warning-200 py-2 gap-2', className)}>
           <Icon size={16} color="#9B8435" />
-          <Text className="text-yellow">{fulfillmentStatus.label}</Text>
+          <Text className="text-warning-500">{fulfillmentStatus.label}</Text>
         </View>
       );
     case 'green':
       return (
-        <View className={clx('px-4 flex-row rounded-full bg-green-light py-2 gap-2', className)}>
-          <Icon size={16} color="#33C320" />
-          <Text className="text-green">{fulfillmentStatus.label}</Text>
+        <View className={clx('px-4 flex-row rounded-full bg-success-200 py-2 gap-2', className)}>
+          <Icon size={16} color="#469B3B" />
+          <Text className="text-success-500">{fulfillmentStatus.label}</Text>
         </View>
       );
     case 'red':

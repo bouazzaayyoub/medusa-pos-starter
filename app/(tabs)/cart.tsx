@@ -11,11 +11,11 @@ import { Form } from '@/components/form/Form';
 import { FormButton } from '@/components/form/FormButton';
 import { TextField } from '@/components/form/TextField';
 import { ChevronDown } from '@/components/icons/chevron-down';
-import { CircleAlert } from '@/components/icons/circle-alert';
 import { ShoppingCart } from '@/components/icons/shopping-cart';
 import { Trash2 } from '@/components/icons/trash-2';
 import { UserRoundPlus } from '@/components/icons/user-round-plus';
 import { X } from '@/components/icons/x';
+import { InfoBanner } from '@/components/InfoBanner';
 import { SwipeableListItem } from '@/components/SwipeableListItem';
 import { Button } from '@/components/ui/Button';
 import { QuantityPicker } from '@/components/ui/QuantityPicker';
@@ -68,7 +68,7 @@ const DraftOrderItem: React.FC<{ item: AdminOrderLineItem; onRemove?: (item: Adm
       )}
     >
       <View className="flex-row gap-4 px-4 bg-white py-6">
-        <View className="h-[5.25rem] w-[5.25rem] rounded-xl bg-border overflow-hidden">
+        <View className="h-[5.25rem] w-[5.25rem] rounded-xl bg-gray-200 overflow-hidden">
           {thumbnail && <Image source={{ uri: thumbnail }} className="w-full h-full object-cover" />}
         </View>
         <View className="flex-col gap-2 flex-1">
@@ -234,7 +234,7 @@ export default function CartScreen() {
             <View className="w-24 h-4 rounded-md bg-gray-200" />
           </View>
 
-          <View className="h-px bg-border my-4" />
+          <View className="h-px bg-gray-200 my-4" />
 
           <View className="flex-row justify-between mb-6">
             <View className="w-16 h-7 rounded-md bg-gray-200" />
@@ -257,10 +257,9 @@ export default function CartScreen() {
           <Text className="text-black text-4xl font-semibold">Cart</Text>
         </View>
         <View className="flex-1 items-center justify-center">
-          <View className="flex-row gap-2 mb-2 items-center">
-            <CircleAlert size={24} className="text-error-500" />
-            <Text className="text-xl text-error-500">Failed to load cart</Text>
-          </View>
+          <InfoBanner variant="ghost" colorScheme="error" className="mb-2">
+            Failed to load cart
+          </InfoBanner>
           <Button
             onPress={() => {
               draftOrder.refetch();
@@ -348,7 +347,7 @@ export default function CartScreen() {
         keyExtractor={(item) => item.id}
         estimatedItemSize={132}
         renderItem={renderItem}
-        ItemSeparatorComponent={() => <View className="h-px bg-border" />}
+        ItemSeparatorComponent={() => <View className="h-px bg-gray-200" />}
         CellRendererComponent={ItemCell}
         disableAutoLayout
       />
@@ -387,11 +386,11 @@ export default function CartScreen() {
         </Form>
         <View className="gap-2">
           <View className="flex-row justify-between">
-            <Text className="text-gray-dark">Taxes</Text>
+            <Text className="text-gray-400">Taxes</Text>
             {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
               <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
             ) : (
-              <Text className="text-gray-dark">
+              <Text className="text-gray-400">
                 {draftOrder.data.draft_order.tax_total?.toLocaleString('en-US', {
                   style: 'currency',
                   currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
@@ -401,11 +400,11 @@ export default function CartScreen() {
             )}
           </View>
           <View className="flex-row justify-between">
-            <Text className="text-gray-dark">Subtotal</Text>
+            <Text className="text-gray-400">Subtotal</Text>
             {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
               <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
             ) : (
-              <Text className="text-gray-dark">
+              <Text className="text-gray-400">
                 {draftOrder.data.draft_order.subtotal?.toLocaleString('en-US', {
                   style: 'currency',
                   currency: draftOrder.data.draft_order.region?.currency_code || settings.data?.region?.currency_code,
@@ -416,11 +415,11 @@ export default function CartScreen() {
           </View>
           {draftOrder.data.draft_order.discount_total > 0 && (
             <View className="flex-row justify-between">
-              <Text className="text-gray-dark">Discount</Text>
+              <Text className="text-gray-400">Discount</Text>
               {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
                 <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
               ) : (
-                <Text className="text-gray-dark">
+                <Text className="text-gray-400">
                   {(draftOrder.data.draft_order.discount_total * -1)?.toLocaleString('en-US', {
                     style: 'currency',
                     currency: draftOrder.data.draft_order.region?.currency_code || settings.data?.region?.currency_code,
@@ -432,7 +431,7 @@ export default function CartScreen() {
           )}
         </View>
 
-        <View className="h-px bg-border my-4" />
+        <View className="h-px bg-gray-200 my-4" />
 
         <View className="flex-row justify-between mb-6">
           <Text className="font-medium text-lg">Total</Text>

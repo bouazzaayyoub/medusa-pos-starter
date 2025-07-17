@@ -1,7 +1,7 @@
 import { useRegions } from '@/api/hooks/regions';
-import { CircleAlert } from '@/components/icons/circle-alert';
 import { Globe } from '@/components/icons/globe';
 import { Loader } from '@/components/icons/loader';
+import { InfoBanner } from '@/components/InfoBanner';
 import { clx } from '@/utils/clx';
 import React from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
@@ -24,12 +24,7 @@ const RegionList: React.FC<RegionListProps> = ({ selectedRegionId, onRegionSelec
   }
 
   if (regionsQuery.isError) {
-    return (
-      <View className="flex-row mb-auto bg-yellow-light rounded-xl justify-between items-center p-4">
-        <Text className="text-base text-yellow-500">Unable to load regions.</Text>
-        <CircleAlert size={16} className="text-yellow-500" />
-      </View>
-    );
+    return <InfoBanner className="mb-auto">Unable to load regions.</InfoBanner>;
   }
 
   return (
@@ -38,7 +33,7 @@ const RegionList: React.FC<RegionListProps> = ({ selectedRegionId, onRegionSelec
         data={regionsQuery.data?.pages?.[0]?.regions || []}
         keyExtractor={(item) => item.id}
         className="border rounded-xl border-b border-gray-200"
-        ItemSeparatorComponent={() => <View className="h-px bg-border mx-4" />}
+        ItemSeparatorComponent={() => <View className="h-px bg-gray-200 mx-4" />}
         renderItem={({ item }) => (
           <TouchableOpacity
             className={clx('py-3 justify-between items-center flex-row px-4', {

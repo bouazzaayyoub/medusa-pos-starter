@@ -165,8 +165,8 @@ const CustomersList: React.FC<{
       renderItem={renderCustomer}
       keyExtractor={(item) => item.id}
       refreshing={customersQuery.isRefetching}
-      ItemSeparatorComponent={() => <View className="h-px bg-border mx-4" />}
-      className="border overflow-hidden rounded-xl border-[#EDEDED]"
+      ItemSeparatorComponent={() => <View className="h-px bg-gray-200 mx-4" />}
+      className="border overflow-hidden rounded-xl border-gray-200"
       ListEmptyComponent={
         <View className="py-10 px-4 justify-center items-center">
           <CircleAlert size={24} />
@@ -181,19 +181,19 @@ const CustomersList: React.FC<{
         customersQuery.isFetchingNextPage ? (
           <View>
             <CustomerListPlaceholder />
-            <View className="h-px bg-border mx-4" />
+            <View className="h-px bg-gray-200 mx-4" />
             <CustomerListPlaceholder />
-            <View className="h-px bg-border mx-4" />
+            <View className="h-px bg-gray-200 mx-4" />
             <CustomerListPlaceholder />
-            <View className="h-px bg-border mx-4" />
+            <View className="h-px bg-gray-200 mx-4" />
             <CustomerListPlaceholder />
-            <View className="h-px bg-border mx-4" />
+            <View className="h-px bg-gray-200 mx-4" />
             <CustomerListPlaceholder />
-            <View className="h-px bg-border mx-4" />
+            <View className="h-px bg-gray-200 mx-4" />
             <CustomerListPlaceholder />
-            <View className="h-px bg-border mx-4" />
+            <View className="h-px bg-gray-200 mx-4" />
             <CustomerListPlaceholder />
-            <View className="h-px bg-border mx-4" />
+            <View className="h-px bg-gray-200 mx-4" />
             <CustomerListPlaceholder />
           </View>
         ) : null
