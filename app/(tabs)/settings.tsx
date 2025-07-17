@@ -32,7 +32,7 @@ export default function SettingsScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white px-4 pt-safe" style={{ paddingBottom: bottomTabBarHeight }}>
-      <Text className="text-black text-[40px] font-semibold mb-6">Settings</Text>
+      <Text className="text-black text-4xl font-semibold mb-6">Settings</Text>
 
       <Text className="text-2xl mb-4">Sales Channel</Text>
       <Button
@@ -61,7 +61,7 @@ export default function SettingsScreen() {
         Log Out
       </Button>
 
-      <Text className="text-gray">You will be signed out of your account.</Text>
+      <Text className="text-gray-300">You will be signed out of your account.</Text>
     </SafeAreaView>
   );
 }

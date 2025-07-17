@@ -35,7 +35,7 @@ export function SizePicker({
               disabled={isDisabled}
               className={clx(
                 'w-10 h-10 rounded-full border items-center justify-center disabled:opacity-50',
-                isSelected ? 'border-black bg-black' : 'border-border bg-white',
+                isSelected ? 'border-black bg-black' : 'border-gray-200 bg-white',
               )}
             >
               <Text className={clx(isSelected ? 'text-white' : 'text-black')}>{size}</Text>

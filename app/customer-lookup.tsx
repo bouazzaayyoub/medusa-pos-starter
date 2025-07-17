@@ -127,7 +127,7 @@ const CustomersList: React.FC<{
             className={clx(
               customerName.length > 0
                 ? {
-                    'text-[#b5b5b5]': true,
+                    'text-gray-300': true,
                     'text-gray-400': selectedCustomerId === item.id,
                   }
                 : {
@@ -156,11 +156,7 @@ const CustomersList: React.FC<{
   }, [customersQuery]);
 
   if (customersQuery.isError) {
-    return (
-      <InfoBanner colorScheme="error" iconPosition="left">
-        Error loading customers. Please try again.
-      </InfoBanner>
-    );
+    return <InfoBanner colorScheme="error">Error loading customers. Please try again.</InfoBanner>;
   }
 
   return (
@@ -233,9 +229,9 @@ export default function CustomerLookupScreen() {
       contentClassName="flex-shrink"
     >
       <View className="mb-4 relative">
-        <Search size={16} className="absolute left-4 top-1/2 -translate-y-[50%] text-gray" />
+        <Search size={16} className="absolute left-4 top-1/2 -translate-y-[50%] text-gray-300" />
         <TextInput
-          className="rounded-full py-3 pr-4 pl-10 text-base leading-5 border placeholder:text-gray border-border"
+          className="rounded-full py-3 pr-4 pl-10 text-base leading-5 border placeholder:text-gray-300 border-gray-200"
           placeholder="Search customers..."
           value={searchQuery}
           onChangeText={setSearchQuery}

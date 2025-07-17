@@ -16,8 +16,8 @@ const SalesChannelList: React.FC<SalesChannelListProps> = ({ selectedSalesChanne
 
   if (salesChannelsQuery.isLoading) {
     return (
-      <View className="flex-row mb-auto border rounded-xl border-border justify-between items-center p-4">
-        <Text className="text-base text-gray">Loading sales channels...</Text>
+      <View className="flex-row mb-auto border rounded-xl border-gray-200 justify-between items-center p-4">
+        <Text className="text-base text-gray-300">Loading sales channels...</Text>
         <Loader size={16} color="#B5B5B5" className="animate-spin" />
       </View>
     );
@@ -26,8 +26,8 @@ const SalesChannelList: React.FC<SalesChannelListProps> = ({ selectedSalesChanne
   if (salesChannelsQuery.isError) {
     return (
       <View className="flex-row mb-auto bg-yellow-light rounded-xl justify-between items-center p-4">
-        <Text className="text-base text-yellow">Unable to load sales channels.</Text>
-        <CircleAlert size={16} className="text-yellow" />
+        <Text className="text-base text-yellow-500">Unable to load sales channels.</Text>
+        <CircleAlert size={16} className="text-yellow-500" />
       </View>
     );
   }

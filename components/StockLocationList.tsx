@@ -21,8 +21,8 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
 
   if (stockLocationsQuery.isLoading) {
     return (
-      <View className="flex-row mb-auto border rounded-xl border-border justify-between items-center p-4">
-        <Text className="text-base text-gray">Loading stock locations...</Text>
+      <View className="flex-row mb-auto border rounded-xl border-gray-200 justify-between items-center p-4">
+        <Text className="text-base text-gray-300">Loading stock locations...</Text>
         <Loader size={16} color="#B5B5B5" className="animate-spin" />
       </View>
     );
@@ -31,8 +31,8 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
   if (stockLocationsQuery.isError) {
     return (
       <View className="flex-row mb-auto bg-yellow-light rounded-xl justify-between items-center p-4">
-        <Text className="text-base text-yellow">Unable to load stock locations.</Text>
-        <CircleAlert size={16} className="text-yellow" />
+        <Text className="text-base text-yellow-500">Unable to load stock locations.</Text>
+        <CircleAlert size={16} className="text-yellow-500" />
       </View>
     );
   }
@@ -61,7 +61,7 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
               </Text>
               {item.address && (
                 <Text
-                  className={clx('text-sm text-gray', {
+                  className={clx('text-sm text-gray-300', {
                     'text-white': selectedStockLocationId === item.id,
                   })}
                 >

@@ -24,7 +24,7 @@ export const StockLocationSelectionStep: React.FC<StockLocationSelectionStepProp
     <View className="flex-1">
       <Text className="text-4xl mb-6 font-semibold">Setting Up</Text>
       <Text className="text-2xl mb-2">Select stock location</Text>
-      <Text className="text-base mb-6 text-gray">
+      <Text className="text-base mb-6 text-gray-300">
         Select where inventory will be sourced from, or add a new location if needed.
       </Text>
 

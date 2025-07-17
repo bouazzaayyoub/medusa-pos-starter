@@ -24,7 +24,7 @@ export const RegionSelectionStep: React.FC<RegionSelectionStepProps> = ({
     <View className="flex-1">
       <Text className="text-4xl mb-6 font-semibold">Setting Up</Text>
       <Text className="text-2xl mb-2">Choose a region</Text>
-      <Text className="text-base mb-6 text-gray">
+      <Text className="text-base mb-6 text-gray-300">
         Select a region that defines your market area, currency, and tax settings.
       </Text>
 

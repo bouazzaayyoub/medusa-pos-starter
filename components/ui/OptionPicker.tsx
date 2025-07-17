@@ -37,7 +37,7 @@ export function OptionPicker({
                 'px-2 h-10 rounded-full border items-center justify-center flex-row gap-2 disabled:opacity-50',
                 {
                   'border-black bg-black': isSelected,
-                  'border-border bg-white': !isSelected,
+                  'border-gray-200 bg-white': !isSelected,
                 },
               )}
             >

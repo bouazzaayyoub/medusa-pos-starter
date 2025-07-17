@@ -1,5 +1,6 @@
 import { CircleAlert } from '@/components/icons/circle-alert';
 import { clx } from '@/utils/clx';
+import { Check, TriangleAlert } from 'lucide-react-native';
 import { Text, View } from 'react-native';
 
 type InfoBannerProps = {
@@ -7,56 +8,37 @@ type InfoBannerProps = {
   colorScheme?: 'error' | 'warning' | 'success';
   className?: string;
   children?: React.ReactNode;
-  iconPosition?: 'left' | 'right';
 };
 
-const WRAPPER_COLOR_SCHEME = {
-  error: 'bg-red-light',
-  warning: 'bg-yellow-light',
-  success: 'bg-green-light',
-} as const;
+export const InfoBanner = ({ variant = 'solid', colorScheme = 'warning', className, children }: InfoBannerProps) => {
+  const wrapperClasses = clx(
+    'items-center flex-row',
+    {
+      'bg-error-200': colorScheme === 'error' && variant === 'solid',
+      'bg-warning-200': colorScheme === 'warning' && variant === 'solid',
+      'bg-success-200': colorScheme === 'success' && variant === 'solid',
+      'p-4 rounded-xl justify-between gap-2': variant === 'solid',
+      'gap-2 flex-row-reverse': variant === 'ghost',
+    },
+    className,
+  );
 
-const TEXT_COLOR_SCHEME = {
-  error: 'text-red',
-  warning: 'text-yellow',
-  success: 'text-green',
-} as const;
+  const textClasses = clx('text-base flex-1 flex-wrap', {
+    'text-error-500': colorScheme === 'error',
+    'text-warning-500': colorScheme === 'warning',
+    'text-success-500': colorScheme === 'success',
+  });
 
-const ICON_COLOR_SCHEME = {
-  error: '#F14747',
-  warning: '#9B8435',
-  success: '#33C320',
-} as const;
-
-const WRAPPER_VARIANT = {
-  ghost: 'justify-end gap-1',
-  solid: 'p-4 rounded-xl justify-between gap-3',
-} as const;
-
-export const InfoBanner = ({
-  variant = 'solid',
-  colorScheme = 'warning',
-  iconPosition = 'right',
-  className,
-  children,
-}: InfoBannerProps) => {
-  const wrapperColorSchemeClassNames = WRAPPER_COLOR_SCHEME[colorScheme];
-  const textColorSchemeClassNames = TEXT_COLOR_SCHEME[colorScheme];
-  const iconColorSchemeColor = ICON_COLOR_SCHEME[colorScheme];
-  const wrapperVariantClassNames = WRAPPER_VARIANT[variant];
+  const icon = {
+    error: <CircleAlert size={16} color="#F14747" />,
+    warning: <TriangleAlert size={16} color="#9B8435" />,
+    success: <Check size={16} color="#469B3B" />,
+  }[colorScheme];
 
   return (
-    <View
-      className={clx(
-        'items-center',
-        variant === 'solid' && wrapperColorSchemeClassNames,
-        iconPosition === 'left' ? 'flex-row-reverse' : 'flex-row',
-        wrapperVariantClassNames,
-        className,
-      )}
-    >
-      <Text className={clx('text-base', textColorSchemeClassNames)}>{children}</Text>
-      <CircleAlert size={16} color={iconColorSchemeColor} />
+    <View className={wrapperClasses}>
+      <Text className={textClasses}>{children}</Text>
+      {icon}
     </View>
   );
 };

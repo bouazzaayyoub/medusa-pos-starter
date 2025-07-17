@@ -102,7 +102,7 @@ export default function LoginScreen() {
       {error && (
         <View className="flex-row bg-red-light p-4 rounded-xl items-center gap-3">
           <CircleAlert size={16} color="#ef4444" />
-          <Text className="text-red text-base">{error}</Text>
+          <Text className="text-error-500 text-base">{error}</Text>
         </View>
       )}
       <View className="w-full flex-1">

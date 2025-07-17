@@ -75,7 +75,7 @@ const DraftOrderItem: React.FC<{ item: AdminOrderLineItem; onRemove?: (item: Adm
             <View className="flex-row flex-wrap items-center gap-x-4 gap-y-1">
               {item.variant.options.map((option) => (
                 <View className="flex-row" key={option.id}>
-                  <Text className="text-gray-dark text-sm">{option.option?.title || option.option_id}:</Text>
+                  <Text className="text-gray-400 text-sm">{option.option?.title || option.option_id}:</Text>
                   <Text className="text-sm">{option.value}</Text>
                 </View>
               ))}
@@ -136,16 +136,16 @@ const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({ cu
           },
         });
       }}
-      className="flex-row mb-6 pb-6 border-b border-border justify-between items-center"
+      className="flex-row mb-6 pb-6 border-b border-gray-200 justify-between items-center"
     >
       {customerName.length > 0 ? (
         <View>
           <Text className="text-lg">{customerName}</Text>
-          <Text className="text-sm text-gray">{customer.email}</Text>
+          <Text className="text-sm text-gray-300">{customer.email}</Text>
         </View>
       ) : (
         <View>
-          <Text className="text-sm text-gray">Customer</Text>
+          <Text className="text-sm text-gray-300">Customer</Text>
           <Text className="text-lg">{customer.email}</Text>
         </View>
       )}
@@ -192,11 +192,11 @@ export default function CartScreen() {
     return (
       <SafeAreaView className="relative flex-1 bg-white" style={{ paddingBottom: bottomTabBarHeight }}>
         <View className="p-4">
-          <Text className="text-black text-[40px] font-semibold">Cart</Text>
+          <Text className="text-black text-4xl font-semibold">Cart</Text>
         </View>
 
         <View className="px-4">
-          <View className="flex-row mb-6 pb-6 border-b border-border justify-between items-center">
+          <View className="flex-row mb-6 pb-6 border-b border-gray-200 justify-between items-center">
             <View>
               <View className="w-32 h-6 rounded-md bg-gray-200 mb-2" />
               <View className="w-48 h-4 rounded-md bg-gray-200" />
@@ -206,7 +206,7 @@ export default function CartScreen() {
         </View>
 
         {[1, 2].map((index) => (
-          <View key={index} className="flex-row gap-4 px-4 bg-white py-6 border-b border-border">
+          <View key={index} className="flex-row gap-4 px-4 bg-white py-6 border-b border-gray-200">
             <View className="h-[5.25rem] w-[5.25rem] rounded-xl bg-gray-200" />
             <View className="flex-col gap-2 flex-1">
               <View className="w-3/4 h-5 rounded-md bg-gray-200" />
@@ -252,12 +252,12 @@ export default function CartScreen() {
     return (
       <SafeAreaView className="relative flex-1 px-4 bg-white" style={{ paddingBottom: bottomTabBarHeight }}>
         <View className="py-4">
-          <Text className="text-black text-[40px] font-semibold">Cart</Text>
+          <Text className="text-black text-4xl font-semibold">Cart</Text>
         </View>
         <View className="flex-1 items-center justify-center">
           <View className="flex-row gap-2 mb-2 items-center">
-            <CircleAlert size={24} className="text-red" />
-            <Text className="text-xl text-red">Failed to load cart</Text>
+            <CircleAlert size={24} className="text-error-500" />
+            <Text className="text-xl text-error-500">Failed to load cart</Text>
           </View>
           <Button
             onPress={() => {
@@ -278,12 +278,12 @@ export default function CartScreen() {
     return (
       <SafeAreaView className="relative flex-1 px-4 bg-white" style={{ paddingBottom: bottomTabBarHeight }}>
         <View className="py-4">
-          <Text className="text-black text-[40px] font-semibold">Cart</Text>
+          <Text className="text-black text-4xl font-semibold">Cart</Text>
         </View>
         <View className="flex-1 items-center justify-center">
           <ShoppingCart size={24} className="mb-1" />
           <Text className="text-xl mb-1">Your cart is empty</Text>
-          <Text className="text-gray text-base">Add products to begin</Text>
+          <Text className="text-gray-300 text-base">Add products to begin</Text>
         </View>
         <View className="flex-row gap-2">
           <Button variant="outline" className="flex-1" disabled>
@@ -301,12 +301,12 @@ export default function CartScreen() {
     return (
       <SafeAreaView className="relative flex-1 px-4 bg-white" style={{ paddingBottom: bottomTabBarHeight }}>
         <View className="py-4">
-          <Text className="text-black text-[40px] font-semibold">Cart</Text>
+          <Text className="text-black text-4xl font-semibold">Cart</Text>
         </View>
         <View className="flex-1 items-center justify-center">
           <ShoppingCart size={24} className="mb-1" />
           <Text className="text-xl mb-1">Your cart is empty</Text>
-          <Text className="text-gray text-base">Add products to begin</Text>
+          <Text className="text-gray-300 text-base">Add products to begin</Text>
         </View>
         <View className="flex-row gap-2">
           <Button
@@ -332,7 +332,7 @@ export default function CartScreen() {
   return (
     <SafeAreaView className="relative flex-1 bg-white">
       <View className="p-4">
-        <Text className="text-black text-[40px] font-semibold">Cart</Text>
+        <Text className="text-black text-4xl font-semibold">Cart</Text>
       </View>
 
       <View className="px-4">
@@ -383,11 +383,11 @@ export default function CartScreen() {
           </FormButton>
         </Form>
         <View className="flex-row mb-2 justify-between">
-          <Text className="text-gray-dark">Taxes</Text>
+          <Text className="text-gray-400">Taxes</Text>
           {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
             <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
           ) : (
-            <Text className="text-gray-dark">
+            <Text className="text-gray-400">
               {draftOrder.data?.draft_order.tax_total?.toLocaleString('en-US', {
                 style: 'currency',
                 currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
@@ -397,11 +397,11 @@ export default function CartScreen() {
           )}
         </View>
         <View className="flex-row justify-between">
-          <Text className="text-gray-dark">Subtotal</Text>
+          <Text className="text-gray-400">Subtotal</Text>
           {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
             <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
           ) : (
-            <Text className="text-gray-dark">
+            <Text className="text-gray-400">
               {draftOrder.data?.draft_order.subtotal?.toLocaleString('en-US', {
                 style: 'currency',
                 currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,

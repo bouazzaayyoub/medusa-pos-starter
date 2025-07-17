@@ -3,32 +3,10 @@ import { clx } from '@/utils/clx';
 import * as React from 'react';
 import { Text, TouchableOpacity, TouchableOpacityProps } from 'react-native';
 
-const BUTTON_SIZES = {
-  sm: 'p-3',
-  md: 'p-4',
-  lg: 'p-5',
-} as const;
-
-const TEXT_SIZES = {
-  sm: 'text-lg',
-  md: 'text-lg',
-  lg: 'text-xl',
-} as const;
-
-const BUTTON_VARIANTS = {
-  solid: 'bg-black disabled:bg-gray-light',
-  outline: 'border border-border bg-transparent disabled:bg-gray-light disabled:border-gray-light',
-} as const;
-
-const TEXT_VARIANTS = {
-  solid: 'text-white disabled:text-gray',
-  outline: 'text-black disabled:text-gray',
-} as const;
-
 export type ButtonProps = TouchableOpacityProps & {
   isPending?: boolean;
-  size?: keyof typeof BUTTON_SIZES;
-  variant?: keyof typeof BUTTON_VARIANTS;
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'solid' | 'outline';
   icon?: React.ReactNode;
   iconPosition?: 'left' | 'right';
 };
@@ -43,25 +21,41 @@ export const Button: React.FC<ButtonProps> = ({
   iconPosition = 'right',
   ...props
 }) => {
-  const buttonSizeClasses = BUTTON_SIZES[size];
-  const textSizeClasses = TEXT_SIZES[size];
-  const buttonVariantClasses = BUTTON_VARIANTS[variant];
-  const textVariantClasses = TEXT_VARIANTS[variant];
+  const wrapperClasses = clx(
+    'items-center justify-center gap-2 rounded-xl',
+    iconPosition === 'left' ? 'flex-row-reverse' : 'flex-row',
+    {
+      'p-5': size === 'lg',
+      'p-4': size === 'md',
+      'p-3': size === 'sm',
+      'bg-black disabled:bg-gray-light': variant === 'solid',
+      'border border-gray-200 bg-transparent disabled:bg-gray-light disabled:border-gray-light': variant === 'outline',
+    },
+    className,
+  );
+
+  const textClasses = clx(
+    'font-semibold',
+    {
+      'text-xl': size === 'lg',
+      'text-lg': size === 'md',
+      'text-base': size === 'sm',
+      'text-white disabled:text-gray-300': variant === 'solid',
+      'text-black disabled:text-gray-300': variant === 'outline',
+    },
+    {
+      'text-gray-300': props.disabled || isPending,
+    },
+  );
 
   return (
     <TouchableOpacity
       accessibilityRole="button"
       disabled={props.disabled || isPending}
-      className={clx(
-        'items-center justify-center gap-2 rounded-xl',
-        iconPosition === 'left' ? 'flex-row-reverse' : 'flex-row',
-        buttonSizeClasses,
-        buttonVariantClasses,
-        className,
-      )}
+      className={wrapperClasses}
       {...props}
     >
-      <Text disabled={props.disabled || isPending} className={clx(textSizeClasses, textVariantClasses)}>
+      <Text disabled={props.disabled || isPending} className={textClasses}>
         {children}
       </Text>
       {isPending && <Loader size={16} color="#B5B5B5" className="animate-spin" />}

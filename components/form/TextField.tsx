@@ -1,10 +1,11 @@
 import { CircleAlert } from '@/components/icons/circle-alert';
 import { Eye } from '@/components/icons/eye';
 import { EyeOff } from '@/components/icons/eye-off';
+import { InfoBanner } from '@/components/InfoBanner';
 import { clx } from '@/utils/clx';
 import React, { useEffect, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
-import { Text, TextInput, TextInputProps, TouchableOpacity, View } from 'react-native';
+import { TextInput, TextInputProps, TouchableOpacity, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 interface TextFieldProps extends Omit<TextInputProps, 'value' | 'onChangeText'> {
@@ -70,10 +71,10 @@ export function TextField({
 
   return (
     <View className={className}>
-      <View className="relative">
+      <View className="relative justify-center">
         {floatingPlaceholder && (
           <Animated.Text
-            className={clx('absolute left-4 z-10 text-lg top-5', error ? 'text-red' : 'text-gray')}
+            className={clx('absolute left-4 z-10', error ? 'text-error-500' : 'text-gray-300')}
             style={floatingPlaceholderStyle}
             pointerEvents="none"
           >
@@ -82,9 +83,9 @@ export function TextField({
         )}
         <TextInput
           className={clx(
-            'bg-white rounded-xl px-4 py-5 text-lg leading-6 border border-border focus:border-blue',
+            'bg-white rounded-xl px-4 py-5 leading-6 border border-gray-200 focus:border-blue',
             {
-              '!border-red': error,
+              '!border-error-500': error,
               'pt-6 pb-4': floatingPlaceholder,
               'pr-10': error && errorVariation === 'inline',
             },
@@ -103,28 +104,24 @@ export function TextField({
           {...textInputProps}
         />
         {secureTextEntry && (
-          <TouchableOpacity
-            className="absolute p-1 right-4 top-1/2 -translate-y-1/2"
-            onPress={() => setShowValue(!showValue)}
-          >
+          <TouchableOpacity className="absolute p-1 right-4" onPress={() => setShowValue(!showValue)}>
             {showValue ? (
-              <Eye size={16} className={error ? 'text-red' : 'text-gray'} />
+              <Eye size={16} className={error ? 'text-error-500' : 'text-gray-300'} />
             ) : (
-              <EyeOff size={16} className={error ? 'text-red' : 'text-gray'} />
+              <EyeOff size={16} className={error ? 'text-error-500' : 'text-gray-300'} />
             )}
           </TouchableOpacity>
         )}
         {error && errorVariation === 'inline' && (
-          <View className="absolute right-4 top-1/2 -translate-y-1/2">
+          <View className="absolute right-4">
             <CircleAlert size={16} color="#ef4444" />
           </View>
         )}
       </View>
       {error && errorVariation === 'default' && (
-        <View className="flex-row items-center mt-1 gap-1">
-          <CircleAlert size={14} color="#ef4444" />
-          <Text className={`text-red text-sm ${errorClassName}`}>{error.message}</Text>
-        </View>
+        <InfoBanner colorScheme="error" variant="ghost" className={clx('mt-2', errorClassName)}>
+          {error.message}
+        </InfoBanner>
       )}
     </View>
   );

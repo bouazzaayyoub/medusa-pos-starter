@@ -94,17 +94,17 @@ export function MultiSelectField({
   const defaultRenderOption = (option: MultiSelectOption, isSelected: boolean) => (
     <TouchableOpacity
       key={option.value}
-      className={clx('p-4 border-b border-border flex-row justify-between items-center bg-white')}
+      className={clx('p-4 border-b border-gray-200 flex-row justify-between items-center bg-white')}
       onPress={() => toggleOption(option.value)}
     >
       <Text
         className={clx('text-base', {
-          'text-blue font-medium': isSelected,
+          'text-active-500 font-medium': isSelected,
         })}
       >
         {option.label}
       </Text>
-      {isSelected && <Text className="text-blue text-lg">✓</Text>}
+      {isSelected && <Text className="text-active-500 text-lg">✓</Text>}
     </TouchableOpacity>
   );
 
@@ -114,9 +114,9 @@ export function MultiSelectField({
         <TouchableOpacity
           onPress={() => setIsVisible(true)}
           className={clx(
-            'bg-white rounded-xl px-4 py-5 text-lg leading-6 border border-border flex-row justify-between items-center',
+            'bg-white rounded-xl px-4 py-5 text-lg leading-6 border border-gray-200 flex-row justify-between items-center',
             {
-              'border-red': error,
+              'border-error-500': error,
               [buttonClassName]: buttonClassName,
               'pt-6 pb-4': floatingPlaceholder,
             },
@@ -143,7 +143,7 @@ export function MultiSelectField({
             ) : (
               <Text
                 className={clx('text-lg', {
-                  'text-gray': !selectedOptions.length,
+                  'text-gray-300': !selectedOptions.length,
                 })}
               >
                 {!floatingPlaceholder ? placeholder : null}
@@ -151,11 +151,11 @@ export function MultiSelectField({
             )}
           </View>
         </TouchableOpacity>
-        <ChevronDown size={24} className="text-gray absolute top-1/2 -translate-y-1/2 right-4" />
+        <ChevronDown size={24} className="text-gray-300 absolute top-1/2 -translate-y-1/2 right-4" />
 
         {floatingPlaceholder && (
           <Animated.Text
-            className={clx('absolute left-4 z-10 text-lg top-5', error ? 'text-red' : 'text-gray')}
+            className={clx('absolute left-4 z-10 text-lg top-5', error ? 'text-error-500' : 'text-gray-300')}
             style={floatingPlaceholderStyle}
             pointerEvents="none"
           >
@@ -164,7 +164,7 @@ export function MultiSelectField({
         )}
       </View>
 
-      {error && <Text className={clx('text-red text-sm mt-1', errorClassName)}>{error.message}</Text>}
+      {error && <Text className={clx('text-error-500 text-sm mt-1', errorClassName)}>{error.message}</Text>}
 
       <Modal visible={isVisible} animationType="slide" transparent={true} onRequestClose={() => setIsVisible(false)}>
         <View className="flex-1 bg-black/50 justify-end">
@@ -175,14 +175,14 @@ export function MultiSelectField({
                 className="w-8 h-8 rounded-full bg-gray-light items-center justify-center"
                 onPress={() => setIsVisible(false)}
               >
-                <Text className="text-gray-dark text-lg">✕</Text>
+                <Text className="text-gray-400 text-lg">✕</Text>
               </TouchableOpacity>
             </View>
 
             {searchable && (
-              <View className="p-4 border-b border-border">
+              <View className="p-4 border-b border-gray-200">
                 <TextInput
-                  className="border border-border rounded-lg px-4 py-3 text-base"
+                  className="border border-gray-200 rounded-lg px-4 py-3 text-base"
                   placeholder="Search options..."
                   placeholderTextColor="#9CA3AF"
                   value={searchQuery}

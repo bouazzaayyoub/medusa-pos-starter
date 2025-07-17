@@ -16,8 +16,8 @@ const RegionList: React.FC<RegionListProps> = ({ selectedRegionId, onRegionSelec
 
   if (regionsQuery.isLoading) {
     return (
-      <View className="flex-row mb-auto border rounded-xl border-border justify-between items-center p-4">
-        <Text className="text-base text-gray">Loading regions...</Text>
+      <View className="flex-row mb-auto border rounded-xl border-gray-200 justify-between items-center p-4">
+        <Text className="text-base text-gray-300">Loading regions...</Text>
         <Loader size={16} color="#B5B5B5" className="animate-spin" />
       </View>
     );
@@ -26,8 +26,8 @@ const RegionList: React.FC<RegionListProps> = ({ selectedRegionId, onRegionSelec
   if (regionsQuery.isError) {
     return (
       <View className="flex-row mb-auto bg-yellow-light rounded-xl justify-between items-center p-4">
-        <Text className="text-base text-yellow">Unable to load regions.</Text>
-        <CircleAlert size={16} className="text-yellow" />
+        <Text className="text-base text-yellow-500">Unable to load regions.</Text>
+        <CircleAlert size={16} className="text-yellow-500" />
       </View>
     );
   }
@@ -37,7 +37,7 @@ const RegionList: React.FC<RegionListProps> = ({ selectedRegionId, onRegionSelec
       <FlatList
         data={regionsQuery.data?.pages?.[0]?.regions || []}
         keyExtractor={(item) => item.id}
-        className="border rounded-xl border-b border-border"
+        className="border rounded-xl border-b border-gray-200"
         ItemSeparatorComponent={() => <View className="h-px bg-border mx-4" />}
         renderItem={({ item }) => (
           <TouchableOpacity
@@ -56,8 +56,8 @@ const RegionList: React.FC<RegionListProps> = ({ selectedRegionId, onRegionSelec
               </Text>
               <Text
                 className={clx('text-sm', {
-                  'text-gray-light': selectedRegionId === item.id,
-                  'text-gray': selectedRegionId !== item.id,
+                  'text-gray-100': selectedRegionId === item.id,
+                  'text-gray-300': selectedRegionId !== item.id,
                 })}
               >
                 {item.currency_code.toUpperCase()}

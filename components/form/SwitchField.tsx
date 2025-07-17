@@ -26,9 +26,9 @@ export function SwitchField({ name, label, description, className = '', disabled
       <TouchableOpacity
         onPress={() => !disabled && onChange(!value)}
         disabled={disabled}
-        className={clx('flex-row items-center justify-between py-4 px-4 rounded-xl border border-border bg-white', {
+        className={clx('flex-row items-center justify-between py-4 px-4 rounded-xl border border-gray-200 bg-white', {
           'opacity-50': disabled,
-          'border-red': error,
+          'border-error-500': error,
         })}
       >
         <View className="flex-1 mr-4">
@@ -43,7 +43,7 @@ export function SwitchField({ name, label, description, className = '', disabled
           thumbColor={value ? '#FFFFFF' : '#FFFFFF'}
         />
       </TouchableOpacity>
-      {error && <Text className="text-red text-sm mt-1">{error.message}</Text>}
+      {error && <Text className="text-error-500 text-sm mt-1">{error.message}</Text>}
     </View>
   );
 }

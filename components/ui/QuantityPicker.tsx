@@ -61,7 +61,7 @@ export function QuantityPicker({
       <View
         className={clx(
           'flex-row overflow-hidden rounded-md',
-          variant === 'default' ? 'h-8 border border-border' : 'h-10',
+          variant === 'default' ? 'h-8 border border-gray-200' : 'h-10',
           className,
         )}
       >
@@ -72,11 +72,17 @@ export function QuantityPicker({
         >
           <Minus
             size={variant === 'default' ? 16 : 24}
-            className={clx(variant === 'default' ? 'text-gray-dark' : 'text-black', !canDecrement ? 'text-gray' : '')}
+            className={clx(
+              variant === 'default' ? 'text-gray-400' : 'text-black',
+              !canDecrement ? 'text-gray-300' : '',
+            )}
           />
         </TouchableOpacity>
         <View
-          className={clx('items-center justify-center', variant === 'default' ? 'border-x border-border w-8' : 'w-12')}
+          className={clx(
+            'items-center justify-center',
+            variant === 'default' ? 'border-x border-gray-200 w-8' : 'w-12',
+          )}
         >
           <TextInput
             value={quantity.toString()}
@@ -87,7 +93,7 @@ export function QuantityPicker({
             className={clx(
               'h-full w-full !p-0',
               variant === 'default' ? '' : 'text-[1.5rem]',
-              disabled ? 'text-gray' : '',
+              disabled ? 'text-gray-300' : '',
             )}
             editable={!disabled}
             selectTextOnFocus
@@ -100,7 +106,10 @@ export function QuantityPicker({
         >
           <Plus
             size={variant === 'default' ? 16 : 24}
-            className={clx(variant === 'default' ? 'text-gray-dark' : 'text-black', !canIncrement ? 'text-gray' : '')}
+            className={clx(
+              variant === 'default' ? 'text-gray-400' : 'text-black',
+              !canIncrement ? 'text-gray-300' : '',
+            )}
           />
         </TouchableOpacity>
       </View>

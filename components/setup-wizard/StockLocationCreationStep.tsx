@@ -21,7 +21,7 @@ export const StockLocationCreationStep: React.FC<StockLocationCreationStepProps>
     <ScrollView showsVerticalScrollIndicator={false}>
       <Text className="text-4xl mb-6 font-semibold">Setting Up</Text>
       <Text className="text-2xl mb-2">Create a new stock location</Text>
-      <Text className="text-base mb-6 text-gray">
+      <Text className="text-base mb-6 text-gray-300">
         Select where inventory will be sourced from, or add a new location if needed.
       </Text>
 

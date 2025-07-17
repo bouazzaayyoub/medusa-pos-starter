@@ -35,10 +35,10 @@ export function ColorPicker({
               disabled={isDisabled}
               className={clx(
                 'px-2 h-10 rounded-full border items-center justify-center flex-row gap-2 disabled:opacity-50',
-                isSelected ? 'border-black bg-black' : 'border-border bg-white',
+                isSelected ? 'border-black bg-black' : 'border-gray-200 bg-white',
               )}
             >
-              <View className="w-5 h-5 rounded-full border border-border" style={{ backgroundColor: color.value }} />
+              <View className="w-5 h-5 rounded-full border border-gray-200" style={{ backgroundColor: color.value }} />
               <Text className={clx(isSelected ? 'text-white' : 'text-black')}>{color.name}</Text>
             </TouchableOpacity>
           );
