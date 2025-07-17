@@ -1,13 +1,13 @@
 import { useProducts } from '@/api/hooks/products';
 import { CircleAlert } from '@/components/icons/circle-alert';
-import { Search } from '@/components/icons/search';
+import { SearchInput } from '@/components/SearchInput';
 import { useSettings } from '@/contexts/settings';
 import { AdminProduct } from '@medusajs/types';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { FlashList } from '@shopify/flash-list';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const isPlaceholderProduct = (
@@ -106,16 +106,12 @@ export default function ProductsScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <View className="m-4 mb-6 relative">
-        <Search size={16} className="absolute left-4 top-1/2 -translate-y-[50%] text-gray-300" />
-        <TextInput
-          className="rounded-full py-3 pr-4 pl-10 text-base leading-5 focus:border-active-500 border placeholder:text-gray-300 border-gray-200"
-          placeholder="Search products..."
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          inputMode="search"
-        />
-      </View>
+      <SearchInput
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        placeholder="Search products..."
+        className="mb-6 mt-4 mx-4"
+      />
 
       <View className="flex-1 px-3">
         <FlashList

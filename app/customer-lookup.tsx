@@ -4,15 +4,15 @@ import { Form } from '@/components/form/Form';
 import { FormButton } from '@/components/form/FormButton';
 import { TextField } from '@/components/form/TextField';
 import { CircleAlert } from '@/components/icons/circle-alert';
-import { Search } from '@/components/icons/search';
 import { InfoBanner } from '@/components/InfoBanner';
+import { SearchInput } from '@/components/SearchInput';
 import { Button } from '@/components/ui/Button';
 import { Dialog } from '@/components/ui/Dialog';
 import { clx } from '@/utils/clx';
 import { AdminCustomer } from '@medusajs/types';
 import { router, useLocalSearchParams } from 'expo-router';
 import * as React from 'react';
-import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { z } from 'zod/v4';
 
 const customerFormSchema = z.object({
@@ -228,16 +228,12 @@ export default function CustomerLookupScreen() {
       animationType="fade"
       contentClassName="flex-shrink"
     >
-      <View className="mb-4 relative">
-        <Search size={16} className="absolute left-4 top-1/2 -translate-y-[50%] text-gray-300" />
-        <TextInput
-          className="rounded-full py-3 pr-4 pl-10 text-base leading-5 border placeholder:text-gray-300 border-gray-200"
-          placeholder="Search customers..."
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          inputMode="search"
-        />
-      </View>
+      <SearchInput
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        placeholder="Search customers..."
+        className="mb-4"
+      />
 
       <CustomersList
         q={searchQuery ? searchQuery : undefined}

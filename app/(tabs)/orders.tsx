@@ -2,16 +2,16 @@ import { DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL } from '@/api/hooks/draft-orders';
 import { useOrders } from '@/api/hooks/orders';
 import { DateRangeFilter } from '@/components/DateRangeFilter';
 import { CircleAlert } from '@/components/icons/circle-alert';
-import { Search } from '@/components/icons/search';
 import { UserRound } from '@/components/icons/user-round';
 import { MultiSelectFilter } from '@/components/MultiSelectFilter';
+import { SearchInput } from '@/components/SearchInput';
 import { OrderStatus } from '@/components/ui/OrderStatus';
 import { AdminOrder } from '@medusajs/types';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { FlashList } from '@shopify/flash-list';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const isPlaceholderOrder = (
@@ -141,16 +141,12 @@ export default function OrdersScreen() {
         <Text className="text-black text-4xl font-semibold">My Orders</Text>
       </View>
 
-      <View className="mx-4 mb-6 relative">
-        <Search size={16} className="absolute left-4 top-1/2 -translate-y-[50%] text-gray-300" />
-        <TextInput
-          className="rounded-full py-3 pr-4 pl-10 text-base leading-5 border placeholder:text-gray-300 border-gray-200"
-          placeholder="Search for a specific order..."
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          inputMode="search"
-        />
-      </View>
+      <SearchInput
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        placeholder="Search for a specific order..."
+        className="mb-6 mx-4"
+      />
 
       <View className="flex-row items-center gap-2 mb-4 px-4">
         <MultiSelectFilter
