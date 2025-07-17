@@ -2,7 +2,7 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
 
-import { useDraftOrder } from '@/api/hooks/draft-orders';
+import { useCurrentDraftOrder } from '@/api/hooks/draft-orders';
 import { HapticTab } from '@/components/HapticTab';
 import { ClipboardList } from '@/components/icons/clipboard-list';
 import { ScanBarcode } from '@/components/icons/scan-barcode';
@@ -11,7 +11,8 @@ import { ShoppingCart } from '@/components/icons/shopping-cart';
 import { Store } from '@/components/icons/store';
 
 export default function TabLayout() {
-  const draftOrder = useDraftOrder();
+  const draftOrder = useCurrentDraftOrder();
+
   return (
     <Tabs
       screenOptions={{
@@ -37,17 +38,27 @@ export default function TabLayout() {
         name="products"
         options={{
           title: 'Products',
-          tabBarIcon: ({ color }) => <Store size={28} color={color} />,
+          tabBarIcon: ({ color }) => <Store size={20} color={color} />,
         }}
       />
+
+      <Tabs.Screen
+        name="orders"
+        options={{
+          title: 'Orders',
+          tabBarIcon: ({ color }) => <ClipboardList size={20} color={color} />,
+        }}
+      />
+
       <Tabs.Screen
         name="scan"
         options={{
           title: 'Scan',
-          tabBarIcon: ({ color }) => <ScanBarcode size={28} color={color} />,
+          tabBarIcon: ({ color }) => <ScanBarcode size={20} color={color} />,
           tabBarStyle: { display: 'none' },
         }}
       />
+
       <Tabs.Screen
         name="cart"
         options={{
@@ -64,21 +75,15 @@ export default function TabLayout() {
             backgroundColor: '#282828',
             fontWeight: '700',
           },
-          tabBarIcon: ({ color }) => <ShoppingCart size={28} color={color} />,
+          tabBarIcon: ({ color }) => <ShoppingCart size={20} color={color} />,
         }}
       />
-      <Tabs.Screen
-        name="orders"
-        options={{
-          title: 'Orders',
-          tabBarIcon: ({ color }) => <ClipboardList size={28} color={color} />,
-        }}
-      />
+
       <Tabs.Screen
         name="settings"
         options={{
           title: 'Settings',
-          tabBarIcon: ({ color }) => <Settings size={28} color={color} />,
+          tabBarIcon: ({ color }) => <Settings size={20} color={color} />,
         }}
       />
     </Tabs>
