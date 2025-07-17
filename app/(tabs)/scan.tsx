@@ -180,7 +180,7 @@ export default function ScanScreen() {
           className="absolute bottom-0 left-0 right-0 px-6 pb-safe-offset-4 flex items-center z-50"
         >
           <TouchableOpacity
-            className="bg-red px-4 py-2 rounded-3xl"
+            className="bg-error-500 px-4 py-2 rounded-3xl"
             onPress={() => {
               setErrorMessage(null);
               scanBarcodeMutation.reset();

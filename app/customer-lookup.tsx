@@ -38,7 +38,7 @@ const AddNewCustomerButton: React.FC<{ onNewCustomer: (customer: AdminCustomer) 
       </Button>
 
       <Dialog
-        open={isOpen}
+        visible={isOpen}
         title="Add New Customer"
         onClose={() => setIsOpen(false)}
         dismissOnOverlayPress={true}
@@ -221,7 +221,7 @@ export default function CustomerLookupScreen() {
 
   return (
     <Dialog
-      open={true}
+      visible={true}
       title="Customer Lookup"
       onClose={() => router.back()}
       dismissOnOverlayPress={true}

@@ -10,7 +10,7 @@ export const AppStatusBar = () => {
       style={
         pathname.startsWith('/scan') ||
         pathname.startsWith('/product-details') ||
-        pathname.startsWith('/order-details') ||
+        pathname.startsWith('/orders/') ||
         pathname.startsWith('/customer-lookup')
           ? 'light'
           : 'auto'

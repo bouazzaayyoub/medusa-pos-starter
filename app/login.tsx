@@ -100,7 +100,7 @@ export default function LoginScreen() {
     <SafeAreaView className="flex-1 p-4 pt-6 bg-white gap-7">
       <Text className="text-4xl font-semibold">Login</Text>
       {error && (
-        <View className="flex-row bg-red-light p-4 rounded-xl items-center gap-3">
+        <View className="flex-row bg-error-200 p-4 rounded-xl items-center gap-3">
           <CircleAlert size={16} color="#ef4444" />
           <Text className="text-error-500 text-base">{error}</Text>
         </View>

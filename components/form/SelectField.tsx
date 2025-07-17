@@ -2,8 +2,9 @@ import { ChevronDown } from '@/components/icons/chevron-down';
 import { clx } from '@/utils/clx';
 import React, { useEffect, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
-import { FlatList, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import { BottomSheet } from '../ui/BottomSheet';
 
 interface SelectOption {
   label: string;
@@ -17,11 +18,11 @@ interface SelectFieldProps {
   className?: string;
   buttonClassName?: string;
   errorClassName?: string;
-  modalClassName?: string;
   searchable?: boolean;
   renderOption?: (option: SelectOption, isSelected: boolean) => React.ReactNode;
   floatingPlaceholder?: boolean;
   onEndReached?: () => void;
+  isDisabled?: boolean;
 }
 
 export function SelectField({
@@ -31,11 +32,11 @@ export function SelectField({
   className = '',
   buttonClassName = '',
   errorClassName = '',
-  modalClassName = '',
   searchable = false,
   renderOption,
   floatingPlaceholder = false,
   onEndReached,
+  isDisabled = false,
 }: SelectFieldProps) {
   const { control } = useFormContext();
   const {
@@ -127,6 +128,7 @@ export function SelectField({
             },
           )}
           onPress={() => setIsVisible(true)}
+          disabled={isDisabled}
         >
           <Text
             className={clx('text-base', {
@@ -136,60 +138,46 @@ export function SelectField({
             {selectedOption ? selectedOption.label : !floatingPlaceholder ? placeholder : null}
           </Text>
         </TouchableOpacity>
-        <ChevronDown size={24} className="text-gray-300 absolute top-1/2 -translate-y-1/2 right-4" />
+        {!isDisabled && <ChevronDown size={24} className="text-gray-300 absolute top-1/2 -translate-y-1/2 right-4" />}
       </View>
       {error && <Text className={clx('text-error-500 text-sm mt-1', errorClassName)}>{error.message}</Text>}
 
-      <Modal visible={isVisible} animationType="slide" transparent={true} onRequestClose={() => setIsVisible(false)}>
-        <View className="flex-1 bg-black/50 justify-end">
-          <View className={clx('bg-white rounded-t-3xl max-h-[80%] pb-safe', modalClassName)}>
-            <View className="p-4 border-b border-gray-200 flex-row justify-between items-center">
-              <Text className="text-lg font-semibold">Select Option</Text>
-              <TouchableOpacity
-                className="w-8 h-8 rounded-full bg-gray-light items-center justify-center"
-                onPress={() => setIsVisible(false)}
-              >
-                <Text className="text-gray-400 text-lg">✕</Text>
-              </TouchableOpacity>
-            </View>
-
-            {searchable && (
-              <View className="p-4 border-b border-gray-200">
-                <TextInput
-                  className="border border-gray-200 rounded-lg px-4 py-3 text-base"
-                  placeholder="Search options..."
-                  placeholderTextColor="#9CA3AF"
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
-              </View>
-            )}
-
-            <FlatList
-              data={filteredOptions}
-              keyExtractor={(item) => item.value}
-              showsVerticalScrollIndicator={false}
-              renderItem={({ item }) => {
-                const isSelected = item.value === value;
-                const renderedOption = renderOption
-                  ? renderOption(item, isSelected)
-                  : defaultRenderOption(item, isSelected);
-                return renderedOption as React.ReactElement;
-              }}
-              ListEmptyComponent={
-                <View className="p-8 items-center">
-                  <Text className="text-gray-500 text-base">
-                    {searchable && searchQuery ? 'No options found' : 'No options available'}
-                  </Text>
-                </View>
-              }
-              onEndReached={onEndReached}
+      <BottomSheet visible={isVisible} onClose={() => setIsVisible(false)} showCloseButton={false}>
+        {searchable && (
+          <View className="p-4 border-b border-gray-200">
+            <TextInput
+              className="border border-gray-200 rounded-lg px-4 py-3 text-base"
+              placeholder="Search options..."
+              placeholderTextColor="#9CA3AF"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              autoCapitalize="none"
+              autoCorrect={false}
             />
           </View>
-        </View>
-      </Modal>
+        )}
+
+        <FlatList
+          data={filteredOptions}
+          keyExtractor={(item) => item.value}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => {
+            const isSelected = item.value === value;
+            const renderedOption = renderOption
+              ? renderOption(item, isSelected)
+              : defaultRenderOption(item, isSelected);
+            return renderedOption as React.ReactElement;
+          }}
+          ListEmptyComponent={
+            <View className="p-8 items-center">
+              <Text className="text-gray-500 text-base">
+                {searchable && searchQuery ? 'No options found' : 'No options available'}
+              </Text>
+            </View>
+          }
+          onEndReached={onEndReached}
+        />
+      </BottomSheet>
     </View>
   );
 }

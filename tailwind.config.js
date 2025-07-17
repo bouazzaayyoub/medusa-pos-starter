@@ -93,6 +93,9 @@ module.exports = {
           700: '#4E78E5',
         },
       },
+      borderRadius: {
+        '4xl': '2rem',
+      },
     },
   },
   plugins: [],
