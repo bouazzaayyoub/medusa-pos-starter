@@ -1,3 +1,4 @@
+import { clx } from '@/utils/clx';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React from 'react';
 import { FieldValues, FormProvider, useForm, UseFormProps, UseFormReturn } from 'react-hook-form';
@@ -52,7 +53,7 @@ export function Form<T extends FieldValues, Output>({
   return (
     <FormProvider {...methods}>
       <CustomFormContext.Provider value={{ handleSubmit }}>
-        <View className={`gap-y-4 ${className}`}>{children}</View>
+        <View className={clx('gap-y-4', className)}>{children}</View>
       </CustomFormContext.Provider>
     </FormProvider>
   );

@@ -110,7 +110,7 @@ export function MultiSelectField({
   );
 
   return (
-    <View className={`w-full ${className}`}>
+    <View className={clx('w-full', className)}>
       <View className="relative">
         <TouchableOpacity
           onPress={() => setIsVisible(true)}

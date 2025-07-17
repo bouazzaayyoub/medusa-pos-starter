@@ -22,7 +22,7 @@ export function SwitchField({ name, label, description, className = '', disabled
   });
 
   return (
-    <View className={`w-full ${className}`}>
+    <View className={clx('w-full', className)}>
       <TouchableOpacity
         onPress={() => !disabled && onChange(!value)}
         disabled={disabled}

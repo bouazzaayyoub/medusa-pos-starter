@@ -71,7 +71,7 @@ export const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({
   );
 
   return (
-    <View className={`w-full ${className}`}>
+    <View className={clx('w-full', className)}>
       <View className="relative">
         <TouchableOpacity
           onPress={() => setIsVisible(true)}
