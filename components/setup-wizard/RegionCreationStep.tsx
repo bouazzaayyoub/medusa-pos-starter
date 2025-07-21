@@ -1,8 +1,9 @@
 import { RegionCreateForm } from '@/components/RegionCreateForm';
 import { Button } from '@/components/ui/Button';
+import { Text } from '@/components/ui/Text';
 import { AdminRegion } from '@medusajs/types';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
 interface RegionCreationStepProps {
   onComplete: (regionId: string) => void;
@@ -16,16 +17,16 @@ export const RegionCreationStep: React.FC<RegionCreationStepProps> = ({ onComple
 
   return (
     <View className="flex-1">
-      <Text className="text-4xl mb-6 font-semibold">Setting Up</Text>
+      <Text className="text-4xl mb-6">Setting Up</Text>
       <Text className="text-2xl mb-2">Choose a region</Text>
-      <Text className="text-base mb-6 text-gray-300">
+      <Text className="mb-6 text-gray-300">
         Create a new region that defines your market area, currency, and tax settings.
       </Text>
 
       <RegionCreateForm onRegionCreated={handleRegionCreated} />
 
       {typeof onBackToSelection === 'function' && (
-        <Button variant="outline" size="lg" className="mt-4" onPress={onBackToSelection}>
+        <Button variant="outline" className="mt-4" onPress={onBackToSelection}>
           Cancel
         </Button>
       )}

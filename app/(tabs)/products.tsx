@@ -1,13 +1,14 @@
 import { useProducts } from '@/api/hooks/products';
 import { CircleAlert } from '@/components/icons/circle-alert';
 import { SearchInput } from '@/components/SearchInput';
+import { Text } from '@/components/ui/Text';
 import { useSettings } from '@/contexts/settings';
 import { AdminProduct } from '@medusajs/types';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { FlashList } from '@shopify/flash-list';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Image, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const isPlaceholderProduct = (
@@ -125,7 +126,7 @@ export default function ProductsScreen() {
           ListEmptyComponent={
             <View className="flex-1 mt-60 items-center">
               <CircleAlert size={24} />
-              <Text className="text-center text-xl mt-1">No products match{'\n'}the search</Text>
+              <Text className="text-center text-xl mt-2">No products match{'\n'}the search</Text>
             </View>
           }
           contentContainerStyle={{

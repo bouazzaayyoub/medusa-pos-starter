@@ -2,11 +2,12 @@ import { useScanBarcode } from '@/api/hooks/products';
 import { X } from '@/components/icons/x';
 import { Zap } from '@/components/icons/zap';
 import { ZapOff } from '@/components/icons/zap-off';
+import { Text } from '@/components/ui/Text';
 import { BarcodeScanningResult, Camera, CameraView } from 'expo-camera';
 import * as Haptics from 'expo-haptics';
 import { router, usePathname } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -91,11 +92,11 @@ export default function ScanScreen() {
     return (
       <SafeAreaView className="flex-1 bg-black justify-center items-center p-5">
         <Text className="text-white text-2xl mb-4 text-center">Camera Access Required</Text>
-        <Text className="text-white text-base text-center opacity-70 mb-8">
+        <Text className="text-white text-center opacity-70 mb-8">
           Please enable camera access in settings to scan barcodes
         </Text>
         <TouchableOpacity className="border border-white rounded-lg p-4 items-center" onPress={handleGoBack}>
-          <Text className="text-white text-base font-semibold">Go Back</Text>
+          <Text className="text-white">Go Back</Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -168,7 +169,7 @@ export default function ScanScreen() {
           className="absolute bottom-0 left-0 right-0 px-6 pb-safe-offset-4 flex items-center"
         >
           <View className="bg-white px-4 py-2 rounded-3xl">
-            <Text className="text-black text-center text-base">Searching...</Text>
+            <Text className="text-black text-center">Searching...</Text>
           </View>
         </Animated.View>
       )}
@@ -186,7 +187,7 @@ export default function ScanScreen() {
               scanBarcodeMutation.reset();
             }}
           >
-            <Text className="text-white text-center text-base">{errorMessage}</Text>
+            <Text className="text-white text-center">{errorMessage}</Text>
           </TouchableOpacity>
         </Animated.View>
       )}

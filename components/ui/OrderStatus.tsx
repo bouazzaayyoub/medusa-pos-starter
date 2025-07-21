@@ -7,10 +7,11 @@ import { Package } from '@/components/icons/package';
 import { PackageOpen } from '@/components/icons/package-open';
 import { Truck } from '@/components/icons/truck';
 import { X } from '@/components/icons/x';
+import { Text } from '@/components/ui/Text';
 import { clx } from '@/utils/clx';
 import { AdminOrder, FulfillmentStatus } from '@medusajs/types';
 import { LucideProps } from 'lucide-react-native';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
 type OrderStatusProps = {
   order: AdminOrder;

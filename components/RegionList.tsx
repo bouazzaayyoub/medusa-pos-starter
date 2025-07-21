@@ -2,9 +2,10 @@ import { useRegions } from '@/api/hooks/regions';
 import { Globe } from '@/components/icons/globe';
 import { InfoBanner } from '@/components/InfoBanner';
 import { LoadingBanner } from '@/components/LoadingBanner';
+import { Text } from '@/components/ui/Text';
 import { clx } from '@/utils/clx';
 import React from 'react';
-import { FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, TouchableOpacity, View } from 'react-native';
 
 interface RegionListProps {
   selectedRegionId: string;
@@ -38,7 +39,7 @@ const RegionList: React.FC<RegionListProps> = ({ selectedRegionId, onRegionSelec
           >
             <View className="flex-1">
               <Text
-                className={clx('font-medium', {
+                className={clx({
                   'text-white': selectedRegionId === item.id,
                 })}
               >

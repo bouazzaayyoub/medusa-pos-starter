@@ -8,11 +8,12 @@ import { InfoBanner } from '@/components/InfoBanner';
 import { SearchInput } from '@/components/SearchInput';
 import { Button } from '@/components/ui/Button';
 import { Dialog } from '@/components/ui/Dialog';
+import { Text } from '@/components/ui/Text';
 import { clx } from '@/utils/clx';
 import { AdminCustomer } from '@medusajs/types';
 import { router, useLocalSearchParams } from 'expo-router';
 import * as React from 'react';
-import { FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, TouchableOpacity, View } from 'react-native';
 import { z } from 'zod/v4';
 
 const customerFormSchema = z.object({
@@ -171,9 +172,9 @@ const CustomersList: React.FC<{
         <View className="py-10 px-4 justify-center items-center">
           <CircleAlert size={24} />
           {typeof q === 'string' && q.length > 1 ? (
-            <Text className="text-center mt-1">No customers match{'\n'}the search</Text>
+            <Text className="text-center mt-2">No customers match{'\n'}the search</Text>
           ) : (
-            <Text className="text-center mt-1">No customers found</Text>
+            <Text className="text-center mt-2">No customers found</Text>
           )}
         </View>
       }

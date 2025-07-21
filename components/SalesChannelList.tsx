@@ -2,9 +2,10 @@ import { useSalesChannels } from '@/api/hooks/sales-channel';
 import { Antenna } from '@/components/icons/antenna';
 import { InfoBanner } from '@/components/InfoBanner';
 import { LoadingBanner } from '@/components/LoadingBanner';
+import { Text } from '@/components/ui/Text';
 import { clx } from '@/utils/clx';
 import React from 'react';
-import { FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, TouchableOpacity, View } from 'react-native';
 
 interface SalesChannelListProps {
   selectedSalesChannelId: string;

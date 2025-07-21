@@ -3,11 +3,12 @@ import { useOrder } from '@/api/hooks/orders';
 import { LoadingBanner } from '@/components/LoadingBanner';
 import { BottomSheet } from '@/components/ui/BottomSheet';
 import { Button } from '@/components/ui/Button';
+import { Text } from '@/components/ui/Text';
 import { useSettings } from '@/contexts/settings';
 import { AdminOrder, AdminOrderLineItem } from '@medusajs/types';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect } from 'react';
-import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image, TouchableOpacity, View } from 'react-native';
 
 const CustomerInformation: React.FC<{
   order: AdminOrder;
@@ -85,11 +86,11 @@ export default function OrderDetailsScreen() {
           {thumbnail && <Image source={{ uri: thumbnail }} className="w-full h-full object-cover" />}
         </View>
         <View>
-          <Text className="font-medium">{item.title}</Text>
+          <Text>{item.title}</Text>
           <Text className="text-gray-300 text-sm mt-auto">{item.variant?.options?.map((o) => o.value).join(', ')}</Text>
         </View>
         <View className="ml-auto">
-          <Text className="font-medium">
+          <Text>
             {item.total.toLocaleString('en-US', {
               style: 'currency',
               currency,
@@ -185,7 +186,7 @@ export default function OrderDetailsScreen() {
               ListFooterComponentClassName="mt-14"
             />
           )}
-          <Button size="lg" variant="outline" onPress={() => animateOut(() => router.back())}>
+          <Button variant="outline" onPress={() => animateOut(() => router.back())}>
             Close
           </Button>
         </>

@@ -2,11 +2,12 @@ import { useStockLocations } from '@/api/hooks/stock-location';
 import { MapPin } from '@/components/icons/map-pin';
 import { InfoBanner } from '@/components/InfoBanner';
 import { LoadingBanner } from '@/components/LoadingBanner';
+import { Text } from '@/components/ui/Text';
 import { getCountryByAlpha2 } from '@/constants/countries';
 import { findProvinceByCode } from '@/constants/provinces';
 import { clx } from '@/utils/clx';
 import React from 'react';
-import { FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, TouchableOpacity, View } from 'react-native';
 
 interface StockLocationListProps {
   selectedStockLocationId: string;

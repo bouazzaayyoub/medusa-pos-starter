@@ -1,6 +1,7 @@
 import { QuantityPicker } from '@/components/ui/QuantityPicker';
+import { Text } from '@/components/ui/Text';
 import React from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export const ProductDetailsSkeleton = () => (

@@ -4,11 +4,12 @@ import { ProductDetailsSkeleton } from '@/components/skeletons/ProductDetailsSke
 import { Button } from '@/components/ui/Button';
 import { OptionPicker } from '@/components/ui/OptionPicker';
 import { QuantityPicker } from '@/components/ui/QuantityPicker';
+import { Text } from '@/components/ui/Text';
 import { useSettings } from '@/contexts/settings';
 import { AdminProductImage } from '@medusajs/types';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { Dimensions, Image, ScrollView, Text, View } from 'react-native';
+import { Dimensions, Image, ScrollView, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSharedValue } from 'react-native-reanimated';
 import Carousel, { CarouselRenderItem, ICarouselInstance, Pagination } from 'react-native-reanimated-carousel';
@@ -162,24 +163,24 @@ export default function ProductDetailsScreen() {
     <SafeAreaView className="flex-1 bg-white">
       <GestureHandlerRootView>
         <ScrollView className="flex-1 px-4 pb-4" showsVerticalScrollIndicator={false}>
-          <View className="mb-5 bg-gray-100 rounded-xl overflow-hidden">
+          <View className="mb-6 bg-gray-100 rounded-xl overflow-hidden">
             {productQuery.data.product.images && productQuery.data.product.images.length ? (
               <ProductImagesCarousel images={productQuery.data.product.images} />
             ) : (
               <View className="flex-1 justify-center items-center bg-gray-300">
-                <Text className="text-base text-gray-500">No Image</Text>
+                <Text className="text-gray-500">No Image</Text>
               </View>
             )}
           </View>
 
           <View className="flex-row mb-4 justify-between items-center">
-            <Text className="text-xl font-medium">{productName}</Text>
+            <Text className="text-xl">{productName}</Text>
             {price && (
               <View className="flex-row">
                 {/* TODO: show discounted price */}
                 {/* <Text className="text-[#888] line-through mt-1.5">€50</Text> */}
                 <View className="items-end">
-                  <Text className="text-xl font-medium">
+                  <Text className="text-xl">
                     {price.amount.toLocaleString(undefined, {
                       style: 'currency',
                       currency: price.currency_code,
@@ -195,7 +196,7 @@ export default function ProductDetailsScreen() {
             )}
           </View>
 
-          <Text className="text-gray-400 mb-6">{productQuery.data.product.description}</Text>
+          <Text className="text-gray-400 text-sm mb-6">{productQuery.data.product.description}</Text>
 
           {productQuery.data.product.options && (
             <View className="gap-6 mb-4">
@@ -244,7 +245,6 @@ export default function ProductDetailsScreen() {
             <QuantityPicker quantity={quantity} onQuantityChange={setQuantity} min={1} variant="ghost" />
 
             <Button
-              size="lg"
               className="flex-1"
               disabled={!selectedVariant}
               isPending={addToDraftOrder.isPending}

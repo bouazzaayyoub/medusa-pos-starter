@@ -1,6 +1,7 @@
 import { Loader } from '@/components/icons/loader';
+import { Text } from '@/components/ui/Text';
 import { clx } from '@/utils/clx';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
 type LoadingBannerProps = {
   variant?: 'ghost' | 'outline';

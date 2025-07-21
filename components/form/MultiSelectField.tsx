@@ -1,10 +1,11 @@
 import { Check } from '@/components/icons/check';
 import { ChevronDown } from '@/components/icons/chevron-down';
 import { X } from '@/components/icons/x';
+import { Text } from '@/components/ui/Text';
 import { clx } from '@/utils/clx';
 import React, { useEffect, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
-import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, TextInput, TouchableOpacity, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { BottomSheet } from '../ui/BottomSheet';
 
@@ -100,8 +101,8 @@ export function MultiSelectField({
       onPress={() => toggleOption(option.value)}
     >
       <Text
-        className={clx('text-base', {
-          'text-active-500 font-medium': isSelected,
+        className={clx({
+          'text-active-500': isSelected,
         })}
       >
         {option.label}
@@ -181,7 +182,7 @@ export function MultiSelectField({
         {searchable && (
           <View className="p-4 border-b border-gray-200">
             <TextInput
-              className="border border-gray-200 rounded-lg px-4 py-3 text-base"
+              className="border border-gray-200 rounded-lg px-4 py-3"
               placeholder="Search options..."
               placeholderTextColor="#9CA3AF"
               value={searchQuery}
@@ -203,7 +204,7 @@ export function MultiSelectField({
           ItemSeparatorComponent={() => <View className="h-px bg-gray-200" />}
           ListEmptyComponent={
             <View className="p-8 items-center">
-              <Text className="text-gray-500 text-base">
+              <Text className="text-gray-500">
                 {searchable && searchQuery ? 'No options found' : 'No options available'}
               </Text>
             </View>

@@ -8,12 +8,13 @@ import { ShoppingCart } from '@/components/icons/shopping-cart';
 import { InfoBanner } from '@/components/InfoBanner';
 import { Button } from '@/components/ui/Button';
 import { Dialog } from '@/components/ui/Dialog';
+import { Text } from '@/components/ui/Text';
 import { useSettings } from '@/contexts/settings';
 import { AdminOrderLineItem } from '@medusajs/types';
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import { router, useLocalSearchParams, usePathname } from 'expo-router';
 import React from 'react';
-import { Image, Text, View } from 'react-native';
+import { Image, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const DraftOrderItem: React.FC<{ item: AdminOrderLineItem }> = ({ item }) => {
@@ -27,7 +28,7 @@ const DraftOrderItem: React.FC<{ item: AdminOrderLineItem }> = ({ item }) => {
         {thumbnail && <Image source={{ uri: thumbnail }} className="w-full h-full object-cover" />}
       </View>
       <View className="flex-col gap-2 flex-1">
-        <Text className="font-medium">{item.product_title}</Text>
+        <Text>{item.product_title}</Text>
         {item.variant && item.variant.options && item.variant.options.length > 0 && (
           <View className="flex-row flex-wrap items-center gap-x-2 gap-y-1">
             {item.variant.options.map((option) => (
@@ -39,7 +40,7 @@ const DraftOrderItem: React.FC<{ item: AdminOrderLineItem }> = ({ item }) => {
           </View>
         )}
       </View>
-      <Text className="font-medium ml-auto">
+      <Text className="ml-auto">
         {item.unit_price.toLocaleString('en-US', {
           style: 'currency',
           currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
@@ -68,7 +69,7 @@ export default function CheckoutScreen() {
     return (
       <SafeAreaView className="relative flex-1 bg-white">
         <View className="p-4">
-          <Text className="text-black text-4xl font-semibold">Checkout</Text>
+          <Text className="text-black text-4xl">Checkout</Text>
         </View>
 
         {/* Order Items */}
@@ -88,19 +89,19 @@ export default function CheckoutScreen() {
             <Text className="text-2xl mb-6">Information</Text>
 
             <View className="flex-row mb-4">
-              <Text className="text-gray-300 text-base w-24">Full Name</Text>
+              <Text className="text-gray-300 w-24">Full Name</Text>
               <View className="w-1/3 h-5 rounded-md bg-gray-200" />
             </View>
             <View className="flex-row mb-4">
-              <Text className="text-gray-300 text-base w-24">Mail</Text>
+              <Text className="text-gray-300 w-24">Mail</Text>
               <View className="w-1/3 h-5 rounded-md bg-gray-200" />
             </View>
             <View className="flex-row mb-4">
-              <Text className="text-gray-300 text-base w-24">Address</Text>
+              <Text className="text-gray-300 w-24">Address</Text>
               <View className="w-1/2 h-5 rounded-md bg-gray-200" />
             </View>
             <View className="flex-row mb-10">
-              <Text className="text-gray-300 text-base w-24">Phone</Text>
+              <Text className="text-gray-300 w-24">Phone</Text>
               <View className="w-1/3 h-5 rounded-md bg-gray-200" />
             </View>
           </View>
@@ -144,7 +145,7 @@ export default function CheckoutScreen() {
     return (
       <SafeAreaView className="relative flex-1 px-4 bg-white">
         <View className="py-4">
-          <Text className="text-black text-4xl font-semibold">Checkout</Text>
+          <Text className="text-black text-4xl">Checkout</Text>
         </View>
         <View className="flex-1 items-center justify-center">
           <InfoBanner variant="ghost" colorScheme="error" className="mb-2">
@@ -156,7 +157,6 @@ export default function CheckoutScreen() {
               settings.refetch();
             }}
             isPending={draftOrder.isRefetching || settings.isRefetching}
-            size="sm"
             variant="outline"
           >
             Try Again
@@ -170,12 +170,12 @@ export default function CheckoutScreen() {
     return (
       <SafeAreaView className="relative flex-1 px-4 bg-white">
         <View className="py-4">
-          <Text className="text-black text-4xl font-semibold">Checkout</Text>
+          <Text className="text-black text-4xl">Checkout</Text>
         </View>
         <View className="flex-1 items-center justify-center">
           <ShoppingCart size={24} className="mb-1" />
           <Text className="text-xl mb-1">Your cart is empty</Text>
-          <Text className="text-gray-300 text-base text-center">
+          <Text className="text-gray-300 text-center">
             It seems you have no items in your cart.{'\n'}Please add items to your cart before{'\n'}proceeding to
             checkout.
           </Text>
@@ -203,7 +203,7 @@ export default function CheckoutScreen() {
   return (
     <>
       <SafeAreaView className="relative flex-1 pt-6 px-4 bg-white">
-        <Text className="text-4xl mb-6 font-medium">Checkout</Text>
+        <Text className="text-4xl mb-6">Checkout</Text>
 
         <FlashList
           data={items}
@@ -217,18 +217,18 @@ export default function CheckoutScreen() {
 
                 {customerName && (
                   <View className="flex-row mb-4">
-                    <Text className="text-gray-300 text-base w-24">Full Name</Text>
-                    <Text className="text-base flex-wrap flex-1">{customerName}</Text>
+                    <Text className="text-gray-300 w-24">Full Name</Text>
+                    <Text className="flex-wrap flex-1">{customerName}</Text>
                   </View>
                 )}
                 <View className="flex-row mb-4">
-                  <Text className="text-gray-300 text-base w-24">E-Mail</Text>
-                  <Text className="text-base flex-wrap flex-1">{customerEmail}</Text>
+                  <Text className="text-gray-300 w-24">E-Mail</Text>
+                  <Text className="flex-wrap flex-1">{customerEmail}</Text>
                 </View>
                 {customerPhone && (
                   <View className="flex-row mb-10">
-                    <Text className="text-gray-300 text-base w-24">Phone</Text>
-                    <Text className="text-base flex-wrap flex-1">{customerPhone}</Text>
+                    <Text className="text-gray-300 w-24">Phone</Text>
+                    <Text className="flex-wrap flex-1">{customerPhone}</Text>
                   </View>
                 )}
               </View>
@@ -272,8 +272,8 @@ export default function CheckoutScreen() {
         </View>
 
         <View className="flex-row justify-between mb-6">
-          <Text className="text-lg font-medium">Total</Text>
-          <Text className="text-lg font-medium">
+          <Text className="text-lg">Total</Text>
+          <Text className="text-lg">
             {draftOrder.data.total?.toLocaleString('en-US', {
               style: 'currency',
               currency: draftOrder.data.region?.currency_code || settings.data?.region?.currency_code,
@@ -324,7 +324,6 @@ export default function CheckoutScreen() {
         </InfoBanner>
 
         <Button
-          size="lg"
           className="mb-2"
           onPress={() => {
             router.replace('/orders');
@@ -334,7 +333,6 @@ export default function CheckoutScreen() {
           View Order
         </Button>
         <Button
-          size="lg"
           variant="outline"
           onPress={() => {
             router.replace('/products');

@@ -1,11 +1,11 @@
 import { Loader } from '@/components/icons/loader';
+import { Text } from '@/components/ui/Text';
 import { clx } from '@/utils/clx';
 import * as React from 'react';
-import { Text, TouchableOpacity, TouchableOpacityProps } from 'react-native';
+import { TouchableOpacity, TouchableOpacityProps } from 'react-native';
 
 export type ButtonProps = TouchableOpacityProps & {
   isPending?: boolean;
-  size?: 'sm' | 'md' | 'lg';
   variant?: 'solid' | 'outline';
   icon?: React.ReactNode;
   iconPosition?: 'left' | 'right';
@@ -16,19 +16,15 @@ export const Button: React.FC<ButtonProps> = ({
   className,
   isPending = false,
   disabled = false,
-  size = 'md',
   variant = 'solid',
   icon,
   iconPosition = 'right',
   ...props
 }) => {
   const wrapperClasses = clx(
-    'items-center justify-center gap-2 rounded-xl',
+    'items-center justify-center gap-x-2 rounded-xl p-4',
     iconPosition === 'left' ? 'flex-row-reverse' : 'flex-row',
     {
-      'p-5': size === 'lg',
-      'p-4': size === 'md',
-      'p-3': size === 'sm',
       'bg-black': variant === 'solid',
       'border border-gray-200 bg-transparent': variant === 'outline',
       'bg-gray-100 border-gray-100': disabled || isPending,
@@ -37,11 +33,8 @@ export const Button: React.FC<ButtonProps> = ({
   );
 
   const textClasses = clx(
-    'font-semibold',
+    'text-lg',
     {
-      'text-xl': size === 'lg',
-      'text-lg': size === 'md',
-      'text-base': size === 'sm',
       'text-white': variant === 'solid',
       'text-black': variant === 'outline',
     },

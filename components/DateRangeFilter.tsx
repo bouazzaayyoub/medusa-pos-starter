@@ -1,8 +1,9 @@
 import { ChevronDown } from '@/components/icons/chevron-down';
+import { Text } from '@/components/ui/Text';
 import { clx } from '@/utils/clx';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import DatePicker, { DateType } from 'react-native-ui-datepicker';
 import { BottomSheet } from './ui/BottomSheet';
 
@@ -141,11 +142,11 @@ export const DateRangeFilter = ({
             range_fill_weekend: '',
             header: 'mb-1',
             month_selector: '',
-            month_selector_label: 'font-semibold text-lg text-black',
+            month_selector_label: 'text-lg text-black',
             year_selector: '',
-            year_selector_label: 'font-semibold text-lg text-black',
+            year_selector_label: 'text-lg text-black',
             time_selector: '',
-            time_selector_label: 'font-semibold text-lg text-black',
+            time_selector_label: 'text-lg text-black',
             weekdays: '',
             weekday: '',
             weekday_label: 'text-sm uppercase text-black',
@@ -153,7 +154,7 @@ export const DateRangeFilter = ({
             button_next_image: '',
             button_prev: '',
             button_prev_image: '',
-            time_label: 'text-black text-2xl font-medium',
+            time_label: 'text-black text-2xl',
             time_selected_indicator: 'bg-muted rounded-lg',
             range_end: 'bg-black',
             range_end_label: 'text-white',

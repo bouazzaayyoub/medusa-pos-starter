@@ -6,12 +6,13 @@ import { UserRound } from '@/components/icons/user-round';
 import { MultiSelectFilter } from '@/components/MultiSelectFilter';
 import { SearchInput } from '@/components/SearchInput';
 import { OrderStatus } from '@/components/ui/OrderStatus';
+import { Text } from '@/components/ui/Text';
 import { AdminOrder } from '@medusajs/types';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { FlashList } from '@shopify/flash-list';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const isPlaceholderOrder = (
@@ -95,7 +96,7 @@ export default function OrdersScreen() {
         >
           <View className="gap-4 flex-1">
             <View className="flex-1">
-              <Text textBreakStrategy="balanced" className="text-xl font-medium shrink">
+              <Text textBreakStrategy="balanced" className="text-xl shrink">
                 Order #{item.display_id || item.id.slice(-6)}
               </Text>
             </View>
@@ -138,7 +139,7 @@ export default function OrdersScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="mx-4 mt-6 mb-6">
-        <Text className="text-black text-4xl font-semibold">My Orders</Text>
+        <Text className="text-black text-4xl">My Orders</Text>
       </View>
 
       <SearchInput
@@ -181,7 +182,7 @@ export default function OrdersScreen() {
           ListEmptyComponent={
             <View className="flex-1 mt-60 items-center">
               <CircleAlert size={24} />
-              <Text className="text-center text-xl mt-1">No orders match{'\n'}the search</Text>
+              <Text className="text-center text-xl mt-2">No orders match{'\n'}the search</Text>
             </View>
           }
           contentContainerStyle={{

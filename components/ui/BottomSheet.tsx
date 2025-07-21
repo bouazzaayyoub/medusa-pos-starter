@@ -1,4 +1,5 @@
 import { X } from '@/components/icons/x';
+import { Text } from '@/components/ui/Text';
 import { clx } from '@/utils/clx';
 import React from 'react';
 import {
@@ -8,7 +9,6 @@ import {
   ModalProps,
   PanResponder,
   PanResponderGestureState,
-  Text,
   TouchableOpacity,
   useWindowDimensions,
   View,
@@ -248,7 +248,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
             </View>
             {(title || showCloseButton) && (
               <View className={clx('flex-row p-4 justify-between gap-2 items-center shrink-0 grow-0', headerClassName)}>
-                <View className="flex-1">{title && <Text className="text-base">{title}</Text>}</View>
+                <View className="flex-1">{title && <Text>{title}</Text>}</View>
                 {showCloseButton && (
                   <TouchableOpacity onPress={handleCloseIconPress} accessibilityLabel="Close dialog">
                     <X size={20} />
