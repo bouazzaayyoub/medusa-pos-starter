@@ -29,7 +29,7 @@ const SalesChannelList: React.FC<SalesChannelListProps> = ({ selectedSalesChanne
         data={salesChannelsQuery.data?.pages?.[0]?.sales_channels || []}
         keyExtractor={(item) => item.id}
         contentContainerClassName="border overflow-hidden rounded-xl border-b border-[#EDEDED]"
-        ItemSeparatorComponent={() => <View className="h-px bg-gray-200 mx-4" />}
+        ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200 mx-4" />}
         renderItem={({ item }) => (
           <TouchableOpacity
             className={clx('py-3 justify-between items-center flex-row px-4', {

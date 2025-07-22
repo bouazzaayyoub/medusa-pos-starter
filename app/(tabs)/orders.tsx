@@ -5,6 +5,7 @@ import { CircleAlert } from '@/components/icons/circle-alert';
 import { UserRound } from '@/components/icons/user-round';
 import { MultiSelectFilter } from '@/components/MultiSelectFilter';
 import { SearchInput } from '@/components/SearchInput';
+import { Layout } from '@/components/ui/Layout';
 import { OrderStatus } from '@/components/ui/OrderStatus';
 import { Text } from '@/components/ui/Text';
 import { AdminOrder } from '@medusajs/types';
@@ -12,8 +13,7 @@ import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { FlashList } from '@shopify/flash-list';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Platform, TouchableOpacity, View } from 'react-native';
 
 const isPlaceholderOrder = (
   order: AdminOrder | { id: `placeholder_${string}` },
@@ -100,8 +100,8 @@ export default function OrdersScreen() {
                 Order #{item.display_id || item.id.slice(-6)}
               </Text>
             </View>
-            <View className="flex-row gap-1">
-              <UserRound size={16} />
+            <View className="flex-row gap-2">
+              <UserRound size={16} className="mt-1" />
               <View className="flex-1">
                 <Text textBreakStrategy="balanced" className="shrink">
                   {customerName}
@@ -137,19 +137,17 @@ export default function OrdersScreen() {
   }, [ordersQuery]);
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <View className="mx-4 mt-6 mb-6">
-        <Text className="text-black text-4xl">My Orders</Text>
-      </View>
+    <Layout>
+      <Text className="text-4xl mb-6">My Orders</Text>
 
       <SearchInput
         value={searchQuery}
         onChangeText={setSearchQuery}
         placeholder="Search for a specific order..."
-        className="mb-6 mx-4"
+        className="mb-4"
       />
 
-      <View className="flex-row items-center gap-2 mb-4 px-4">
+      <View className="flex-row items-center gap-2 mb-4">
         <MultiSelectFilter
           variant="secondary"
           placeholder="Status"
@@ -171,52 +169,52 @@ export default function OrdersScreen() {
         />
       </View>
 
-      <View className="flex-1 px-4">
-        <FlashList
-          data={data}
-          renderItem={renderOrder}
-          keyExtractor={(item) => item.id}
-          estimatedItemSize={120}
-          refreshing={ordersQuery.isRefetching}
-          ItemSeparatorComponent={() => <View className="w-full h-4" />}
-          ListEmptyComponent={
-            <View className="flex-1 mt-60 items-center">
-              <CircleAlert size={24} />
-              <Text className="text-center text-xl mt-2">No orders match{'\n'}the search</Text>
-            </View>
-          }
-          contentContainerStyle={{
+      <FlashList
+        data={data}
+        renderItem={renderOrder}
+        keyExtractor={(item) => item.id}
+        estimatedItemSize={120}
+        refreshing={ordersQuery.isRefetching}
+        ItemSeparatorComponent={() => <View className="w-full h-4" />}
+        ListEmptyComponent={
+          <View className="flex-1 mt-32 items-center">
+            <CircleAlert size={24} />
+            <Text className="text-center text-xl mt-2">No orders match{'\n'}the search</Text>
+          </View>
+        }
+        contentContainerStyle={Platform.select({
+          ios: {
             paddingBottom: bottomTabBarHeight,
-          }}
-          ListFooterComponent={
-            ordersQuery.isFetchingNextPage ? (
-              <View className="gap-4 mt-4">
-                {Array.from({ length: 3 }).map((_, index) => (
-                  <View key={index} className="p-4 border gap-2 border-gray-200 rounded-2xl">
-                    <View className="bg-gray-200 h-6 w-full rounded-md" />
-                    <View className="flex-row justify-between">
-                      <View className="gap-2">
-                        <View className="bg-gray-200 h-4 w-16 rounded-md" />
-                        <View className="bg-gray-200 h-4 w-16 rounded-md" />
-                      </View>
-                      <View className="bg-gray-200 mt-auto h-4 w-32 rounded-md" />
+          },
+        })}
+        ListFooterComponent={
+          ordersQuery.isFetchingNextPage ? (
+            <View className="gap-4 mt-4">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <View key={index} className="p-4 border gap-2 border-gray-200 rounded-2xl">
+                  <View className="bg-gray-200 h-6 w-full rounded-md" />
+                  <View className="flex-row justify-between">
+                    <View className="gap-2">
+                      <View className="bg-gray-200 h-4 w-16 rounded-md" />
+                      <View className="bg-gray-200 h-4 w-16 rounded-md" />
                     </View>
+                    <View className="bg-gray-200 mt-auto h-4 w-32 rounded-md" />
                   </View>
-                ))}
-              </View>
-            ) : null
+                </View>
+              ))}
+            </View>
+          ) : null
+        }
+        onRefresh={() => {
+          ordersQuery.refetch();
+        }}
+        onEndReached={() => {
+          if (ordersQuery.hasNextPage && !ordersQuery.isFetchingNextPage) {
+            ordersQuery.fetchNextPage();
           }
-          onRefresh={() => {
-            ordersQuery.refetch();
-          }}
-          onEndReached={() => {
-            if (ordersQuery.hasNextPage && !ordersQuery.isFetchingNextPage) {
-              ordersQuery.fetchNextPage();
-            }
-          }}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
-    </SafeAreaView>
+        }}
+        showsVerticalScrollIndicator={false}
+      />
+    </Layout>
   );
 }

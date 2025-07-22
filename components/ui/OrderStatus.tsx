@@ -73,7 +73,7 @@ export const OrderStatus: React.FC<OrderStatusProps> = ({ order, className }) =>
     return (
       <View className={clx('px-4 flex-row rounded-full bg-error-200 py-2 gap-2', className)}>
         <X size={16} color="#F14747" />
-        <Text className="text-error-500">Canceled</Text>
+        <Text className="text-sm text-error-500">Canceled</Text>
       </View>
     );
   }
@@ -82,7 +82,7 @@ export const OrderStatus: React.FC<OrderStatusProps> = ({ order, className }) =>
     return (
       <View className={clx('px-4 flex-row rounded-full bg-warning-200 py-2 gap-2', className)}>
         <AlertCircle size={16} color="#9B8435" />
-        <Text className="text-warning-500">Requires action</Text>
+        <Text className="text-sm text-warning-500">Requires action</Text>
       </View>
     );
   }
@@ -91,7 +91,7 @@ export const OrderStatus: React.FC<OrderStatusProps> = ({ order, className }) =>
     return (
       <View className={clx('px-4 flex-row rounded-full bg-active-200 py-2 gap-2', className)}>
         <FilePen size={16} color="#4E78E5" />
-        <Text className="text-active-500">Draft</Text>
+        <Text className="text-sm text-active-500">Draft</Text>
       </View>
     );
   }
@@ -100,7 +100,7 @@ export const OrderStatus: React.FC<OrderStatusProps> = ({ order, className }) =>
     return (
       <View className={clx('px-4 flex-row rounded-full bg-gray-100 py-2 gap-2', className)}>
         <Archive size={16} color="#6b7280" />
-        <Text className="text-gray-500">Archived</Text>
+        <Text className="text-sm text-gray-500">Archived</Text>
       </View>
     );
   }
@@ -111,7 +111,7 @@ export const OrderStatus: React.FC<OrderStatusProps> = ({ order, className }) =>
     return (
       <View className={clx('px-4 flex-row rounded-full bg-gray-100 py-2 gap-2', className)}>
         <HelpCircle size={16} color="#6b7280" />
-        <Text className="text-gray-500">Unknown</Text>
+        <Text className="text-sm text-gray-500">Unknown</Text>
       </View>
     );
   }
@@ -123,21 +123,21 @@ export const OrderStatus: React.FC<OrderStatusProps> = ({ order, className }) =>
       return (
         <View className={clx('px-4 flex-row rounded-full bg-warning-200 py-2 gap-2', className)}>
           <Icon size={16} color="#9B8435" />
-          <Text className="text-warning-500">{fulfillmentStatus.label}</Text>
+          <Text className="text-sm text-warning-500">{fulfillmentStatus.label}</Text>
         </View>
       );
     case 'green':
       return (
         <View className={clx('px-4 flex-row rounded-full bg-success-200 py-2 gap-2', className)}>
           <Icon size={16} color="#469B3B" />
-          <Text className="text-success-500">{fulfillmentStatus.label}</Text>
+          <Text className="text-sm text-success-500">{fulfillmentStatus.label}</Text>
         </View>
       );
     case 'red':
       return (
         <View className={clx('px-4 flex-row rounded-full bg-error-200 py-2 gap-2', className)}>
           <Icon size={16} color="#F14747" />
-          <Text className="text-error-500">{fulfillmentStatus.label}</Text>
+          <Text className="text-sm text-error-500">{fulfillmentStatus.label}</Text>
         </View>
       );
   }

@@ -19,6 +19,7 @@ import { InfoBanner } from '@/components/InfoBanner';
 import { CartSkeleton } from '@/components/skeletons/CartSkeleton';
 import { SwipeableListItem } from '@/components/SwipeableListItem';
 import { Button } from '@/components/ui/Button';
+import { Layout } from '@/components/ui/Layout';
 import { QuantityPicker } from '@/components/ui/QuantityPicker';
 import { Text } from '@/components/ui/Text';
 import { useSettings } from '@/contexts/settings';
@@ -29,9 +30,8 @@ import { AnimatedFlashList as FlashList, ListRenderItem } from '@shopify/flash-l
 import { useIsMutating } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import * as React from 'react';
-import { Alert, Image, Pressable, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Platform, Pressable, TouchableOpacity, View } from 'react-native';
 import Animated, { SequencedTransition, SlideOutLeft } from 'react-native-reanimated';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import * as z from 'zod/v4';
 
 const addPromotionFormSchema = z.object({
@@ -69,7 +69,7 @@ const DraftOrderItem: React.FC<{ item: AdminOrderLineItem; onRemove?: (item: Adm
         </View>
       )}
     >
-      <View className="flex-row gap-4 px-4 bg-white py-6">
+      <View className="flex-row gap-4 bg-white py-6">
         <View className="h-[5.25rem] w-[5.25rem] rounded-xl bg-gray-200 overflow-hidden">
           {thumbnail && <Image source={{ uri: thumbnail }} className="w-full h-full object-cover" />}
         </View>
@@ -78,7 +78,7 @@ const DraftOrderItem: React.FC<{ item: AdminOrderLineItem; onRemove?: (item: Adm
           {item.variant && item.variant.options && item.variant.options.length > 0 && (
             <View className="flex-row flex-wrap items-center gap-x-2 gap-y-1">
               {item.variant.options.map((option) => (
-                <View className="flex-row" key={option.id}>
+                <View className="flex-row gap-1" key={option.id}>
                   <Text className="text-gray-400 text-sm">{option.option?.title || option.option_id}:</Text>
                   <Text className="text-sm">{option.value}</Text>
                 </View>
@@ -193,17 +193,29 @@ export default function CartScreen() {
   );
 
   if (draftOrder.isLoading || settings.isLoading) {
-    return <CartSkeleton style={{ paddingBottom: bottomTabBarHeight }} />;
+    return (
+      <CartSkeleton
+        style={Platform.select({
+          ios: {
+            paddingBottom: bottomTabBarHeight,
+          },
+        })}
+      />
+    );
   }
 
   if (draftOrder.isError || settings.isError) {
     return (
-      <SafeAreaView className="relative flex-1 px-4 bg-white" style={{ paddingBottom: bottomTabBarHeight }}>
-        <View className="py-4">
-          <Text className="text-black text-4xl">Cart</Text>
-        </View>
-        <View className="flex-1 items-center justify-center">
-          <InfoBanner variant="ghost" colorScheme="error" className="mb-2">
+      <Layout
+        style={Platform.select({
+          ios: {
+            paddingBottom: bottomTabBarHeight,
+          },
+        })}
+      >
+        <Text className="text-4xl">Cart</Text>
+        <View className="flex-1 items-center  gap-2 justify-center">
+          <InfoBanner variant="ghost" colorScheme="error" className="w-40">
             Failed to load cart
           </InfoBanner>
           <Button
@@ -217,42 +229,23 @@ export default function CartScreen() {
             Try Again
           </Button>
         </View>
-      </SafeAreaView>
+      </Layout>
     );
   }
 
-  if (!draftOrder.data?.draft_order) {
+  if (!draftOrder.data?.draft_order || !draftOrder.data?.draft_order.items.length) {
     return (
-      <SafeAreaView className="relative flex-1 px-4 bg-white" style={{ paddingBottom: bottomTabBarHeight }}>
-        <View className="py-4">
-          <Text className="text-black text-4xl">Cart</Text>
-        </View>
-        <View className="flex-1 items-center justify-center">
-          <ShoppingCart size={24} className="mb-1" />
-          <Text className="text-xl mb-1">Your cart is empty</Text>
-          <Text className="text-gray-300">Add products to begin</Text>
-        </View>
-        <View className="flex-row gap-2">
-          <Button variant="outline" className="flex-1" disabled>
-            Cancel Cart
-          </Button>
-          <Button className="flex-1" disabled>
-            Checkout
-          </Button>
-        </View>
-      </SafeAreaView>
-    );
-  }
-
-  if (!draftOrder.data?.draft_order.items.length) {
-    return (
-      <SafeAreaView className="relative flex-1 px-4 bg-white" style={{ paddingBottom: bottomTabBarHeight }}>
-        <View className="py-4">
-          <Text className="text-black text-4xl">Cart</Text>
-        </View>
-        <View className="flex-1 items-center justify-center">
-          <ShoppingCart size={24} className="mb-1" />
-          <Text className="text-xl mb-1">Your cart is empty</Text>
+      <Layout
+        style={Platform.select({
+          ios: {
+            paddingBottom: bottomTabBarHeight,
+          },
+        })}
+      >
+        <Text className="text-4xl">Cart</Text>
+        <View className="flex-1 items-center gap-1 justify-center">
+          <ShoppingCart size={24} />
+          <Text className="text-xl">Your cart is empty</Text>
           <Text className="text-gray-300">Add products to begin</Text>
         </View>
         <View className="flex-row gap-2">
@@ -263,6 +256,7 @@ export default function CartScreen() {
               cancelDraftOrder.mutate();
             }}
             isPending={cancelDraftOrder.isPending}
+            disabled={!draftOrder.data?.draft_order}
           >
             Cancel Cart
           </Button>
@@ -270,21 +264,17 @@ export default function CartScreen() {
             Checkout
           </Button>
         </View>
-      </SafeAreaView>
+      </Layout>
     );
   }
 
   const items = draftOrder.data.draft_order.items;
 
   return (
-    <SafeAreaView className="relative flex-1 bg-white">
-      <View className="p-4">
-        <Text className="text-black text-4xl">Cart</Text>
-      </View>
+    <Layout>
+      <Text className="text-4xl mb-6">Cart</Text>
 
-      <View className="px-4">
-        <CustomerBadge customer={draftOrder.data.draft_order.customer} />
-      </View>
+      <CustomerBadge customer={draftOrder.data.draft_order.customer} />
 
       <FlashList
         ref={itemsListRef}
@@ -292,12 +282,19 @@ export default function CartScreen() {
         keyExtractor={(item) => item.id}
         estimatedItemSize={132}
         renderItem={renderItem}
-        ItemSeparatorComponent={() => <View className="h-px bg-gray-200" />}
+        ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200" />}
         CellRendererComponent={ItemCell}
         disableAutoLayout
       />
 
-      <View className="mt-6 px-4">
+      <View
+        className="mt-6"
+        style={Platform.select({
+          ios: {
+            paddingBottom: bottomTabBarHeight,
+          },
+        })}
+      >
         <Form
           schema={addPromotionFormSchema}
           onSubmit={(data, form) => {
@@ -312,7 +309,7 @@ export default function CartScreen() {
           <TextField
             placeholder="Enter promotion code"
             name="promotionCode"
-            className="w-[60%] h-[3.125rem]"
+            className="w-[60%] h-14"
             inputClassName="py-0 h-full"
             readOnly={addPromotion.isPending}
             autoComplete="off"
@@ -321,7 +318,7 @@ export default function CartScreen() {
             errorVariation="inline"
           />
           <FormButton
-            className="flex-1 h-[3.125rem]"
+            className="flex-1"
             isPending={addPromotion.isPending}
             disabled={draftOrder.isFetching || isUpdatingDraftOrder > 0}
           >
@@ -330,11 +327,11 @@ export default function CartScreen() {
         </Form>
         <View className="gap-2">
           <View className="flex-row justify-between">
-            <Text className="text-gray-400">Taxes</Text>
+            <Text className="text-gray-400 text-sm">Taxes</Text>
             {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
               <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
             ) : (
-              <Text className="text-gray-400">
+              <Text className="text-gray-400 text-sm">
                 {draftOrder.data.draft_order.tax_total?.toLocaleString('en-US', {
                   style: 'currency',
                   currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
@@ -344,11 +341,11 @@ export default function CartScreen() {
             )}
           </View>
           <View className="flex-row justify-between">
-            <Text className="text-gray-400">Subtotal</Text>
+            <Text className="text-gray-400 text-sm">Subtotal</Text>
             {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
               <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
             ) : (
-              <Text className="text-gray-400">
+              <Text className="text-gray-400 text-sm">
                 {draftOrder.data.draft_order.subtotal?.toLocaleString('en-US', {
                   style: 'currency',
                   currency: draftOrder.data.draft_order.region?.currency_code || settings.data?.region?.currency_code,
@@ -375,7 +372,7 @@ export default function CartScreen() {
           )}
         </View>
 
-        <View className="h-px bg-gray-200 my-4" />
+        <View className="h-hairline bg-gray-200 my-4" />
 
         <View className="flex-row justify-between mb-6">
           <Text className="text-lg">Total</Text>
@@ -434,6 +431,6 @@ export default function CartScreen() {
           </Button>
         </View>
       </View>
-    </SafeAreaView>
+    </Layout>
   );
 }

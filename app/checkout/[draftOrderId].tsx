@@ -6,8 +6,10 @@ import {
 } from '@/api/hooks/draft-orders';
 import { ShoppingCart } from '@/components/icons/shopping-cart';
 import { InfoBanner } from '@/components/InfoBanner';
+import { CheckoutSkeleton } from '@/components/skeletons/CheckoutSkeleton';
 import { Button } from '@/components/ui/Button';
 import { Dialog } from '@/components/ui/Dialog';
+import { Layout } from '@/components/ui/Layout';
 import { Text } from '@/components/ui/Text';
 import { useSettings } from '@/contexts/settings';
 import { AdminOrderLineItem } from '@medusajs/types';
@@ -15,7 +17,6 @@ import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import { router, useLocalSearchParams, usePathname } from 'expo-router';
 import React from 'react';
 import { Image, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const DraftOrderItem: React.FC<{ item: AdminOrderLineItem }> = ({ item }) => {
   const settings = useSettings();
@@ -32,7 +33,7 @@ const DraftOrderItem: React.FC<{ item: AdminOrderLineItem }> = ({ item }) => {
         {item.variant && item.variant.options && item.variant.options.length > 0 && (
           <View className="flex-row flex-wrap items-center gap-x-2 gap-y-1">
             {item.variant.options.map((option) => (
-              <View className="flex-row" key={option.id}>
+              <View className="flex-row gap-1" key={option.id}>
                 <Text className="text-gray-400 text-sm">{option.option?.title || option.option_id}:</Text>
                 <Text className="text-sm">{option.value}</Text>
               </View>
@@ -66,89 +67,15 @@ export default function CheckoutScreen() {
   const items = draftOrder.data?.items || [];
 
   if (draftOrder.isLoading || settings.isLoading) {
-    return (
-      <SafeAreaView className="relative flex-1 bg-white">
-        <View className="p-4">
-          <Text className="text-black text-4xl">Checkout</Text>
-        </View>
-
-        {/* Order Items */}
-        <View className="flex-1 overflow-hidden">
-          <Text className="text-2xl px-4">Cart Items</Text>
-          {[1, 2].map((index) => (
-            <View key={index} className="flex-row gap-4 px-4 bg-white py-6">
-              <View className="h-[5.25rem] w-[5.25rem] rounded-xl bg-gray-200" />
-              <View className="flex-col gap-2 flex-1">
-                <View className="w-3/4 h-5 rounded-md bg-gray-200" />
-                <View className="w-1/2 h-4 rounded-md bg-gray-200" />
-              </View>
-              <View className="w-16 h-5 rounded-md bg-gray-200 ml-auto" />
-            </View>
-          ))}
-          <View className="px-4 mt-4">
-            <Text className="text-2xl mb-6">Information</Text>
-
-            <View className="flex-row mb-4">
-              <Text className="text-gray-300 w-24">Full Name</Text>
-              <View className="w-1/3 h-5 rounded-md bg-gray-200" />
-            </View>
-            <View className="flex-row mb-4">
-              <Text className="text-gray-300 w-24">Mail</Text>
-              <View className="w-1/3 h-5 rounded-md bg-gray-200" />
-            </View>
-            <View className="flex-row mb-4">
-              <Text className="text-gray-300 w-24">Address</Text>
-              <View className="w-1/2 h-5 rounded-md bg-gray-200" />
-            </View>
-            <View className="flex-row mb-10">
-              <Text className="text-gray-300 w-24">Phone</Text>
-              <View className="w-1/3 h-5 rounded-md bg-gray-200" />
-            </View>
-          </View>
-        </View>
-
-        <View className="mt-6 px-4">
-          {/* Order Summary */}
-          <View className="w-32 h-6 rounded-md bg-gray-200 mb-4" />
-
-          <View className="flex-row mb-2 justify-between">
-            <View className="w-16 h-4 rounded-md bg-gray-200" />
-            <View className="w-20 h-4 rounded-md bg-gray-200" />
-          </View>
-          <View className="flex-row mb-2 justify-between">
-            <View className="w-16 h-4 rounded-md bg-gray-200" />
-            <View className="w-20 h-4 rounded-md bg-gray-200" />
-          </View>
-          <View className="flex-row justify-between">
-            <View className="w-20 h-4 rounded-md bg-gray-200" />
-            <View className="w-24 h-4 rounded-md bg-gray-200" />
-          </View>
-
-          <View className="h-px bg-gray-200 my-4" />
-
-          <View className="flex-row justify-between mb-6">
-            <View className="w-16 h-7 rounded-md bg-gray-200" />
-            <View className="w-24 h-7 rounded-md bg-gray-200" />
-          </View>
-
-          {/* Action Buttons */}
-          <View className="flex-row gap-2">
-            <View className="flex-1 h-12 rounded-md bg-gray-200" />
-            <View className="flex-1 h-12 rounded-md bg-gray-200" />
-          </View>
-        </View>
-      </SafeAreaView>
-    );
+    return <CheckoutSkeleton />;
   }
 
   if (draftOrder.isError || settings.isError) {
     return (
-      <SafeAreaView className="relative flex-1 px-4 bg-white">
-        <View className="py-4">
-          <Text className="text-black text-4xl">Checkout</Text>
-        </View>
-        <View className="flex-1 items-center justify-center">
-          <InfoBanner variant="ghost" colorScheme="error" className="mb-2">
+      <Layout>
+        <Text className="text-4xl">Checkout</Text>
+        <View className="flex-1 items-center gap-2 justify-center">
+          <InfoBanner variant="ghost" colorScheme="error" className="w-40">
             Failed to load cart
           </InfoBanner>
           <Button
@@ -162,19 +89,17 @@ export default function CheckoutScreen() {
             Try Again
           </Button>
         </View>
-      </SafeAreaView>
+      </Layout>
     );
   }
 
   if (!draftOrder.data?.items.length) {
     return (
-      <SafeAreaView className="relative flex-1 px-4 bg-white">
-        <View className="py-4">
-          <Text className="text-black text-4xl">Checkout</Text>
-        </View>
-        <View className="flex-1 items-center justify-center">
-          <ShoppingCart size={24} className="mb-1" />
-          <Text className="text-xl mb-1">Your cart is empty</Text>
+      <Layout>
+        <Text className="text-4xl">Checkout</Text>
+        <View className="flex-1 items-center gap-1 justify-center">
+          <ShoppingCart size={24} />
+          <Text className="text-xl">Your cart is empty</Text>
           <Text className="text-gray-300 text-center">
             It seems you have no items in your cart.{'\n'}Please add items to your cart before{'\n'}proceeding to
             checkout.
@@ -188,7 +113,7 @@ export default function CheckoutScreen() {
             Complete Order
           </Button>
         </View>
-      </SafeAreaView>
+      </Layout>
     );
   }
 
@@ -202,18 +127,19 @@ export default function CheckoutScreen() {
 
   return (
     <>
-      <SafeAreaView className="relative flex-1 pt-6 px-4 bg-white">
+      <Layout>
         <Text className="text-4xl mb-6">Checkout</Text>
 
         <FlashList
           data={items}
           renderItem={renderItem}
           estimatedItemSize={132}
-          ListHeaderComponent={() => <Text className="text-2xl mb-6">Cart Items</Text>}
+          ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200" />}
+          ListHeaderComponent={() => <Text className="text-2xl">Cart Items</Text>}
           ListFooterComponent={() =>
             !isPosDefaultCustomer ? (
-              <View>
-                <Text className="text-2xl mb-6 mt-10">Information</Text>
+              <View className="mt-4 mb-10">
+                <Text className="text-2xl mb-6">Information</Text>
 
                 {customerName && (
                   <View className="flex-row mb-4">
@@ -226,7 +152,7 @@ export default function CheckoutScreen() {
                   <Text className="flex-wrap flex-1">{customerEmail}</Text>
                 </View>
                 {customerPhone && (
-                  <View className="flex-row mb-10">
+                  <View className="flex-row">
                     <Text className="text-gray-300 w-24">Phone</Text>
                     <Text className="flex-wrap flex-1">{customerPhone}</Text>
                   </View>
@@ -236,10 +162,10 @@ export default function CheckoutScreen() {
           }
         />
 
-        <View className="py-4 gap-y-4 border-y mb-6 border-gray-200">
+        <View className="py-4 gap-y-2 border-y mb-6 border-gray-200">
           <View className="flex-row justify-between">
-            <Text className="text-gray-400">Taxes</Text>
-            <Text className="text-gray-400">
+            <Text className="text-gray-400 text-sm">Taxes</Text>
+            <Text className="text-gray-400 text-sm">
               {draftOrder.data.tax_total?.toLocaleString('en-US', {
                 style: 'currency',
                 currency: draftOrder.data.region?.currency_code || settings.data?.region?.currency_code,
@@ -248,8 +174,8 @@ export default function CheckoutScreen() {
             </Text>
           </View>
           <View className="flex-row justify-between">
-            <Text className="text-gray-400">Subtotal</Text>
-            <Text className="text-gray-400">
+            <Text className="text-gray-400 text-sm">Subtotal</Text>
+            <Text className="text-gray-400 text-sm">
               {draftOrder.data.subtotal?.toLocaleString('en-US', {
                 style: 'currency',
                 currency: draftOrder.data.region?.currency_code || settings.data?.region?.currency_code,
@@ -259,8 +185,8 @@ export default function CheckoutScreen() {
           </View>
           {typeof draftOrder.data.discount_total === 'number' && draftOrder.data.discount_total > 0 && (
             <View className="flex-row justify-between">
-              <Text className="text-gray-400">Discount</Text>
-              <Text className="text-gray-400">
+              <Text className="text-gray-400 text-sm">Discount</Text>
+              <Text className="text-gray-400 text-sm">
                 {(draftOrder.data.discount_total * -1)?.toLocaleString('en-US', {
                   style: 'currency',
                   currency: draftOrder.data.region?.currency_code || settings.data?.region?.currency_code,
@@ -300,7 +226,7 @@ export default function CheckoutScreen() {
             Complete Order
           </Button>
         </View>
-      </SafeAreaView>
+      </Layout>
 
       <Dialog
         visible={!isDraftOrder && pathName === `/checkout/${draftOrderId}`}

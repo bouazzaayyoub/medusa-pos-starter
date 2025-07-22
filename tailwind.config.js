@@ -1,3 +1,5 @@
+const { hairlineWidth } = require('nativewind/theme');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -55,6 +57,9 @@ module.exports = {
       },
       borderRadius: {
         '4xl': '2rem',
+      },
+      height: {
+        hairline: hairlineWidth(),
       },
     },
   },

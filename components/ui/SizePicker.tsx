@@ -39,7 +39,7 @@ export function SizePicker({
                 isSelected ? 'border-black bg-black' : 'border-gray-200 bg-white',
               )}
             >
-              <Text className={clx(isSelected ? 'text-white' : 'text-black')}>{size}</Text>
+              <Text className={clx(isSelected ? 'text-white' : '')}>{size}</Text>
             </TouchableOpacity>
           );
         })}

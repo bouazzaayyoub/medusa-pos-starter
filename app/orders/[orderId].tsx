@@ -58,7 +58,7 @@ const CustomerInformation: React.FC<{
             <Text className="text-gray-300 flex-1 text-sm">{item.label}</Text>
             <Text className="flex-1 text-sm flex-wrap text-right">{item.value}</Text>
           </View>
-          {index < info.length - 1 && <View className="h-px bg-gray-200 mt-2 w-full" />}
+          {index < info.length - 1 && <View className="h-hairline bg-gray-200 mt-2 w-full" />}
         </View>
       ))}
     </View>
@@ -127,7 +127,7 @@ export default function OrderDetailsScreen() {
             <FlatList
               data={orderQuery.data?.order.items}
               renderItem={renderItem}
-              ItemSeparatorComponent={() => <View className="w-full h-px bg-gray-200 my-6" />}
+              ItemSeparatorComponent={() => <View className="w-full h-hairline bg-gray-200 my-6" />}
               contentContainerClassName="pt-4 grow-0"
               className="grow-0 shrink"
               ListFooterComponent={() =>
@@ -169,7 +169,7 @@ export default function OrderDetailsScreen() {
                         </View>
                       )}
                     </View>
-                    <View className="h-px bg-gray-200 my-4 w-full" />
+                    <View className="h-hairline bg-gray-200 my-4 w-full" />
                     <View className="flex-row justify-between gap-4 mb-4 items-center">
                       <Text className="flex-1 text-lg">Total</Text>
                       <Text className="flex-1 text-lg flex-wrap text-right">
@@ -186,7 +186,7 @@ export default function OrderDetailsScreen() {
               ListFooterComponentClassName="mt-14"
             />
           )}
-          <Button variant="outline" onPress={() => animateOut(() => router.back())}>
+          <Button variant="outline" onPress={() => animateOut(() => router.back())} className="mt-4">
             Close
           </Button>
         </>

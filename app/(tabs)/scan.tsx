@@ -169,7 +169,7 @@ export default function ScanScreen() {
           className="absolute bottom-0 left-0 right-0 px-6 pb-safe-offset-4 flex items-center"
         >
           <View className="bg-white px-4 py-2 rounded-3xl">
-            <Text className="text-black text-center">Searching...</Text>
+            <Text className="text-center">Searching...</Text>
           </View>
         </Animated.View>
       )}

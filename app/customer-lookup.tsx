@@ -17,7 +17,7 @@ import { FlatList, TouchableOpacity, View } from 'react-native';
 import { z } from 'zod/v4';
 
 const customerFormSchema = z.object({
-  email: z.email(),
+  email: z.email('Please enter a valid email address').min(3, 'Email is required'),
   first_name: z.string().optional(),
   last_name: z.string().optional(),
   phone: z.string().optional(),
@@ -166,15 +166,15 @@ const CustomersList: React.FC<{
       renderItem={renderCustomer}
       keyExtractor={(item) => item.id}
       refreshing={customersQuery.isRefetching}
-      ItemSeparatorComponent={() => <View className="h-px bg-gray-200 mx-4" />}
+      ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200 mx-4" />}
       className="border overflow-hidden rounded-xl border-gray-200"
       ListEmptyComponent={
-        <View className="py-10 px-4 justify-center items-center">
+        <View className="py-10 px-4 gap-2 justify-center items-center">
           <CircleAlert size={24} />
           {typeof q === 'string' && q.length > 1 ? (
-            <Text className="text-center mt-2">No customers match{'\n'}the search</Text>
+            <Text className="text-center">No customers match{'\n'}the search</Text>
           ) : (
-            <Text className="text-center mt-2">No customers found</Text>
+            <Text className="text-center">No customers found</Text>
           )}
         </View>
       }
@@ -182,19 +182,19 @@ const CustomersList: React.FC<{
         customersQuery.isFetchingNextPage ? (
           <View>
             <CustomerListPlaceholder />
-            <View className="h-px bg-gray-200 mx-4" />
+            <View className="h-hairline bg-gray-200 mx-4" />
             <CustomerListPlaceholder />
-            <View className="h-px bg-gray-200 mx-4" />
+            <View className="h-hairline bg-gray-200 mx-4" />
             <CustomerListPlaceholder />
-            <View className="h-px bg-gray-200 mx-4" />
+            <View className="h-hairline bg-gray-200 mx-4" />
             <CustomerListPlaceholder />
-            <View className="h-px bg-gray-200 mx-4" />
+            <View className="h-hairline bg-gray-200 mx-4" />
             <CustomerListPlaceholder />
-            <View className="h-px bg-gray-200 mx-4" />
+            <View className="h-hairline bg-gray-200 mx-4" />
             <CustomerListPlaceholder />
-            <View className="h-px bg-gray-200 mx-4" />
+            <View className="h-hairline bg-gray-200 mx-4" />
             <CustomerListPlaceholder />
-            <View className="h-px bg-gray-200 mx-4" />
+            <View className="h-hairline bg-gray-200 mx-4" />
             <CustomerListPlaceholder />
           </View>
         ) : null

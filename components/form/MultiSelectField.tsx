@@ -201,7 +201,7 @@ export function MultiSelectField({
             const isSelected = value.includes(item.value);
             return defaultRenderOption(item, isSelected);
           }}
-          ItemSeparatorComponent={() => <View className="h-px bg-gray-200" />}
+          ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200" />}
           ListEmptyComponent={
             <View className="p-8 items-center">
               <Text className="text-gray-500">

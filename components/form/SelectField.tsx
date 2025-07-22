@@ -170,7 +170,7 @@ export function SelectField({
               : defaultRenderOption(item, isSelected);
             return renderedOption as React.ReactElement;
           }}
-          ItemSeparatorComponent={() => <View className="h-px bg-gray-200" />}
+          ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200" />}
           ListEmptyComponent={
             <View className="p-8 items-center">
               <Text className="text-gray-500">

@@ -2,6 +2,7 @@ import { useAddToDraftOrder } from '@/api/hooks/draft-orders';
 import { useProduct } from '@/api/hooks/products';
 import { ProductDetailsSkeleton } from '@/components/skeletons/ProductDetailsSkeleton';
 import { Button } from '@/components/ui/Button';
+import { Layout } from '@/components/ui/Layout';
 import { OptionPicker } from '@/components/ui/OptionPicker';
 import { QuantityPicker } from '@/components/ui/QuantityPicker';
 import { Text } from '@/components/ui/Text';
@@ -13,7 +14,6 @@ import { Dimensions, Image, ScrollView, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSharedValue } from 'react-native-reanimated';
 import Carousel, { CarouselRenderItem, ICarouselInstance, Pagination } from 'react-native-reanimated-carousel';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -160,9 +160,9 @@ export default function ProductDetailsScreen() {
   const price = selectedVariant?.prices?.find((price) => price.currency_code === currencyCode);
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <Layout>
       <GestureHandlerRootView>
-        <ScrollView className="flex-1 px-4 pb-4" showsVerticalScrollIndicator={false}>
+        <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
           <View className="mb-6 bg-gray-100 rounded-xl overflow-hidden">
             {productQuery.data.product.images && productQuery.data.product.images.length ? (
               <ProductImagesCarousel images={productQuery.data.product.images} />
@@ -268,6 +268,6 @@ export default function ProductDetailsScreen() {
           </View>
         </ScrollView>
       </GestureHandlerRootView>
-    </SafeAreaView>
+    </Layout>
   );
 }

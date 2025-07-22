@@ -45,7 +45,6 @@ export function OptionPicker({
               <Text
                 className={clx({
                   'text-white': isSelected,
-                  'text-black': !isSelected,
                 })}
               >
                 {valueItem.value}

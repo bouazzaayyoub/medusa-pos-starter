@@ -34,7 +34,7 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
         data={stockLocationsQuery.data?.pages?.[0]?.stock_locations || []}
         keyExtractor={(item) => item.id}
         contentContainerClassName="border rounded-xl border-b overflow-hidden border-[#EDEDED]"
-        ItemSeparatorComponent={() => <View className="h-px bg-gray-200 mx-4" />}
+        ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200 mx-4" />}
         renderItem={({ item }) => (
           <TouchableOpacity
             className={clx('py-3 justify-between items-center flex-row px-4', {

@@ -29,7 +29,7 @@ const RegionList: React.FC<RegionListProps> = ({ selectedRegionId, onRegionSelec
         data={regionsQuery.data?.pages?.[0]?.regions || []}
         keyExtractor={(item) => item.id}
         className="border rounded-xl border-b border-gray-200"
-        ItemSeparatorComponent={() => <View className="h-px bg-gray-200 mx-4" />}
+        ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200 mx-4" />}
         renderItem={({ item }) => (
           <TouchableOpacity
             className={clx('py-3 justify-between items-center flex-row px-4', {

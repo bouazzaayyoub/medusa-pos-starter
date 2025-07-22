@@ -36,7 +36,6 @@ export const Button: React.FC<ButtonProps> = ({
     'text-lg',
     {
       'text-white': variant === 'solid',
-      'text-black': variant === 'outline',
     },
     {
       'text-gray-300': disabled || isPending,

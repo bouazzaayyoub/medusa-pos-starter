@@ -1,5 +1,6 @@
 import { Antenna } from '@/components/icons/antenna';
 import { Button } from '@/components/ui/Button';
+import { Layout } from '@/components/ui/Layout';
 import { Text } from '@/components/ui/Text';
 import { useAuthCtx } from '@/contexts/auth';
 import { useSettings } from '@/contexts/settings';
@@ -8,7 +9,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import React from 'react';
 import { Alert } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SettingsScreen() {
   const queryClient = useQueryClient();
@@ -32,10 +32,11 @@ export default function SettingsScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white px-4 pt-safe" style={{ paddingBottom: bottomTabBarHeight }}>
-      <Text className="text-black text-4xl mb-6">Settings</Text>
+    <Layout style={{ paddingBottom: bottomTabBarHeight }}>
+      <Text className="text-4xl mb-6">Settings</Text>
 
       <Text className="text-2xl mb-4">Sales Channel</Text>
+
       <Button
         onPress={() => router.push('/setup-wizard')}
         variant="outline"
@@ -47,6 +48,7 @@ export default function SettingsScreen() {
       </Button>
 
       <Text className="text-2xl mb-4">Stock location</Text>
+
       <Button
         onPress={() => router.push('/setup-wizard')}
         variant="outline"
@@ -58,11 +60,12 @@ export default function SettingsScreen() {
       </Button>
 
       <Text className="text-2xl mb-4">Account</Text>
+
       <Button onPress={handleLogout} className="mb-4">
         Log Out
       </Button>
 
       <Text className="text-gray-300">You will be signed out of your account.</Text>
-    </SafeAreaView>
+    </Layout>
   );
 }
