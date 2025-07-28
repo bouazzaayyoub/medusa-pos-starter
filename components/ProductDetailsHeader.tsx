@@ -1,8 +1,9 @@
 import { X } from '@/components/icons/x';
 import { Text } from '@/components/ui/Text';
+import { clx } from '@/utils/clx';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { Platform, TouchableOpacity, View } from 'react-native';
 
 interface ProductDetailsHeaderProps {
   title?: string;
@@ -12,7 +13,12 @@ export const ProductDetailsHeader: React.FC<ProductDetailsHeaderProps> = ({ titl
   const router = useRouter();
 
   return (
-    <View className="flex-row items-center justify-between px-4 py-4 bg-white">
+    <View
+      className={clx(
+        'flex-row items-center justify-between px-4 bg-white',
+        Platform.OS === 'android' ? 'pt-safe' : 'py-4',
+      )}
+    >
       <Text>{title}</Text>
       <TouchableOpacity
         onPress={() => router.back()}
