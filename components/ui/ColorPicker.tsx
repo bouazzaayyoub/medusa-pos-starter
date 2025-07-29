@@ -40,7 +40,7 @@ export function ColorPicker({
               )}
             >
               <View className="w-5 h-5 rounded-full border border-gray-200" style={{ backgroundColor: color.value }} />
-              <Text className={clx(isSelected ? 'text-white' : '')}>{color.name}</Text>
+              <Text className={clx({ 'text-white': isSelected })}>{color.name}</Text>
             </TouchableOpacity>
           );
         })}
