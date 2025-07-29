@@ -1,8 +1,10 @@
+import { Check } from '@/components/icons/check';
 import { ChevronDown } from '@/components/icons/chevron-down';
+import { Text } from '@/components/ui/Text';
 import { clx } from '@/utils/clx';
 import React, { useEffect, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
-import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, TextInput, TouchableOpacity, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { BottomSheet } from '../ui/BottomSheet';
 
@@ -92,17 +94,17 @@ export function SelectField({
   const defaultRenderOption = (option: SelectOption, isSelected: boolean) => (
     <TouchableOpacity
       key={option.value}
-      className={clx('p-4 border-b border-gray-200 flex-row justify-between items-center bg-white')}
+      className={clx('p-4 flex-row justify-between items-center bg-white')}
       onPress={() => handleSelect(option.value)}
     >
       <Text
-        className={clx('text-base', {
-          'text-active-500 font-medium': isSelected,
+        className={clx({
+          'text-active-500': isSelected,
         })}
       >
         {option.label}
       </Text>
-      {isSelected && <Text className="text-active-500 text-lg">✓</Text>}
+      {isSelected && <Check size={16} color="#4E78E5" />}
     </TouchableOpacity>
   );
 
@@ -131,7 +133,7 @@ export function SelectField({
           disabled={isDisabled}
         >
           <Text
-            className={clx('text-base', {
+            className={clx({
               'text-gray-300': !selectedOption,
             })}
           >
@@ -146,7 +148,7 @@ export function SelectField({
         {searchable && (
           <View className="p-4 border-b border-gray-200">
             <TextInput
-              className="border border-gray-200 rounded-lg px-4 py-3 text-base"
+              className="border border-gray-200 rounded-lg px-4 py-3"
               placeholder="Search options..."
               placeholderTextColor="#9CA3AF"
               value={searchQuery}
@@ -168,9 +170,10 @@ export function SelectField({
               : defaultRenderOption(item, isSelected);
             return renderedOption as React.ReactElement;
           }}
+          ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200" />}
           ListEmptyComponent={
             <View className="p-8 items-center">
-              <Text className="text-gray-500 text-base">
+              <Text className="text-gray-500">
                 {searchable && searchQuery ? 'No options found' : 'No options available'}
               </Text>
             </View>

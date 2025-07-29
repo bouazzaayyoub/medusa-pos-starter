@@ -61,8 +61,8 @@ export function TextField({
 
   useEffect(() => {
     if (showFloating) {
-      floatingPlaceholderTranslateY.value = withTiming(-12, { duration: 150 });
-      floatingPlaceholderScale.value = withTiming(0.67, { duration: 150 });
+      floatingPlaceholderTranslateY.value = withTiming(-7, { duration: 150 });
+      floatingPlaceholderScale.value = withTiming(0.6825, { duration: 150 });
     } else {
       floatingPlaceholderTranslateY.value = withTiming(0, { duration: 150 });
       floatingPlaceholderScale.value = withTiming(1, { duration: 150 });
@@ -74,7 +74,7 @@ export function TextField({
       <View className="relative justify-center">
         {floatingPlaceholder && (
           <Animated.Text
-            className={clx('absolute left-4 z-10', error ? 'text-error-500' : 'text-gray-300')}
+            className={clx('absolute left-3 z-10 text-base', error ? 'text-error-500' : 'text-gray-300')}
             style={floatingPlaceholderStyle}
             pointerEvents="none"
           >
@@ -83,11 +83,11 @@ export function TextField({
         )}
         <TextInput
           className={clx(
-            'bg-white rounded-xl px-4 py-5 border border-gray-200 focus:border-active-500',
+            'bg-white rounded-xl px-3 py-4 border border-gray-200 focus:border-active-500',
             {
               '!border-error-500': error,
-              'pt-6 pb-4': floatingPlaceholder,
-              'pr-10': error && errorVariation === 'inline',
+              'pt-6 pb-2': floatingPlaceholder,
+              'pr-9': error && errorVariation === 'inline',
             },
             inputClassName,
           )}
@@ -104,7 +104,7 @@ export function TextField({
           {...textInputProps}
         />
         {secureTextEntry && (
-          <TouchableOpacity className="absolute p-1 right-4" onPress={() => setShowValue(!showValue)}>
+          <TouchableOpacity className="absolute p-1 right-2" onPress={() => setShowValue(!showValue)}>
             {showValue ? (
               <Eye size={16} className={error ? 'text-error-500' : 'text-gray-300'} />
             ) : (
@@ -113,13 +113,18 @@ export function TextField({
           </TouchableOpacity>
         )}
         {error && errorVariation === 'inline' && (
-          <View className="absolute right-4">
+          <View className="absolute right-3">
             <CircleAlert size={16} color="#ef4444" />
           </View>
         )}
       </View>
       {error && errorVariation === 'default' && (
-        <InfoBanner colorScheme="error" variant="ghost" className={clx('mt-2', errorClassName)}>
+        <InfoBanner
+          colorScheme="error"
+          variant="ghost"
+          className={clx('mt-2 gap-1', errorClassName)}
+          textClassName="text-2xs"
+        >
           {error.message}
         </InfoBanner>
       )}

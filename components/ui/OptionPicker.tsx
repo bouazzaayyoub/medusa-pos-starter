@@ -1,6 +1,7 @@
+import { Text } from '@/components/ui/Text';
 import { clx } from '@/utils/clx';
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 interface OptionPickerProps {
   values: { id: string; value: string }[];
@@ -21,7 +22,7 @@ export function OptionPicker({
 }: OptionPickerProps) {
   return (
     <View className={className}>
-      <Text className="text-base text-gray-900 mb-2">{label}</Text>
+      <Text className="text-gray-900 mb-2">{label}</Text>
 
       <View className="flex-row flex-wrap gap-2">
         {values.map((valueItem) => {
@@ -44,7 +45,6 @@ export function OptionPicker({
               <Text
                 className={clx({
                   'text-white': isSelected,
-                  'text-black': !isSelected,
                 })}
               >
                 {valueItem.value}

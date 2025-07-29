@@ -2,11 +2,12 @@ import { useStockLocations } from '@/api/hooks/stock-location';
 import { MapPin } from '@/components/icons/map-pin';
 import { InfoBanner } from '@/components/InfoBanner';
 import { LoadingBanner } from '@/components/LoadingBanner';
+import { Text } from '@/components/ui/Text';
 import { getCountryByAlpha2 } from '@/constants/countries';
 import { findProvinceByCode } from '@/constants/provinces';
 import { clx } from '@/utils/clx';
 import React from 'react';
-import { FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, TouchableOpacity, View } from 'react-native';
 
 interface StockLocationListProps {
   selectedStockLocationId: string;
@@ -33,7 +34,7 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
         data={stockLocationsQuery.data?.pages?.[0]?.stock_locations || []}
         keyExtractor={(item) => item.id}
         contentContainerClassName="border rounded-xl border-b overflow-hidden border-[#EDEDED]"
-        ItemSeparatorComponent={() => <View className="h-px bg-gray-200 mx-4" />}
+        ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200 mx-4" />}
         renderItem={({ item }) => (
           <TouchableOpacity
             className={clx('py-3 justify-between items-center flex-row px-4', {

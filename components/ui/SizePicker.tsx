@@ -1,6 +1,7 @@
+import { Text } from '@/components/ui/Text';
 import { clx } from '@/utils/clx';
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 interface SizePickerProps {
   sizes: string[];
@@ -21,7 +22,7 @@ export function SizePicker({
 }: SizePickerProps) {
   return (
     <View className={className}>
-      {label && <Text className="text-base mb-2">{label}</Text>}
+      {label && <Text className="mb-2">{label}</Text>}
 
       <View className="flex-row flex-wrap gap-2">
         {sizes.map((size) => {
@@ -38,7 +39,7 @@ export function SizePicker({
                 isSelected ? 'border-black bg-black' : 'border-gray-200 bg-white',
               )}
             >
-              <Text className={clx(isSelected ? 'text-white' : 'text-black')}>{size}</Text>
+              <Text className={clx(isSelected ? 'text-white' : '')}>{size}</Text>
             </TouchableOpacity>
           );
         })}

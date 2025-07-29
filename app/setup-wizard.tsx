@@ -2,8 +2,9 @@ import { useRegions } from '@/api/hooks/regions';
 import { useSalesChannels } from '@/api/hooks/sales-channel';
 import { useStockLocations } from '@/api/hooks/stock-location';
 import { SetupWizardContent } from '@/components/setup-wizard/SetupWizardContent';
+import { Text } from '@/components/ui/Text';
 import React from 'react';
-import { ActivityIndicator, Text } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SetupWizardScreen() {

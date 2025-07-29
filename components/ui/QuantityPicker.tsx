@@ -72,10 +72,10 @@ export function QuantityPicker({
         >
           <Minus
             size={variant === 'default' ? 16 : 24}
-            className={clx(
-              variant === 'default' ? 'text-gray-400' : 'text-black',
-              !canDecrement ? 'text-gray-300' : '',
-            )}
+            className={clx({
+              'text-gray-400': variant === 'default',
+              'text-gray-300': !canDecrement,
+            })}
           />
         </TouchableOpacity>
         <View
@@ -106,10 +106,7 @@ export function QuantityPicker({
         >
           <Plus
             size={variant === 'default' ? 16 : 24}
-            className={clx(
-              variant === 'default' ? 'text-gray-400' : 'text-black',
-              !canIncrement ? 'text-gray-300' : '',
-            )}
+            className={clx(variant === 'default' ? 'text-gray-400' : '', !canIncrement ? 'text-gray-300' : '')}
           />
         </TouchableOpacity>
       </View>

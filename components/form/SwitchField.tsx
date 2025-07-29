@@ -1,7 +1,8 @@
+import { Text } from '@/components/ui/Text';
 import { clx } from '@/utils/clx';
 import React from 'react';
 import { useController, useFormContext } from 'react-hook-form';
-import { Switch, Text, TouchableOpacity, View } from 'react-native';
+import { Switch, TouchableOpacity, View } from 'react-native';
 
 interface SwitchFieldProps {
   name: string;
@@ -32,7 +33,7 @@ export function SwitchField({ name, label, description, className = '', disabled
         })}
       >
         <View className="flex-1 mr-4">
-          <Text className="text-base font-medium">{label}</Text>
+          <Text>{label}</Text>
           {description && <Text className="text-sm text-gray-500 mt-1">{description}</Text>}
         </View>
         <Switch

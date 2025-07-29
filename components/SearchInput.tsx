@@ -12,7 +12,7 @@ export const SearchInput: React.FC<{
     <View className={clx('relative', className)}>
       <Search size={16} className="absolute left-4 top-1/2 -translate-y-[50%] text-gray-300" />
       <TextInput
-        className="rounded-full py-3 pr-4 pl-10 text-base border focus:border-active-500 placeholder:text-gray-300 border-gray-200"
+        className="rounded-full text-sm py-3 pr-4 pl-10 border focus:border-active-500 placeholder:text-gray-300 border-gray-200"
         placeholder={placeholder}
         value={value}
         onChangeText={onChangeText}

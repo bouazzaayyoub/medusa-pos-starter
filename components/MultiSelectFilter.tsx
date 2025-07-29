@@ -1,8 +1,10 @@
+import { Check } from '@/components/icons/check';
 import { ChevronDown } from '@/components/icons/chevron-down';
 import { X } from '@/components/icons/x';
+import { Text } from '@/components/ui/Text';
 import { clx } from '@/utils/clx';
 import React, { useState } from 'react';
-import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, TextInput, TouchableOpacity, View } from 'react-native';
 import { BottomSheet } from './ui/BottomSheet';
 
 interface MultiSelectOption {
@@ -57,16 +59,17 @@ export const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({
   const defaultRenderOption = (option: MultiSelectOption, isSelected: boolean) => (
     <TouchableOpacity
       key={option.value}
-      className={clx('p-4 border-b border-gray-200 flex-row justify-between items-center bg-white')}
+      className={clx('p-4 flex-row justify-between items-center bg-white')}
       onPress={() => toggleOption(option.value)}
     >
       <Text
-        className={clx('text-base', {
-          'font-medium': isSelected,
+        className={clx({
+          'text-active-500': isSelected,
         })}
       >
         {option.label}
       </Text>
+      {isSelected && <Check size={16} color="#4E78E5" />}
     </TouchableOpacity>
   );
 
@@ -132,7 +135,7 @@ export const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({
         {searchable && (
           <View className="p-4 border-b border-gray-200">
             <TextInput
-              className="border border-gray-200 rounded-lg px-4 py-3 text-base"
+              className="border border-gray-200 rounded-lg px-4 py-3"
               placeholder="Search options..."
               placeholderTextColor="#9CA3AF"
               value={searchQuery}
@@ -151,9 +154,10 @@ export const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({
             const isSelected = value.includes(item.value);
             return defaultRenderOption(item, isSelected);
           }}
+          ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200" />}
           ListEmptyComponent={
             <View className="p-8 items-center">
-              <Text className="text-gray-500 text-base">
+              <Text className="text-gray-500">
                 {searchable && searchQuery ? 'No options found' : 'No options available'}
               </Text>
             </View>

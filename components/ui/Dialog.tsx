@@ -1,4 +1,5 @@
 import { X } from '@/components/icons/x';
+import { Text } from '@/components/ui/Text';
 import { clx } from '@/utils/clx';
 import React from 'react';
 import {
@@ -6,7 +7,6 @@ import {
   Modal,
   ModalProps,
   SafeAreaView,
-  Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
@@ -85,7 +85,7 @@ export const Dialog: React.FC<DialogProps> = ({
           <View className={clx('bg-white rounded-2xl p-4 w-full overflow-hidden max-h-full', containerClassName)}>
             {(title || showCloseButton) && (
               <View className={clx('flex-row mb-4 justify-between gap-2 items-center', headerClassName)}>
-                {title && <Text className="text-base">{title}</Text>}
+                {title && <Text>{title}</Text>}
                 {showCloseButton && (
                   <TouchableOpacity onPress={handleCloseIconPress} accessibilityLabel="Close dialog">
                     <X size={20} />

@@ -1,7 +1,8 @@
 import { X } from '@/components/icons/x';
+import { Text } from '@/components/ui/Text';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 interface ProductDetailsHeaderProps {
   title?: string;

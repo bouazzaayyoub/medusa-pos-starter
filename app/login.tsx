@@ -2,10 +2,11 @@ import { Form } from '@/components/form/Form';
 import { FormButton } from '@/components/form/FormButton';
 import { TextField } from '@/components/form/TextField';
 import { InfoBanner } from '@/components/InfoBanner';
+import { Layout } from '@/components/ui/Layout';
+import { Text } from '@/components/ui/Text';
 import { useAuthCtx } from '@/contexts/auth';
 import React, { useState } from 'react';
-import { Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View } from 'react-native';
 import * as z from 'zod/v4';
 
 const normalizeUrl = (url: string): string => {
@@ -97,8 +98,8 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 p-4 pt-6 bg-white gap-7">
-      <Text className="text-4xl font-semibold">Login</Text>
+    <Layout className="gap-6">
+      <Text className="text-4xl">Login</Text>
       {error && <InfoBanner colorScheme="error">{error}</InfoBanner>}
       <View className="w-full flex-1">
         <Form schema={loginSchema} onSubmit={handleLogin} defaultValues={defaultValues} className="gap-6">
@@ -134,6 +135,6 @@ export default function LoginScreen() {
           <FormButton isPending={auth.state.status === 'loading'}>Sign In</FormButton>
         </Form>
       </View>
-    </SafeAreaView>
+    </Layout>
   );
 }

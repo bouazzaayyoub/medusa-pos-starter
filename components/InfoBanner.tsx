@@ -1,16 +1,25 @@
+import { Check } from '@/components/icons/check';
 import { CircleAlert } from '@/components/icons/circle-alert';
+import { TriangleAlert } from '@/components/icons/triangle-alert';
+import { Text } from '@/components/ui/Text';
 import { clx } from '@/utils/clx';
-import { Check, TriangleAlert } from 'lucide-react-native';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
 type InfoBannerProps = {
   variant?: 'ghost' | 'solid';
   colorScheme?: 'error' | 'warning' | 'success';
+  textClassName?: string;
   className?: string;
   children?: React.ReactNode;
 };
 
-export const InfoBanner = ({ variant = 'solid', colorScheme = 'warning', className, children }: InfoBannerProps) => {
+export const InfoBanner = ({
+  variant = 'solid',
+  colorScheme = 'warning',
+  textClassName,
+  className,
+  children,
+}: InfoBannerProps) => {
   const wrapperClasses = clx(
     'items-center flex-row',
     {
@@ -23,11 +32,15 @@ export const InfoBanner = ({ variant = 'solid', colorScheme = 'warning', classNa
     className,
   );
 
-  const textClasses = clx('text-base flex-1 flex-wrap', {
-    'text-error-500': colorScheme === 'error',
-    'text-warning-500': colorScheme === 'warning',
-    'text-success-500': colorScheme === 'success',
-  });
+  const textClasses = clx(
+    'flex-1 flex-wrap',
+    {
+      'text-error-500': colorScheme === 'error',
+      'text-warning-500': colorScheme === 'warning',
+      'text-success-500': colorScheme === 'success',
+    },
+    textClassName,
+  );
 
   const icon = {
     error: <CircleAlert size={16} color="#F14747" />,
