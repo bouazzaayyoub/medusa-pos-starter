@@ -22,7 +22,7 @@ export const StockLocationSelectionStep: React.FC<StockLocationSelectionStepProp
   };
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 p-5">
       <Text className="text-4xl mb-6">Setting Up</Text>
       <Text className="text-2xl mb-2">Select stock location</Text>
       <Text className="mb-6 text-gray-300">

@@ -536,3 +536,18 @@ export const useCompleteDraftOrder = (
     },
   });
 };
+
+export const useDraftOrderPromotions = (codes: string[]) => {
+  const sdk = useMedusaSdk();
+
+  return useQuery({
+    queryKey: ['promotions', ...codes],
+    queryFn: async () => {
+      return sdk.admin.promotion.list({
+        code: codes,
+        limit: codes.length,
+      });
+    },
+    enabled: codes.length > 0,
+  });
+};

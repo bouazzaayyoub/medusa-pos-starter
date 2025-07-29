@@ -2,7 +2,7 @@ import { Form } from '@/components/form/Form';
 import { FormButton } from '@/components/form/FormButton';
 import { TextField } from '@/components/form/TextField';
 import { InfoBanner } from '@/components/InfoBanner';
-import { Layout } from '@/components/ui/Layout';
+import { LayoutWithScroll } from '@/components/ui/Layout';
 import { Text } from '@/components/ui/Text';
 import { useAuthCtx } from '@/contexts/auth';
 import React, { useState } from 'react';
@@ -98,7 +98,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <Layout className="gap-6">
+    <LayoutWithScroll contentContainerClassName="gap-6" automaticallyAdjustKeyboardInsets>
       <Text className="text-4xl">Login</Text>
       {error && <InfoBanner colorScheme="error">{error}</InfoBanner>}
       <View className="w-full flex-1">
@@ -135,6 +135,6 @@ export default function LoginScreen() {
           <FormButton isPending={auth.state.status === 'loading'}>Sign In</FormButton>
         </Form>
       </View>
-    </Layout>
+    </LayoutWithScroll>
   );
 }

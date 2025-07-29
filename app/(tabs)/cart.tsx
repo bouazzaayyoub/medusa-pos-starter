@@ -4,6 +4,8 @@ import {
   useAddPromotion,
   useCancelDraftOrder,
   useCurrentDraftOrder,
+  useDraftOrderPromotions,
+  useRemovePromotion,
   useUpdateDraftOrderCustomer,
   useUpdateDraftOrderItem,
 } from '@/api/hooks/draft-orders';
@@ -12,6 +14,7 @@ import { FormButton } from '@/components/form/FormButton';
 import { TextField } from '@/components/form/TextField';
 import { ChevronDown } from '@/components/icons/chevron-down';
 import { ShoppingCart } from '@/components/icons/shopping-cart';
+import { Tag } from '@/components/icons/tag';
 import { Trash2 } from '@/components/icons/trash-2';
 import { UserRoundPlus } from '@/components/icons/user-round-plus';
 import { X } from '@/components/icons/x';
@@ -19,11 +22,12 @@ import { InfoBanner } from '@/components/InfoBanner';
 import { CartSkeleton } from '@/components/skeletons/CartSkeleton';
 import { SwipeableListItem } from '@/components/SwipeableListItem';
 import { Button } from '@/components/ui/Button';
+import { Dialog } from '@/components/ui/Dialog';
 import { Layout } from '@/components/ui/Layout';
 import { QuantityPicker } from '@/components/ui/QuantityPicker';
 import { Text } from '@/components/ui/Text';
 import { useSettings } from '@/contexts/settings';
-import { AdminDraftOrder, AdminOrderLineItem } from '@medusajs/types';
+import { AdminDraftOrder, AdminOrderLineItem, AdminPromotion } from '@medusajs/types';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import type { FlashListProps, FlashList as FlashListType } from '@shopify/flash-list';
 import { AnimatedFlashList as FlashList, ListRenderItem } from '@shopify/flash-list';
@@ -33,6 +37,11 @@ import * as React from 'react';
 import { Alert, Image, Platform, Pressable, TouchableOpacity, View } from 'react-native';
 import Animated, { SequencedTransition, SlideOutLeft } from 'react-native-reanimated';
 import * as z from 'zod/v4';
+
+interface TPromotionItem extends AdminPromotion {
+  __type__: 'promotion';
+  discount_amount: number;
+}
 
 const addPromotionFormSchema = z.object({
   promotionCode: z.string().min(1, 'Promotion code is required'),
@@ -111,6 +120,85 @@ const DraftOrderItem: React.FC<{ item: AdminOrderLineItem; onRemove?: (item: Adm
   );
 };
 
+const PromotionItem: React.FC<{
+  item: TPromotionItem;
+  onRemove?: (item: TPromotionItem) => Promise<void>;
+  currencyCode: string | undefined;
+}> = ({ item, onRemove, currencyCode }) => {
+  const isAutomatic = item.is_automatic === true;
+
+  const getPromotionTypeLabel = (type?: string) => {
+    switch (type) {
+      case 'standard':
+        return 'Standard';
+      case 'buyget':
+        return 'Buy X Get Y';
+      default:
+        return 'Promotion';
+    }
+  };
+
+  return (
+    <SwipeableListItem
+      rightClassName="bg-white"
+      rightWidth={isAutomatic ? undefined : 80}
+      rightContent={
+        isAutomatic
+          ? undefined
+          : (reset) => (
+              <View className="flex-1 w-full h-full justify-center items-center p-2">
+                <Pressable
+                  className="flex-1 w-full h-full justify-center items-center rounded-xl bg-error-500"
+                  onPress={async () => {
+                    await onRemove?.(item);
+                    reset();
+                  }}
+                >
+                  <Trash2 size={24} color="white" />
+                </Pressable>
+              </View>
+            )
+      }
+    >
+      <View className="flex-row gap-4 bg-white py-6">
+        <View className="h-[5.25rem] w-[5.25rem] rounded-xl bg-green-100 overflow-hidden flex items-center justify-center">
+          <View className="flex items-center justify-center">
+            <Tag size={32} color="#10B981" />
+          </View>
+        </View>
+        <View className="flex-col gap-2 flex-1">
+          <View className="flex-row items-center gap-2">
+            <Text className="font-medium">{item.code || 'Promotion'}</Text>
+          </View>
+          <View className="flex-row flex-wrap items-center gap-x-2 gap-y-1">
+            <View className="flex-row gap-1">
+              <Text className="text-gray-400 text-sm">Type:</Text>
+              <Text className="text-sm">{getPromotionTypeLabel(item.type)}</Text>
+            </View>
+            <View className="flex-row gap-1">
+              <Text className="text-gray-400 text-sm">Method:</Text>
+              <Text className="text-sm">{isAutomatic ? 'Automatic' : 'Code'}</Text>
+            </View>
+            {item.campaign && (
+              <View className="flex-row gap-1">
+                <Text className="text-gray-400 text-sm">Campaign:</Text>
+                <Text className="text-sm">{item.campaign.name}</Text>
+              </View>
+            )}
+          </View>
+        </View>
+        <Text className="ml-auto">
+          {(item.discount_amount * -1).toLocaleString('en-US', {
+            style: 'currency',
+            currency: currencyCode,
+            currencyDisplay: 'narrowSymbol',
+          })}
+        </Text>
+      </View>
+    </SwipeableListItem>
+  );
+};
+
 const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({ customer }) => {
   const updateDraftOrder = useUpdateDraftOrderCustomer();
   const defaultCustomer = useCustomers({ email: DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL }, 1);
@@ -169,10 +257,69 @@ const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({ cu
   );
 };
 
+const PromotionBadge: React.FC<{
+  onAddPromotion: (code: string) => void;
+  isAddingPromotion: boolean;
+}> = ({ onAddPromotion, isAddingPromotion }) => {
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+
+  return (
+    <>
+      <Button
+        onPress={() => setIsDialogOpen(true)}
+        variant="outline"
+        icon={<Tag size={16} />}
+        className="justify-between mb-4"
+      >
+        Add Promotion
+      </Button>
+
+      <Dialog visible={isDialogOpen} onClose={() => setIsDialogOpen(false)} title="Add Promotion Code">
+        <Form
+          schema={addPromotionFormSchema}
+          onSubmit={(data, form) => {
+            onAddPromotion(data.promotionCode);
+            form.reset();
+            setIsDialogOpen(false);
+          }}
+          className="gap-4"
+        >
+          <TextField
+            placeholder="Enter promotion code"
+            name="promotionCode"
+            autoComplete="off"
+            autoCorrect={false}
+            autoCapitalize="characters"
+            enterKeyHint="send"
+            autoFocus
+          />
+          <View className="flex-row gap-2">
+            <Button variant="outline" className="flex-1" onPress={() => setIsDialogOpen(false)}>
+              Cancel
+            </Button>
+            <FormButton className="flex-1" isPending={isAddingPromotion}>
+              Apply
+            </FormButton>
+          </View>
+        </Form>
+      </Dialog>
+    </>
+  );
+};
+
 export default function CartScreen() {
   const settings = useSettings();
   const draftOrder = useCurrentDraftOrder();
+  const draftOrderPromotionCodes = React.useMemo(() => {
+    const allCodes =
+      draftOrder.data?.draft_order.items
+        .flatMap((item) => item.adjustments?.map((adj) => adj.code))
+        .filter((code) => typeof code === 'string') ?? [];
+    return Array.from(new Set(allCodes));
+  }, [draftOrder.data]);
+  const addedPromotions = useDraftOrderPromotions(draftOrderPromotionCodes);
   const addPromotion = useAddPromotion();
+  const removePromotion = useRemovePromotion();
   const cancelDraftOrder = useCancelDraftOrder();
   const updateDraftOrderItem = useUpdateDraftOrderItem();
   const isUpdatingDraftOrder = useIsMutating({ mutationKey: ['draft-order'], exact: false });
@@ -187,9 +334,35 @@ export default function CartScreen() {
     [updateDraftOrderItem],
   );
 
-  const renderItem = React.useCallback<ListRenderItem<AdminOrderLineItem>>(
-    ({ item }) => <DraftOrderItem item={item} onRemove={onItemRemove} />,
-    [onItemRemove],
+  const onPromotionRemove = React.useCallback(
+    async (promotion: AdminPromotion) => {
+      if (promotion.code) {
+        await removePromotion.mutateAsync(promotion.code).catch(() => {});
+        itemsListRef.current?.prepareForLayoutAnimationRender();
+      }
+    },
+    [removePromotion],
+  );
+
+  const renderItem = React.useCallback<
+    ListRenderItem<(AdminOrderLineItem & { __type__: 'draft_order_item' }) | TPromotionItem>
+  >(
+    ({ item }) =>
+      item.__type__ === 'draft_order_item' ? (
+        <DraftOrderItem item={item} onRemove={onItemRemove} />
+      ) : (
+        <PromotionItem
+          item={item}
+          onRemove={onPromotionRemove}
+          currencyCode={draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code}
+        />
+      ),
+    [
+      draftOrder.data?.draft_order.region?.currency_code,
+      onItemRemove,
+      onPromotionRemove,
+      settings.data?.region?.currency_code,
+    ],
   );
 
   if (draftOrder.isLoading || settings.isLoading) {
@@ -268,112 +441,107 @@ export default function CartScreen() {
     );
   }
 
-  const items = draftOrder.data.draft_order.items;
+  const items = [
+    ...draftOrder.data.draft_order.items.map((item) => ({
+      ...item,
+      __type__: 'draft_order_item' as const,
+    })),
+    ...(addedPromotions.data?.promotions ?? []).map(
+      (promotion) =>
+        ({
+          ...promotion,
+          __type__: 'promotion' as const,
+          discount_amount:
+            draftOrder.data?.draft_order.items
+              .flatMap((item) => item.adjustments?.filter((adj) => adj.promotion_id === promotion.id))
+              .reduce((acc, adj) => acc + (adj?.amount || 0), 0) || 0,
+        }) satisfies TPromotionItem,
+    ),
+  ];
 
   return (
     <Layout>
       <Text className="text-4xl mb-6">Cart</Text>
-
       <CustomerBadge customer={draftOrder.data.draft_order.customer} />
-
       <FlashList
         ref={itemsListRef}
         data={items}
         keyExtractor={(item) => item.id}
         estimatedItemSize={132}
         renderItem={renderItem}
+        getItemType={(item) => item.__type__}
         ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200" />}
         CellRendererComponent={ItemCell}
         disableAutoLayout
+        ListFooterComponent={() =>
+          draftOrder.data ? (
+            <View className="pt-6 pb-4">
+              <PromotionBadge
+                onAddPromotion={(code) => addPromotion.mutate(code)}
+                isAddingPromotion={addPromotion.isPending}
+              />
+              <View className="gap-2">
+                <View className="flex-row justify-between">
+                  <Text className="text-gray-400 text-sm">Taxes</Text>
+                  {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
+                    <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
+                  ) : (
+                    <Text className="text-gray-400 text-sm">
+                      {draftOrder.data.draft_order.tax_total?.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency:
+                          draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
+                        currencyDisplay: 'narrowSymbol',
+                      })}
+                    </Text>
+                  )}
+                </View>
+                <View className="flex-row justify-between">
+                  <Text className="text-gray-400 text-sm">Subtotal</Text>
+                  {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
+                    <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
+                  ) : (
+                    <Text className="text-gray-400 text-sm">
+                      {draftOrder.data.draft_order.subtotal?.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency:
+                          draftOrder.data.draft_order.region?.currency_code || settings.data?.region?.currency_code,
+                        currencyDisplay: 'narrowSymbol',
+                      })}
+                    </Text>
+                  )}
+                </View>
+                {draftOrder.data.draft_order.discount_total > 0 && (
+                  <View className="flex-row justify-between">
+                    <Text className="text-gray-400 text-sm">Discount</Text>
+                    {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
+                      <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
+                    ) : (
+                      <Text className="text-gray-400 text-sm">
+                        {(draftOrder.data.draft_order.discount_total * -1)?.toLocaleString('en-US', {
+                          style: 'currency',
+                          currency:
+                            draftOrder.data.draft_order.region?.currency_code || settings.data?.region?.currency_code,
+                          currencyDisplay: 'narrowSymbol',
+                        })}
+                      </Text>
+                    )}
+                  </View>
+                )}
+              </View>
+            </View>
+          ) : null
+        }
       />
 
       <View
-        className="mt-6"
         style={Platform.select({
           ios: {
             paddingBottom: bottomTabBarHeight,
           },
         })}
       >
-        <Form
-          schema={addPromotionFormSchema}
-          onSubmit={(data, form) => {
-            addPromotion.mutate(data.promotionCode, {
-              onSuccess: () => {
-                form.reset();
-              },
-            });
-          }}
-          className="flex-row gap-2 items-start mb-6"
-        >
-          <TextField
-            placeholder="Enter promotion code"
-            name="promotionCode"
-            className="w-[60%] h-14"
-            inputClassName="py-0 h-full"
-            readOnly={addPromotion.isPending}
-            autoComplete="off"
-            autoCorrect={false}
-            enterKeyHint="send"
-            errorVariation="inline"
-          />
-          <FormButton
-            className="flex-1"
-            isPending={addPromotion.isPending}
-            disabled={draftOrder.isFetching || isUpdatingDraftOrder > 0}
-          >
-            Submit
-          </FormButton>
-        </Form>
-        <View className="gap-2">
-          <View className="flex-row justify-between">
-            <Text className="text-gray-400 text-sm">Taxes</Text>
-            {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
-              <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
-            ) : (
-              <Text className="text-gray-400 text-sm">
-                {draftOrder.data.draft_order.tax_total?.toLocaleString('en-US', {
-                  style: 'currency',
-                  currency: draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
-                  currencyDisplay: 'narrowSymbol',
-                })}
-              </Text>
-            )}
-          </View>
-          <View className="flex-row justify-between">
-            <Text className="text-gray-400 text-sm">Subtotal</Text>
-            {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
-              <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
-            ) : (
-              <Text className="text-gray-400 text-sm">
-                {draftOrder.data.draft_order.subtotal?.toLocaleString('en-US', {
-                  style: 'currency',
-                  currency: draftOrder.data.draft_order.region?.currency_code || settings.data?.region?.currency_code,
-                  currencyDisplay: 'narrowSymbol',
-                })}
-              </Text>
-            )}
-          </View>
-          {draftOrder.data.draft_order.discount_total > 0 && (
-            <View className="flex-row justify-between">
-              <Text className="text-gray-400">Discount</Text>
-              {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
-                <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
-              ) : (
-                <Text className="text-gray-400">
-                  {(draftOrder.data.draft_order.discount_total * -1)?.toLocaleString('en-US', {
-                    style: 'currency',
-                    currency: draftOrder.data.draft_order.region?.currency_code || settings.data?.region?.currency_code,
-                    currencyDisplay: 'narrowSymbol',
-                  })}
-                </Text>
-              )}
-            </View>
-          )}
-        </View>
-
-        <View className="h-hairline bg-gray-200 my-4" />
-
+        <View className="h-hairline bg-gray-200 mb-4" />
         <View className="flex-row justify-between mb-6">
           <Text className="text-lg">Total</Text>
           {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
@@ -388,7 +556,6 @@ export default function CartScreen() {
             </Text>
           )}
         </View>
-
         <View className="flex-row gap-2">
           <Button
             variant="outline"
@@ -423,7 +590,6 @@ export default function CartScreen() {
               if (!draftOrder.data?.draft_order.id) {
                 return;
               }
-
               router.push(`/checkout/${draftOrder.data.draft_order.id}`);
             }}
           >
