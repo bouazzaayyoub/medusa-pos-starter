@@ -2,6 +2,7 @@ import { useUpdateSettings } from '@/contexts/settings';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAvoidingView } from '../KeyboardAvoidingView';
 import { RegionCreationStep } from './RegionCreationStep';
 import { RegionSelectionStep } from './RegionSelectionStep';
 import { SalesChannelCreationStep } from './SalesChannelCreationStep';
@@ -183,5 +184,9 @@ export const SetupWizardContent: React.FC<SetupWizardContentProps> = ({
     }
   };
 
-  return <SafeAreaView className="flex-1 bg-white p-5 gap-10">{renderCurrentStep()}</SafeAreaView>;
+  return (
+    <SafeAreaView className="flex-1 bg-white">
+      <KeyboardAvoidingView className="flex-1">{renderCurrentStep()}</KeyboardAvoidingView>
+    </SafeAreaView>
+  );
 };
