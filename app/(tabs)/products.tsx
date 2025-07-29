@@ -130,7 +130,7 @@ export default function ProductsScreen() {
         }
         contentContainerStyle={Platform.select({
           ios: {
-            paddingBottom: bottomTabBarHeight,
+            paddingBottom: bottomTabBarHeight + 10,
           },
         })}
         ListFooterComponent={

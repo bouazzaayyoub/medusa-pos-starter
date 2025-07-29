@@ -32,7 +32,7 @@ export default function SettingsScreen() {
   };
 
   return (
-    <Layout style={{ paddingBottom: bottomTabBarHeight }}>
+    <Layout style={{ paddingBottom: bottomTabBarHeight + 10 }}>
       <Text className="text-4xl mb-6">Settings</Text>
 
       <Text className="text-2xl mb-4">Sales Channel</Text>
