@@ -273,9 +273,7 @@ export default function CartScreen() {
   return (
     <Layout>
       <Text className="text-4xl mb-6">Cart</Text>
-
       <CustomerBadge customer={draftOrder.data.draft_order.customer} />
-
       <FlashList
         ref={itemsListRef}
         data={items}
@@ -318,7 +316,7 @@ export default function CartScreen() {
             errorVariation="inline"
           />
           <FormButton
-            className="flex-1"
+            className="flex-1 h-14"
             isPending={addPromotion.isPending}
             disabled={draftOrder.isFetching || isUpdatingDraftOrder > 0}
           >
@@ -371,9 +369,7 @@ export default function CartScreen() {
             </View>
           )}
         </View>
-
         <View className="h-hairline bg-gray-200 my-4" />
-
         <View className="flex-row justify-between mb-6">
           <Text className="text-lg">Total</Text>
           {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
@@ -388,7 +384,6 @@ export default function CartScreen() {
             </Text>
           )}
         </View>
-
         <View className="flex-row gap-2">
           <Button
             variant="outline"
@@ -423,7 +418,6 @@ export default function CartScreen() {
               if (!draftOrder.data?.draft_order.id) {
                 return;
               }
-
               router.push(`/checkout/${draftOrder.data.draft_order.id}`);
             }}
           >
