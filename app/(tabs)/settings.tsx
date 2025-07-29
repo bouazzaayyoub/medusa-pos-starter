@@ -8,7 +8,7 @@ import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import React from 'react';
-import { Alert } from 'react-native';
+import { Alert, View } from 'react-native';
 
 export default function SettingsScreen() {
   const queryClient = useQueryClient();
@@ -33,49 +33,51 @@ export default function SettingsScreen() {
   };
 
   return (
-    <LayoutWithScroll style={{ paddingBottom: bottomTabBarHeight }}>
-      <Text className="text-4xl mb-6">Settings</Text>
+    <LayoutWithScroll>
+      <View style={{ paddingBottom: bottomTabBarHeight }}>
+        <Text className="text-4xl mb-6">Settings</Text>
 
-      <Text className="text-2xl mb-4">Sales Channel</Text>
+        <Text className="text-2xl mb-4">Sales Channel</Text>
 
-      <Button
-        onPress={() => router.push('/setup-wizard')}
-        variant="outline"
-        icon={<Antenna size={16} />}
-        iconPosition="left"
-        className="mb-8 justify-end"
-      >
-        {settings.data?.sales_channel?.name || '—'}
-      </Button>
+        <Button
+          onPress={() => router.push('/setup-wizard')}
+          variant="outline"
+          icon={<Antenna size={16} />}
+          iconPosition="left"
+          className="mb-8 justify-end"
+        >
+          {settings.data?.sales_channel?.name || '—'}
+        </Button>
 
-      <Text className="text-2xl mb-4">Stock location</Text>
+        <Text className="text-2xl mb-4">Stock location</Text>
 
-      <Button
-        onPress={() => router.push('/setup-wizard')}
-        variant="outline"
-        icon={<Antenna size={16} />}
-        iconPosition="left"
-        className="mb-8 justify-end"
-      >
-        {settings.data?.stock_location?.name || '—'}
-      </Button>
+        <Button
+          onPress={() => router.push('/setup-wizard')}
+          variant="outline"
+          icon={<Antenna size={16} />}
+          iconPosition="left"
+          className="mb-8 justify-end"
+        >
+          {settings.data?.stock_location?.name || '—'}
+        </Button>
 
-      <Button
-        onPress={() => {
-          clearSettings.mutate();
-        }}
-        className="mb-8"
-      >
-        Clear Settings
-      </Button>
+        <Button
+          onPress={() => {
+            clearSettings.mutate();
+          }}
+          className="mb-8"
+        >
+          Clear Settings
+        </Button>
 
-      <Text className="text-2xl mb-4">Account</Text>
+        <Text className="text-2xl mb-4">Account</Text>
 
-      <Button onPress={handleLogout} className="mb-4">
-        Log Out
-      </Button>
+        <Button onPress={handleLogout} className="mb-4">
+          Log Out
+        </Button>
 
-      <Text className="text-gray-300">You will be signed out of your account.</Text>
+        <Text className="text-gray-300">You will be signed out of your account.</Text>
+      </View>
     </LayoutWithScroll>
   );
 }
