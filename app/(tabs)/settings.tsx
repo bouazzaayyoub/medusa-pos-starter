@@ -1,9 +1,9 @@
 import { Antenna } from '@/components/icons/antenna';
 import { Button } from '@/components/ui/Button';
-import { Layout } from '@/components/ui/Layout';
+import { LayoutWithScroll } from '@/components/ui/Layout';
 import { Text } from '@/components/ui/Text';
 import { useAuthCtx } from '@/contexts/auth';
-import { useSettings } from '@/contexts/settings';
+import { useClearSettings, useSettings } from '@/contexts/settings';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
@@ -15,6 +15,7 @@ export default function SettingsScreen() {
   const auth = useAuthCtx();
   const settings = useSettings();
   const bottomTabBarHeight = useBottomTabBarHeight();
+  const clearSettings = useClearSettings();
 
   const handleLogout = () => {
     Alert.alert('Logout', 'Are you sure you want to logout?', [
@@ -32,7 +33,7 @@ export default function SettingsScreen() {
   };
 
   return (
-    <Layout style={{ paddingBottom: bottomTabBarHeight }}>
+    <LayoutWithScroll style={{ paddingBottom: bottomTabBarHeight }}>
       <Text className="text-4xl mb-6">Settings</Text>
 
       <Text className="text-2xl mb-4">Sales Channel</Text>
@@ -59,6 +60,15 @@ export default function SettingsScreen() {
         {settings.data?.stock_location?.name || '—'}
       </Button>
 
+      <Button
+        onPress={() => {
+          clearSettings.mutate();
+        }}
+        className="mb-8"
+      >
+        Clear Settings
+      </Button>
+
       <Text className="text-2xl mb-4">Account</Text>
 
       <Button onPress={handleLogout} className="mb-4">
@@ -66,6 +76,6 @@ export default function SettingsScreen() {
       </Button>
 
       <Text className="text-gray-300">You will be signed out of your account.</Text>
-    </Layout>
+    </LayoutWithScroll>
   );
 }
