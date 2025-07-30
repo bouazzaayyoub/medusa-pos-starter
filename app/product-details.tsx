@@ -1,8 +1,8 @@
 import { useAddToDraftOrder } from '@/api/hooks/draft-orders';
 import { useProduct } from '@/api/hooks/products';
 import { ProductDetailsSkeleton } from '@/components/skeletons/ProductDetailsSkeleton';
+import { BottomSheet } from '@/components/ui/BottomSheet';
 import { Button } from '@/components/ui/Button';
-import { Layout } from '@/components/ui/Layout';
 import { OptionPicker } from '@/components/ui/OptionPicker';
 import { QuantityPicker } from '@/components/ui/QuantityPicker';
 import { Text } from '@/components/ui/Text';
@@ -11,7 +11,6 @@ import { AdminProductImage } from '@medusajs/types';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { Dimensions, Image, ScrollView, View } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSharedValue } from 'react-native-reanimated';
 import Carousel, { CarouselRenderItem, ICarouselInstance, Pagination } from 'react-native-reanimated-carousel';
 
@@ -23,6 +22,9 @@ const ProductImagesCarousel: React.FC<{ images: AdminProductImage[] }> = ({ imag
   const progress = useSharedValue<number>(0);
   const scrollOffsetValue = useSharedValue<number>(0);
   const [width, setWidth] = useState<number>(windowWidth);
+
+  // Calculate height based on width with 4:3 aspect ratio
+  const height = Math.round(width * 0.75);
 
   useLayoutEffect(() => {
     targetRef.current?.measure((x, y, width) => {
@@ -50,7 +52,7 @@ const ProductImagesCarousel: React.FC<{ images: AdminProductImage[] }> = ({ imag
         ref={carouselRef}
         loop={true}
         width={width}
-        height={240}
+        height={height}
         snapEnabled={true}
         pagingEnabled={true}
         autoPlayInterval={2000}
@@ -93,6 +95,7 @@ export default function ProductDetailsScreen() {
   const settings = useSettings();
   const [quantity, setQuantity] = useState(1);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
+  const [visible, setVisible] = React.useState(false);
 
   const params = useLocalSearchParams<{
     productId: string;
@@ -130,23 +133,31 @@ export default function ProductDetailsScreen() {
     }
   }, [productQuery.data]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      requestAnimationFrame(() => {
+        setVisible(true);
+      });
+    }, 100);
+  }, []);
+
   if (productQuery.isLoading) {
     return <ProductDetailsSkeleton />;
   }
 
   if (productQuery.isError) {
     return (
-      <View className="flex-1">
-        <Text>Error loading product details</Text>
-      </View>
+      <BottomSheet visible={true} onClose={() => router.back()} showCloseButton={false} dismissOnOverlayPress>
+        <Text className="text-center">Error loading product details</Text>
+      </BottomSheet>
     );
   }
 
   if (!productQuery.data) {
     return (
-      <View className="flex-1">
-        <Text>Product not found</Text>
-      </View>
+      <BottomSheet visible={true} onClose={() => router.back()} showCloseButton={false} dismissOnOverlayPress>
+        <Text className="text-center">Product not found</Text>
+      </BottomSheet>
     );
   }
 
@@ -160,9 +171,9 @@ export default function ProductDetailsScreen() {
   const price = selectedVariant?.prices?.find((price) => price.currency_code === currencyCode);
 
   return (
-    <Layout className="pb-2.5">
-      <GestureHandlerRootView>
-        <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+    <BottomSheet visible={visible} onClose={() => router.back()} showCloseButton={false} dismissOnOverlayPress>
+      {({ animateOut }) => (
+        <ScrollView showsVerticalScrollIndicator={false}>
           <View className="mb-6 bg-gray-100 rounded-xl overflow-hidden">
             {productQuery.data.product.images && productQuery.data.product.images.length ? (
               <ProductImagesCarousel images={productQuery.data.product.images} />
@@ -253,21 +264,23 @@ export default function ProductDetailsScreen() {
                   return;
                 }
 
-                addToDraftOrder.mutate({
-                  items: [
-                    {
-                      quantity,
-                      variant_id: selectedVariant.id,
-                    },
-                  ],
-                });
+                animateOut(() =>
+                  addToDraftOrder.mutate({
+                    items: [
+                      {
+                        quantity,
+                        variant_id: selectedVariant.id,
+                      },
+                    ],
+                  }),
+                );
               }}
             >
               Add to cart
             </Button>
           </View>
         </ScrollView>
-      </GestureHandlerRootView>
-    </Layout>
+      )}
+    </BottomSheet>
   );
 }
