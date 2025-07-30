@@ -1,6 +1,8 @@
 import { useSafeAreaFrame } from 'react-native-safe-area-context';
 
-export const useBreakpointValue = <T>(values: { base: T } & Partial<Record<'xs' | 'sm' | 'md' | 'lg' | 'xl', T>>) => {
+type BreakpointSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+
+export const useBreakpointValue = <T>(values: { base: T } & Partial<Record<BreakpointSize, T>>) => {
   const { width } = useSafeAreaFrame();
 
   if (width >= 1280 && typeof values['xl'] !== 'undefined') return values['xl'];
