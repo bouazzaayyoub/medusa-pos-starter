@@ -36,6 +36,7 @@ import { router } from 'expo-router';
 import * as React from 'react';
 import { Alert, Image, Platform, Pressable, TouchableOpacity, View } from 'react-native';
 import Animated, { SequencedTransition, SlideOutLeft } from 'react-native-reanimated';
+import { useSafeAreaFrame } from 'react-native-safe-area-context';
 import * as z from 'zod/v4';
 
 interface TPromotionItem extends AdminPromotion {
@@ -257,10 +258,12 @@ const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({ cu
   );
 };
 
-const PromotionBadge: React.FC<{
+interface PromotionBadgeProps {
   onAddPromotion: (code: string) => void;
   isAddingPromotion: boolean;
-}> = ({ onAddPromotion, isAddingPromotion }) => {
+}
+
+const PromotionBadge: React.FC<PromotionBadgeProps> = ({ onAddPromotion, isAddingPromotion }) => {
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
 
   return (
@@ -307,8 +310,71 @@ const PromotionBadge: React.FC<{
   );
 };
 
+const CartSummaryHeader: React.FC<
+  PromotionBadgeProps & {
+    isLoading?: boolean;
+    taxTotal: number;
+    subtotal: number;
+    discountTotal: number;
+    currencyCode?: string;
+  }
+> = ({ onAddPromotion, isAddingPromotion, isLoading, taxTotal, subtotal, discountTotal, currencyCode }) => {
+  return (
+    <View className="pt-6 pb-4">
+      <PromotionBadge onAddPromotion={onAddPromotion} isAddingPromotion={isAddingPromotion} />
+      <View className="gap-2">
+        <View className="flex-row justify-between">
+          <Text className="text-gray-400 text-sm">Taxes</Text>
+          {isLoading ? (
+            <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
+          ) : (
+            <Text className="text-gray-400 text-sm">
+              {taxTotal.toLocaleString('en-US', {
+                style: 'currency',
+                currency: currencyCode,
+                currencyDisplay: 'narrowSymbol',
+              })}
+            </Text>
+          )}
+        </View>
+        <View className="flex-row justify-between">
+          <Text className="text-gray-400 text-sm">Subtotal</Text>
+          {isLoading ? (
+            <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
+          ) : (
+            <Text className="text-gray-400 text-sm">
+              {subtotal.toLocaleString('en-US', {
+                style: 'currency',
+                currency: currencyCode,
+                currencyDisplay: 'narrowSymbol',
+              })}
+            </Text>
+          )}
+        </View>
+        {discountTotal > 0 && (
+          <View className="flex-row justify-between">
+            <Text className="text-gray-400 text-sm">Discount</Text>
+            {isLoading ? (
+              <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
+            ) : (
+              <Text className="text-gray-400 text-sm">
+                {(discountTotal * -1)?.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: currencyCode,
+                  currencyDisplay: 'narrowSymbol',
+                })}
+              </Text>
+            )}
+          </View>
+        )}
+      </View>
+    </View>
+  );
+};
+
 export default function CartScreen() {
   const settings = useSettings();
+  const windowDimensions = useSafeAreaFrame();
   const draftOrder = useCurrentDraftOrder();
   const draftOrderPromotionCodes = React.useMemo(() => {
     const allCodes =
@@ -474,62 +540,16 @@ export default function CartScreen() {
         CellRendererComponent={ItemCell}
         disableAutoLayout
         ListFooterComponent={() =>
-          draftOrder.data ? (
-            <View className="pt-6 pb-4">
-              <PromotionBadge
-                onAddPromotion={(code) => addPromotion.mutate(code)}
-                isAddingPromotion={addPromotion.isPending}
-              />
-              <View className="gap-2">
-                <View className="flex-row justify-between">
-                  <Text className="text-gray-400 text-sm">Taxes</Text>
-                  {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
-                    <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
-                  ) : (
-                    <Text className="text-gray-400 text-sm">
-                      {draftOrder.data.draft_order.tax_total?.toLocaleString('en-US', {
-                        style: 'currency',
-                        currency:
-                          draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code,
-                        currencyDisplay: 'narrowSymbol',
-                      })}
-                    </Text>
-                  )}
-                </View>
-                <View className="flex-row justify-between">
-                  <Text className="text-gray-400 text-sm">Subtotal</Text>
-                  {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
-                    <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
-                  ) : (
-                    <Text className="text-gray-400 text-sm">
-                      {draftOrder.data.draft_order.subtotal?.toLocaleString('en-US', {
-                        style: 'currency',
-                        currency:
-                          draftOrder.data.draft_order.region?.currency_code || settings.data?.region?.currency_code,
-                        currencyDisplay: 'narrowSymbol',
-                      })}
-                    </Text>
-                  )}
-                </View>
-                {draftOrder.data.draft_order.discount_total > 0 && (
-                  <View className="flex-row justify-between">
-                    <Text className="text-gray-400 text-sm">Discount</Text>
-                    {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
-                      <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
-                    ) : (
-                      <Text className="text-gray-400 text-sm">
-                        {(draftOrder.data.draft_order.discount_total * -1)?.toLocaleString('en-US', {
-                          style: 'currency',
-                          currency:
-                            draftOrder.data.draft_order.region?.currency_code || settings.data?.region?.currency_code,
-                          currencyDisplay: 'narrowSymbol',
-                        })}
-                      </Text>
-                    )}
-                  </View>
-                )}
-              </View>
-            </View>
+          draftOrder.data && (windowDimensions.width < 768 || windowDimensions.height < 900) ? (
+            <CartSummaryHeader
+              onAddPromotion={(code) => addPromotion.mutate(code)}
+              isAddingPromotion={addPromotion.isPending}
+              isLoading={draftOrder.isFetching || isUpdatingDraftOrder > 0}
+              taxTotal={draftOrder.data.draft_order.tax_total}
+              subtotal={draftOrder.data.draft_order.subtotal}
+              discountTotal={draftOrder.data.draft_order.discount_total}
+              currencyCode={draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code}
+            />
           ) : null
         }
       />
@@ -541,6 +561,17 @@ export default function CartScreen() {
           },
         })}
       >
+        {windowDimensions.width >= 768 && windowDimensions.height >= 900 && (
+          <CartSummaryHeader
+            onAddPromotion={(code) => addPromotion.mutate(code)}
+            isAddingPromotion={addPromotion.isPending}
+            isLoading={draftOrder.isFetching || isUpdatingDraftOrder > 0}
+            taxTotal={draftOrder.data.draft_order.tax_total}
+            subtotal={draftOrder.data.draft_order.subtotal}
+            discountTotal={draftOrder.data.draft_order.discount_total}
+            currencyCode={draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code}
+          />
+        )}
         <View className="h-hairline bg-gray-200 mb-4" />
         <View className="flex-row justify-between mb-6">
           <Text className="text-lg">Total</Text>
