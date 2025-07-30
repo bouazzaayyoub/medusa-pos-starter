@@ -170,7 +170,7 @@ export function SelectField({
               : defaultRenderOption(item, isSelected);
             return renderedOption as React.ReactElement;
           }}
-          automaticallyAdjustKeyboardInsets
+          keyboardShouldPersistTaps="always"
           ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200" />}
           ListEmptyComponent={
             <View className="p-8 items-center">
