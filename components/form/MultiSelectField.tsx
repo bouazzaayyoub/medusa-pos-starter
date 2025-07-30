@@ -5,11 +5,11 @@ import { Text } from '@/components/ui/Text';
 import { clx } from '@/utils/clx';
 import React, { useEffect, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
-import { FlatList, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, ListRenderItemInfo, TextInput, TouchableOpacity, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { BottomSheet } from '../ui/BottomSheet';
 
-interface MultiSelectOption {
+interface TMultiSelectOption {
   label: string;
   value: string;
 }
@@ -17,7 +17,7 @@ interface MultiSelectOption {
 interface MultiSelectFieldProps {
   name: string;
   placeholder?: string;
-  options: MultiSelectOption[];
+  options: TMultiSelectOption[];
   className?: string;
   buttonClassName?: string;
   errorClassName?: string;
@@ -25,6 +25,29 @@ interface MultiSelectFieldProps {
   floatingPlaceholder?: boolean;
   variant?: 'primary' | 'secondary';
 }
+
+const MultiSelectOption: React.FC<{
+  option: TMultiSelectOption;
+  isSelected: boolean;
+  toggleOption: (value: string) => void;
+}> = ({ option, isSelected, toggleOption }) => (
+  <TouchableOpacity
+    key={option.value}
+    className={clx('p-4 flex-row justify-between items-center bg-white')}
+    onPress={() => {
+      toggleOption(option.value);
+    }}
+  >
+    <Text
+      className={clx({
+        'text-active-500': isSelected,
+      })}
+    >
+      {option.label}
+    </Text>
+    {isSelected && <Check size={16} color="#4E78E5" />}
+  </TouchableOpacity>
+);
 
 export function MultiSelectField({
   name,
@@ -82,33 +105,26 @@ export function MultiSelectField({
     }
   }, [floatingPlaceholderScale, floatingPlaceholderTranslateY, showFloating]);
 
-  const toggleOption = (optionValue: string) => {
-    const newValue = value.includes(optionValue)
-      ? value.filter((v: string) => v !== optionValue)
-      : [...value, optionValue];
-    onChange(newValue);
-  };
+  const toggleOption = React.useCallback(
+    (optionValue: string) => {
+      const newValue = value.includes(optionValue)
+        ? value.filter((v: string) => v !== optionValue)
+        : [...value, optionValue];
+      onChange(newValue);
+    },
+    [value, onChange],
+  );
 
   const removeOption = (optionValue: string) => {
     const newValue = value.filter((v: string) => v !== optionValue);
     onChange(newValue);
   };
 
-  const defaultRenderOption = (option: MultiSelectOption, isSelected: boolean) => (
-    <TouchableOpacity
-      key={option.value}
-      className={clx('p-4 flex-row justify-between items-center bg-white')}
-      onPress={() => toggleOption(option.value)}
-    >
-      <Text
-        className={clx({
-          'text-active-500': isSelected,
-        })}
-      >
-        {option.label}
-      </Text>
-      {isSelected && <Check size={16} color="#4E78E5" />}
-    </TouchableOpacity>
+  const renderOption = React.useCallback(
+    ({ item }: ListRenderItemInfo<TMultiSelectOption>) => {
+      return <MultiSelectOption option={item} isSelected={value.includes(item.value)} toggleOption={toggleOption} />;
+    },
+    [value, toggleOption],
   );
 
   return (
@@ -197,11 +213,8 @@ export function MultiSelectField({
           data={filteredOptions}
           keyExtractor={(item) => item.value}
           showsVerticalScrollIndicator={false}
-          automaticallyAdjustKeyboardInsets
-          renderItem={({ item }) => {
-            const isSelected = value.includes(item.value);
-            return defaultRenderOption(item, isSelected);
-          }}
+          keyboardShouldPersistTaps="always"
+          renderItem={renderOption}
           ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200" />}
           ListEmptyComponent={
             <View className="p-8 items-center">
