@@ -1,3 +1,4 @@
+import { toastConfig } from '@/app/_layout';
 import { X } from '@/components/icons/x';
 import { Text } from '@/components/ui/Text';
 import { clx } from '@/utils/clx';
@@ -14,6 +15,7 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 
 export interface BottomSheetProps extends Pick<ModalProps, 'visible' | 'onRequestClose'> {
   title?: string;
@@ -263,6 +265,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
               {typeof children === 'function' ? children({ animateOut }) : children}
             </View>
           </View>
+          <Toast config={toastConfig} />
         </Animated.View>
       </Animated.View>
     </Modal>
