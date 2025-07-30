@@ -197,6 +197,7 @@ export function MultiSelectField({
           data={filteredOptions}
           keyExtractor={(item) => item.value}
           showsVerticalScrollIndicator={false}
+          automaticallyAdjustKeyboardInsets
           renderItem={({ item }) => {
             const isSelected = value.includes(item.value);
             return defaultRenderOption(item, isSelected);
