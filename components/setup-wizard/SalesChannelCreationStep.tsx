@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/Button';
 import { Text } from '@/components/ui/Text';
 import { AdminSalesChannel } from '@medusajs/types';
 import React from 'react';
-import { View } from 'react-native';
+import { ScrollView } from 'react-native';
 
 interface SalesChannelCreationStepProps {
   onComplete: (salesChannelId: string) => void;
@@ -19,7 +19,7 @@ export const SalesChannelCreationStep: React.FC<SalesChannelCreationStepProps> =
   };
 
   return (
-    <View className="flex-1">
+    <ScrollView contentContainerClassName="p-5">
       <Text className="text-4xl mb-6">Setting Up</Text>
       <Text className="text-2xl mb-2">Choose a sales channel</Text>
       <Text className="mb-6 text-gray-300">
@@ -33,6 +33,6 @@ export const SalesChannelCreationStep: React.FC<SalesChannelCreationStepProps> =
           Cancel
         </Button>
       )}
-    </View>
+    </ScrollView>
   );
 };

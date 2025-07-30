@@ -176,6 +176,7 @@ export default function OrdersScreen() {
         estimatedItemSize={120}
         refreshing={ordersQuery.isRefetching}
         ItemSeparatorComponent={() => <View className="w-full h-4" />}
+        automaticallyAdjustKeyboardInsets
         ListEmptyComponent={
           <View className="flex-1 mt-32 items-center">
             <CircleAlert size={24} />

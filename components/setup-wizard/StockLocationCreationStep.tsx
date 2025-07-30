@@ -19,7 +19,7 @@ export const StockLocationCreationStep: React.FC<StockLocationCreationStepProps>
   };
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <ScrollView contentContainerClassName="p-5">
       <Text className="text-4xl mb-6">Setting Up</Text>
       <Text className="text-2xl mb-2">Create a new stock location</Text>
       <Text className="mb-6 text-gray-300">

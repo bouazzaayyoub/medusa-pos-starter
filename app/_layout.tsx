@@ -41,14 +41,14 @@ function App() {
 
     if (auth.state.status === 'authenticated') {
       if (settings.isSuccess) {
-        if (!settings.data || !settings.data.sales_channel || !settings.data.stock_location) {
+        if (!settings.data || !settings.data.sales_channel || !settings.data.region || !settings.data.stock_location) {
           // If settings are not set, redirect to the setup wizard
           router.replace('/setup-wizard');
           return;
         }
 
         // If settings are set, redirect to the main app
-        if (settings.data.sales_channel && settings.data.stock_location) {
+        if (settings.data.sales_channel && settings.data.region && settings.data.stock_location) {
           router.replace('/(tabs)/products');
           return;
         }
@@ -58,55 +58,63 @@ function App() {
 
   return (
     <Stack>
-      <Stack.Protected guard={auth.state.status === 'authenticated'}>
-        <Stack.Protected
-          guard={settings.isSuccess && !!settings.data?.sales_channel && !!settings.data?.stock_location}
-        >
-          {/* Main App - Tab Navigation */}
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Protected
+        guard={
+          auth.state.status === 'authenticated' &&
+          settings.isSuccess &&
+          !!settings.data &&
+          !!settings.data.sales_channel &&
+          !!settings.data.region &&
+          !!settings.data.stock_location
+        }
+      >
+        {/* Main App - Tab Navigation */}
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
-          {/* Checkout Flow */}
-          <Stack.Screen name="checkout/[draftOrderId]" options={{ title: 'Checkout', headerShown: false }} />
+        {/* Checkout Flow */}
+        <Stack.Screen name="checkout/[draftOrderId]" options={{ title: 'Checkout', headerShown: false }} />
 
-          {/* Modal Dialogs */}
-          <Stack.Screen
-            name="product-details"
-            options={{
-              presentation: 'modal',
-              title: 'Product Details',
-              header: () => <ProductDetailsHeader />,
-            }}
-          />
-          <Stack.Screen
-            name="orders/[orderId]"
-            options={{
-              presentation: 'transparentModal',
-              title: 'Order Details',
-              headerShown: false,
-              animation: 'none',
-              animationDuration: 0,
-              gestureEnabled: false,
-              fullScreenGestureShadowEnabled: false,
-            }}
-          />
-          <Stack.Screen
-            name="customer-lookup"
-            options={{
-              presentation: 'transparentModal',
-              title: 'Customer Lookup',
-              headerShown: false,
-              animation: 'none',
-            }}
-          />
-          <Stack.Screen name="+not-found" />
-        </Stack.Protected>
+        {/* Modal Dialogs */}
+        <Stack.Screen
+          name="product-details"
+          options={{
+            presentation: 'modal',
+            title: 'Product Details',
+            header: () => <ProductDetailsHeader />,
+          }}
+        />
+        <Stack.Screen
+          name="orders/[orderId]"
+          options={{
+            presentation: 'transparentModal',
+            title: 'Order Details',
+            headerShown: false,
+            animation: 'none',
+            animationDuration: 0,
+            gestureEnabled: false,
+            fullScreenGestureShadowEnabled: false,
+          }}
+        />
+        <Stack.Screen
+          name="customer-lookup"
+          options={{
+            presentation: 'transparentModal',
+            title: 'Customer Lookup',
+            headerShown: false,
+            animation: 'none',
+          }}
+        />
+        <Stack.Screen name="+not-found" />
+      </Stack.Protected>
 
-        {/* TODO: settings loading state */}
-        <Stack.Protected
-          guard={settings.isSuccess && (!settings.data?.sales_channel || !settings.data?.stock_location)}
-        >
-          <Stack.Screen name="setup-wizard" options={{ headerShown: false }} />
-        </Stack.Protected>
+      <Stack.Protected
+        guard={
+          auth.state.status === 'authenticated' &&
+          settings.isSuccess &&
+          (!settings.data || !settings.data.sales_channel || !settings.data.region || !settings.data.stock_location)
+        }
+      >
+        <Stack.Screen name="setup-wizard" options={{ headerShown: false }} />
       </Stack.Protected>
 
       <Stack.Protected guard={auth.state.status === 'unauthenticated'}>

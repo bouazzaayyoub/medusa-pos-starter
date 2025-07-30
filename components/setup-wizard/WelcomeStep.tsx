@@ -9,7 +9,7 @@ interface WelcomeStepProps {
 
 export const WelcomeStep: React.FC<WelcomeStepProps> = ({ onComplete }) => {
   return (
-    <View className="flex-1">
+    <View className="flex-1 p-5">
       <Text className="text-4xl mb-6">Welcome</Text>
       <Text className="text-2xl mb-2">You&apos;re all set to start selling</Text>
       <Text className="mb-6 text-gray-600">
