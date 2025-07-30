@@ -370,7 +370,7 @@ export default function CartScreen() {
       <CartSkeleton
         style={Platform.select({
           ios: {
-            paddingBottom: bottomTabBarHeight,
+            paddingBottom: bottomTabBarHeight + 10,
           },
         })}
       />
@@ -382,7 +382,7 @@ export default function CartScreen() {
       <Layout
         style={Platform.select({
           ios: {
-            paddingBottom: bottomTabBarHeight,
+            paddingBottom: bottomTabBarHeight + 10,
           },
         })}
       >
@@ -411,7 +411,7 @@ export default function CartScreen() {
       <Layout
         style={Platform.select({
           ios: {
-            paddingBottom: bottomTabBarHeight,
+            paddingBottom: bottomTabBarHeight + 10,
           },
         })}
       >
@@ -537,7 +537,7 @@ export default function CartScreen() {
       <View
         style={Platform.select({
           ios: {
-            paddingBottom: bottomTabBarHeight,
+            paddingBottom: bottomTabBarHeight + 10,
           },
         })}
       >

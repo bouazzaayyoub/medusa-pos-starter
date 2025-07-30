@@ -160,7 +160,7 @@ export default function ProductDetailsScreen() {
   const price = selectedVariant?.prices?.find((price) => price.currency_code === currencyCode);
 
   return (
-    <Layout>
+    <Layout className="pb-2.5">
       <GestureHandlerRootView>
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
           <View className="mb-6 bg-gray-100 rounded-xl overflow-hidden">
