@@ -11,11 +11,10 @@ import { Text } from '@/components/ui/Text';
 import { useBreakpointValue } from '@/hooks/useBreakpointValue';
 import { clx } from '@/utils/clx';
 import { AdminOrder } from '@medusajs/types';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Platform, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 const isPlaceholderOrder = (
   order: AdminOrder | { id: `placeholder_${string}` },
@@ -30,7 +29,6 @@ const isValidOrderStatus = (status: string): status is (typeof allowedOrderStatu
 };
 
 export default function OrdersScreen() {
-  const bottomTabBarHeight = useBottomTabBarHeight();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
   const [dateRange, setDateRange] = useState<{ startDate: Date; endDate: Date } | null>(null);
@@ -201,11 +199,7 @@ export default function OrdersScreen() {
             <Text className="text-center text-xl mt-2">No orders match{'\n'}the search</Text>
           </View>
         }
-        contentContainerStyle={Platform.select({
-          ios: {
-            paddingBottom: bottomTabBarHeight + 10,
-          },
-        })}
+        contentContainerClassName="pb-4"
         ListFooterComponent={
           ordersQuery.isFetchingNextPage ? (
             <View className="gap-4 mt-4">
