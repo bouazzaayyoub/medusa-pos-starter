@@ -16,7 +16,7 @@ export const RegionCreationStep: React.FC<RegionCreationStepProps> = ({ onComple
   };
 
   return (
-    <ScrollView contentContainerClassName="p-5">
+    <ScrollView contentContainerClassName="p-5" keyboardShouldPersistTaps="always">
       <Text className="text-4xl mb-6">Setting Up</Text>
       <Text className="text-2xl mb-2">Choose a region</Text>
       <Text className="mb-6 text-gray-300">

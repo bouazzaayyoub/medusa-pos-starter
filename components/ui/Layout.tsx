@@ -9,10 +9,9 @@ export const Layout: React.FC<SafeAreaViewProps> = ({ className, ...props }) => 
 export const LayoutWithScroll: React.FC<ScrollViewProps> = (props) => {
   return (
     <ScrollView
-      contentInsetAdjustmentBehavior="always"
       {...props}
       className={clx('flex-1 bg-white', props.className)}
-      contentContainerClassName={clx('px-4 py-6', props.contentContainerClassName)}
+      contentContainerClassName={clx('px-safe-offset-4 py-safe-offset-6', props.contentContainerClassName)}
     >
       {props.children}
     </ScrollView>
