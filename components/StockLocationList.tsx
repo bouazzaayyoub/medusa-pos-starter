@@ -33,7 +33,8 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
       <FlatList
         data={stockLocationsQuery.data?.pages?.[0]?.stock_locations || []}
         keyExtractor={(item) => item.id}
-        className="border rounded-xl border-gray-200"
+        className="border rounded-xl border-gray-200 grow-0 shrink"
+        contentContainerClassName="grow-0"
         ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200 mx-4" />}
         renderItem={({ item }) => (
           <TouchableOpacity

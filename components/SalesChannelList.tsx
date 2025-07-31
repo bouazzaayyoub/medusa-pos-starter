@@ -28,7 +28,8 @@ const SalesChannelList: React.FC<SalesChannelListProps> = ({ selectedSalesChanne
       <FlatList
         data={salesChannelsQuery.data?.pages?.[0]?.sales_channels || []}
         keyExtractor={(item) => item.id}
-        className="border rounded-xl border-gray-200"
+        className="border rounded-xl border-gray-200 grow-0 shrink"
+        contentContainerClassName="grow-0"
         ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200 mx-4" />}
         renderItem={({ item }) => (
           <TouchableOpacity

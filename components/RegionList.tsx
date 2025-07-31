@@ -28,7 +28,8 @@ const RegionList: React.FC<RegionListProps> = ({ selectedRegionId, onRegionSelec
       <FlatList
         data={regionsQuery.data?.pages?.[0]?.regions || []}
         keyExtractor={(item) => item.id}
-        className="border rounded-xl border-gray-200"
+        className="border rounded-xl border-gray-200 grow-0 shrink"
+        contentContainerClassName="grow-0"
         ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200 mx-4" />}
         renderItem={({ item }) => (
           <TouchableOpacity
