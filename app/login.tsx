@@ -98,10 +98,10 @@ export default function LoginScreen() {
   };
 
   return (
-    <LayoutWithScroll contentContainerClassName="gap-6" automaticallyAdjustKeyboardInsets>
-      <Text className="text-4xl">Login</Text>
-      {error && <InfoBanner colorScheme="error">{error}</InfoBanner>}
-      <View className="w-full flex-1">
+    <LayoutWithScroll automaticallyAdjustKeyboardInsets keyboardShouldPersistTaps="handled">
+      <View className="gap-6">
+        <Text className="text-4xl">Login</Text>
+        {error && <InfoBanner colorScheme="error">{error}</InfoBanner>}
         <Form schema={loginSchema} onSubmit={handleLogin} defaultValues={defaultValues} className="gap-6">
           <TextField
             name="medusaUrl"
