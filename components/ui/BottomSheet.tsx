@@ -1,6 +1,6 @@
-import { toastConfig } from '@/app/_layout';
 import { X } from '@/components/icons/x';
 import { Text } from '@/components/ui/Text';
+import { toastConfig } from '@/config/toast';
 import { clx } from '@/utils/clx';
 import React from 'react';
 import {

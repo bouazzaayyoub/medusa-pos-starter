@@ -4,7 +4,7 @@ import '../global.css';
 
 import { ProductDetailsHeader } from '@/components/ProductDetailsHeader';
 import { SplashScreenController } from '@/components/SplashScreenController';
-import { ToastMessage } from '@/components/ToastMessage';
+import { toastConfig } from '@/config/toast';
 import { AuthProvider, useAuthCtx } from '@/contexts/auth';
 import { useSettings } from '@/contexts/settings';
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -15,19 +15,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { Stack, useRouter } from 'expo-router';
 import * as React from 'react';
-import Toast, { ToastData } from 'react-native-toast-message';
-
-export const toastConfig = {
-  success: ({ text1, text2 }: ToastData) => (
-    <ToastMessage heading={text1} text={text2} variant="outline" colorScheme="success" />
-  ),
-  error: ({ text1, text2 }: ToastData) => (
-    <ToastMessage heading={text1} text={text2} variant="outline" colorScheme="error" />
-  ),
-  info: ({ text1, text2 }: ToastData) => (
-    <ToastMessage heading={text1} text={text2} variant="outline" colorScheme="warning" />
-  ),
-};
+import Toast from 'react-native-toast-message';
 
 const queryClient = new QueryClient({
   defaultOptions: {
