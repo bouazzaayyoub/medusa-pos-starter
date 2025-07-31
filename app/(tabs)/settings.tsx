@@ -40,7 +40,7 @@ export default function SettingsScreen() {
         <Text className="text-2xl mb-4">Sales Channel</Text>
 
         <Button
-          onPress={() => router.push('/setup-wizard')}
+          onPress={() => router.push('/sales-channel')}
           variant="outline"
           icon={<Antenna size={16} />}
           iconPosition="left"
