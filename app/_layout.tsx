@@ -105,6 +105,10 @@ function App() {
           }}
         />
         <Stack.Screen name="+not-found" />
+
+        <Stack.Screen name="region" options={{ headerShown: false }} />
+
+        <Stack.Screen name="create-region" options={{ headerShown: false }} />
       </Stack.Protected>
 
       <Stack.Protected
