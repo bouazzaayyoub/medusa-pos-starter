@@ -7,11 +7,10 @@ import { useSettings } from '@/contexts/settings';
 import { useBreakpointValue } from '@/hooks/useBreakpointValue';
 import { clx } from '@/utils/clx';
 import { AdminProduct } from '@medusajs/types';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
 import { router } from 'expo-router';
 import * as React from 'react';
-import { Image, Platform, TouchableOpacity, View } from 'react-native';
+import { Image, TouchableOpacity, View } from 'react-native';
 
 const isPlaceholderProduct = (
   product: AdminProduct | { id: `placeholder_${string}` },
@@ -21,7 +20,6 @@ const isPlaceholderProduct = (
 
 export default function ProductsScreen() {
   const settings = useSettings();
-  const bottomTabBarHeight = useBottomTabBarHeight();
   const numColumns = useBreakpointValue({ base: 2, md: 3, xl: 4 });
   const [searchQuery, setSearchQuery] = React.useState('');
   const productsQuery = useProducts({
@@ -142,11 +140,7 @@ export default function ProductsScreen() {
             <Text className="text-center text-xl mt-2">No products match{'\n'}the search</Text>
           </View>
         }
-        contentContainerStyle={Platform.select({
-          ios: {
-            paddingBottom: bottomTabBarHeight + 10,
-          },
-        })}
+        contentContainerClassName="pb-4"
         ListFooterComponent={
           productsQuery.isFetchingNextPage ? (
             <View className="flex-row flex-wrap">
