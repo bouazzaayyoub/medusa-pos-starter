@@ -101,12 +101,9 @@ export default function ProductDetailsScreen() {
     productId: string;
     productName: string;
   }>();
-  const { productId, productName /* barcode, scannedProduct, manualEntry */ } = params;
+  const { productId, productName } = params;
   const productQuery = useProduct(productId);
   const addToDraftOrder = useAddToDraftOrder({
-    onSuccess: (data) => {
-      router.dismissTo('/(tabs)/cart');
-    },
     onError: (error) => {
       console.error('Error adding items to draft order:', error);
     },
@@ -263,16 +260,20 @@ export default function ProductDetailsScreen() {
                 if (!selectedVariant) {
                   return;
                 }
-
-                animateOut(() =>
-                  addToDraftOrder.mutate({
+                addToDraftOrder.mutate(
+                  {
                     items: [
                       {
                         quantity,
                         variant_id: selectedVariant.id,
                       },
                     ],
-                  }),
+                  },
+                  {
+                    onSuccess: () => {
+                      animateOut(() => router.dismissTo('/(tabs)/cart'));
+                    },
+                  },
                 );
               }}
             >
