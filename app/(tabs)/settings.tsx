@@ -46,6 +46,18 @@ export default function SettingsScreen() {
         {settings.data?.sales_channel?.name || '—'}
       </Button>
 
+      <Text className="text-2xl mb-4">Region</Text>
+
+      <Button
+        onPress={() => router.push('/setup-wizard')}
+        variant="outline"
+        icon={<Antenna size={16} />}
+        iconPosition="left"
+        className="mb-8 justify-end"
+      >
+        {settings.data?.region?.name || '—'}
+      </Button>
+
       <Text className="text-2xl mb-4">Stock location</Text>
 
       <Button
@@ -58,7 +70,10 @@ export default function SettingsScreen() {
         {settings.data?.stock_location?.name || '—'}
       </Button>
 
+      <Text className="text-2xl mb-4">Reset</Text>
+
       <Button
+        variant="outline"
         onPress={() => {
           clearSettings.mutate();
         }}
