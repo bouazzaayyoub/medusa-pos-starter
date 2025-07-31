@@ -105,6 +105,9 @@ function App() {
           }}
         />
         <Stack.Screen name="+not-found" />
+        <Stack.Screen name="stock-location" options={{ headerShown: false }} />
+
+        <Stack.Screen name="create-stock-location" options={{ headerShown: false }} />
       </Stack.Protected>
 
       <Stack.Protected
