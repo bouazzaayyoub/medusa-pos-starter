@@ -38,13 +38,15 @@ const SalesChannelList: React.FC<SalesChannelListProps> = ({ selectedSalesChanne
             })}
             onPress={() => onSalesChannelSelect(item.id)}
           >
-            <Text
-              className={clx('flex-1', {
-                'text-white': selectedSalesChannelId === item.id,
-              })}
-            >
-              {item.name}
-            </Text>
+            <View className="flex-1">
+              <Text
+                className={clx({
+                  'text-white': selectedSalesChannelId === item.id,
+                })}
+              >
+                {item.name}
+              </Text>
+            </View>
             <Antenna
               size={16}
               className={clx({

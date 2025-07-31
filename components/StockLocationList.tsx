@@ -45,7 +45,7 @@ export const StockLocationList: React.FC<StockLocationListProps> = ({
           >
             <View className="flex-1">
               <Text
-                className={clx('flex-1', {
+                className={clx({
                   'text-white': selectedStockLocationId === item.id,
                 })}
               >
