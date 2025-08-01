@@ -28,22 +28,25 @@ const SalesChannelList: React.FC<SalesChannelListProps> = ({ selectedSalesChanne
       <FlatList
         data={salesChannelsQuery.data?.pages?.[0]?.sales_channels || []}
         keyExtractor={(item) => item.id}
-        contentContainerClassName="border overflow-hidden rounded-xl border-b border-[#EDEDED]"
+        className="border rounded-xl border-gray-200 grow-0 shrink"
+        contentContainerClassName="grow-0"
         ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200 mx-4" />}
         renderItem={({ item }) => (
           <TouchableOpacity
-            className={clx('py-3 justify-between items-center flex-row px-4', {
+            className={clx('py-3 justify-between items-center flex-row gap-2 px-4', {
               'bg-black': selectedSalesChannelId === item.id,
             })}
             onPress={() => onSalesChannelSelect(item.id)}
           >
-            <Text
-              className={clx({
-                'text-white': selectedSalesChannelId === item.id,
-              })}
-            >
-              {item.name}
-            </Text>
+            <View className="flex-1">
+              <Text
+                className={clx({
+                  'text-white': selectedSalesChannelId === item.id,
+                })}
+              >
+                {item.name}
+              </Text>
+            </View>
             <Antenna
               size={16}
               className={clx({

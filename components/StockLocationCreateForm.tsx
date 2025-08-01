@@ -107,5 +107,4 @@ const StockLocationCreateForm: React.FC<StockLocationCreateFormProps> = ({ onSto
   );
 };
 
-export default StockLocationCreateForm;
 export { StockLocationCreateForm };
