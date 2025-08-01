@@ -11,10 +11,6 @@ export default function SalesChannelScreen() {
   const updateSettings = useUpdateSettings();
   const [selectedSalesChannel, setSelectedSalesChannel] = React.useState(settings.data?.sales_channel?.id || '');
 
-  const handleSalesChannelSelect = (salesChannelId: string) => {
-    setSelectedSalesChannel(salesChannelId);
-  };
-
   return (
     <Layout className="pb-2.5">
       <Text className="text-4xl mb-6">Setting Up</Text>
@@ -23,7 +19,7 @@ export default function SalesChannelScreen() {
         Select an existing sales channel from the list or create a new one to proceed.
       </Text>
 
-      <SalesChannelList selectedSalesChannelId={selectedSalesChannel} onSalesChannelSelect={handleSalesChannelSelect} />
+      <SalesChannelList selectedSalesChannelId={selectedSalesChannel} onSalesChannelSelect={setSelectedSalesChannel} />
 
       <View className="gap-4 mt-6">
         <Button variant="outline" onPress={() => router.replace('/settings/create-sales-channel')}>
