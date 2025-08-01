@@ -9,7 +9,7 @@ import { Text } from '@/components/ui/Text';
 import { useSettings } from '@/contexts/settings';
 import { AdminProductImage } from '@medusajs/types';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import * as React from 'react';
 import { Dimensions, Image, ScrollView, View } from 'react-native';
 import { useSharedValue } from 'react-native-reanimated';
 import Carousel, { CarouselRenderItem, ICarouselInstance, Pagination } from 'react-native-reanimated-carousel';
@@ -21,12 +21,12 @@ const ProductImagesCarousel: React.FC<{ images: AdminProductImage[] }> = ({ imag
   const carouselRef = React.useRef<ICarouselInstance>(null);
   const progress = useSharedValue<number>(0);
   const scrollOffsetValue = useSharedValue<number>(0);
-  const [width, setWidth] = useState<number>(windowWidth);
+  const [width, setWidth] = React.useState<number>(windowWidth);
 
   // Calculate height based on width with 4:3 aspect ratio
   const height = Math.round(width * 0.75);
 
-  useLayoutEffect(() => {
+  React.useLayoutEffect(() => {
     targetRef.current?.measure((x, y, width) => {
       setWidth(width);
     });
@@ -93,8 +93,8 @@ const ProductImagesCarousel: React.FC<{ images: AdminProductImage[] }> = ({ imag
 
 const ProductDetails: React.FC<{ animateOut: (callback?: () => void) => void }> = ({ animateOut }) => {
   const settings = useSettings();
-  const [quantity, setQuantity] = useState(1);
-  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
+  const [quantity, setQuantity] = React.useState(1);
+  const [selectedOptions, setSelectedOptions] = React.useState<Record<string, string>>({});
 
   const params = useLocalSearchParams<{
     productId: string;
@@ -108,7 +108,7 @@ const ProductDetails: React.FC<{ animateOut: (callback?: () => void) => void }> 
     },
   });
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (productQuery.data) {
       const firstVariant = productQuery.data.product.variants?.[0];
 
@@ -278,7 +278,7 @@ const ProductDetails: React.FC<{ animateOut: (callback?: () => void) => void }> 
 export default function ProductDetailsScreen() {
   const [visible, setVisible] = React.useState(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     setTimeout(() => {
       requestAnimationFrame(() => {
         setVisible(true);
