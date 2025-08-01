@@ -21,7 +21,9 @@ type SalesChannelFormData = z.infer<typeof salesChannelSchema>;
 
 const SalesChannelCreateForm: React.FC<SalesChannelCreateFormProps> = ({
   onSalesChannelCreated,
-  defaultValues = { name: 'POS', description: 'Created by Agilo POS' },
+  defaultValues = {
+    description: 'Created via Agilo POS',
+  },
 }) => {
   const createSalesChannel = useCreateSalesChannel();
 
@@ -29,7 +31,7 @@ const SalesChannelCreateForm: React.FC<SalesChannelCreateFormProps> = ({
     try {
       const result = await createSalesChannel.mutateAsync({
         name: data.name,
-        description: data.description || 'Created by Agilo POS',
+        description: data.description,
       });
       onSalesChannelCreated(result.sales_channel);
       return result.sales_channel;

@@ -107,11 +107,16 @@ function App() {
             animation: 'none',
           }}
         />
-        <Stack.Screen name="+not-found" />
+
+        <Stack.Screen name="settings/region" options={{ headerShown: false }} />
+
+        <Stack.Screen name="settings/create-region" options={{ headerShown: false }} />
 
         <Stack.Screen name="settings/sales-channel" options={{ headerShown: false }} />
 
         <Stack.Screen name="settings/create-sales-channel" options={{ headerShown: false }} />
+
+        <Stack.Screen name="+not-found" options={{ headerShown: false }} />
       </Stack.Protected>
 
       <Stack.Protected

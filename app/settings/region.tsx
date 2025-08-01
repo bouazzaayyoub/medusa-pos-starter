@@ -1,4 +1,4 @@
-import { SalesChannelList } from '@/components/SalesChannelList';
+import { RegionList } from '@/components/RegionList';
 import { Button } from '@/components/ui/Button';
 import { Layout } from '@/components/ui/Layout';
 import { useSettings, useUpdateSettings } from '@/contexts/settings';
@@ -6,37 +6,37 @@ import { router } from 'expo-router';
 import * as React from 'react';
 import { Text, View } from 'react-native';
 
-export default function SalesChannelScreen() {
+export default function RegionScreen() {
   const settings = useSettings();
   const updateSettings = useUpdateSettings();
-  const [selectedSalesChannel, setSelectedSalesChannel] = React.useState(settings.data?.sales_channel?.id || '');
+  const [selectedRegion, setSelectedRegion] = React.useState(settings.data?.region?.id || '');
 
   return (
     <Layout className="pb-2.5">
       <Text className="text-4xl mb-6">Setting Up</Text>
-      <Text className="text-2xl mb-2">Choose a sales channel</Text>
+      <Text className="text-2xl mb-2">Choose a region</Text>
       <Text className="mb-6 text-gray-300">
-        Select an existing sales channel from the list or create a new one to proceed.
+        Select a region that defines your market area, currency, and tax settings.
       </Text>
 
-      <SalesChannelList selectedSalesChannelId={selectedSalesChannel} onSalesChannelSelect={setSelectedSalesChannel} />
+      <RegionList selectedRegionId={selectedRegion} onRegionSelect={setSelectedRegion} />
 
       <View className="gap-4 mt-6">
-        <Button variant="outline" onPress={() => router.push('/settings/create-sales-channel')}>
-          Create New Sales Channel
+        <Button variant="outline" onPress={() => router.push('/settings/create-region')}>
+          Create New Region
         </Button>
 
         <Button
-          disabled={!selectedSalesChannel}
+          disabled={!selectedRegion}
           isPending={updateSettings.isPending}
           onPress={() => {
-            if (!selectedSalesChannel) {
+            if (!selectedRegion) {
               return;
             }
 
             updateSettings.mutate(
               {
-                sales_channel_id: selectedSalesChannel,
+                region_id: selectedRegion,
               },
               {
                 onSuccess: () => {

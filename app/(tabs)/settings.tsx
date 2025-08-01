@@ -49,7 +49,7 @@ export default function SettingsScreen() {
       <Text className="text-2xl mb-4">Region</Text>
 
       <Button
-        onPress={() => router.push('/setup-wizard')}
+        onPress={() => router.push('/settings/region')}
         variant="outline"
         icon={<Antenna size={16} />}
         iconPosition="left"
