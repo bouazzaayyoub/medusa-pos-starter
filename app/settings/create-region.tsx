@@ -26,14 +26,14 @@ export default function CreateRegionScreen() {
               },
               {
                 onSuccess: async () => {
-                  router.replace('/settings');
+                  router.dismissTo('/settings');
                 },
               },
             );
           }}
         />
 
-        <Button variant="outline" className="mt-4" onPress={() => router.replace('/settings/region')}>
+        <Button variant="outline" className="mt-4" onPress={() => router.back()}>
           Cancel
         </Button>
       </KeyboardAvoidingView>

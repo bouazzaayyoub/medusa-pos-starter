@@ -22,7 +22,7 @@ export default function RegionScreen() {
       <RegionList selectedRegionId={selectedRegion} onRegionSelect={setSelectedRegion} />
 
       <View className="gap-4 mt-6">
-        <Button variant="outline" onPress={() => router.replace('/settings/create-region')}>
+        <Button variant="outline" onPress={() => router.push('/settings/create-region')}>
           Create New Region
         </Button>
 
@@ -40,7 +40,7 @@ export default function RegionScreen() {
               },
               {
                 onSuccess: () => {
-                  router.replace('/settings');
+                  router.back();
                 },
               },
             );
@@ -49,7 +49,7 @@ export default function RegionScreen() {
           Submit
         </Button>
 
-        <Button variant="outline" onPress={() => router.replace('/settings')}>
+        <Button variant="outline" onPress={() => router.back()}>
           Cancel
         </Button>
       </View>

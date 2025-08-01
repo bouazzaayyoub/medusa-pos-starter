@@ -22,7 +22,7 @@ export default function SalesChannelScreen() {
       <SalesChannelList selectedSalesChannelId={selectedSalesChannel} onSalesChannelSelect={setSelectedSalesChannel} />
 
       <View className="gap-4 mt-6">
-        <Button variant="outline" onPress={() => router.replace('/settings/create-sales-channel')}>
+        <Button variant="outline" onPress={() => router.push('/settings/create-sales-channel')}>
           Create New Sales Channel
         </Button>
 
@@ -40,7 +40,7 @@ export default function SalesChannelScreen() {
               },
               {
                 onSuccess: () => {
-                  router.replace('/settings');
+                  router.back();
                 },
               },
             );
@@ -49,7 +49,7 @@ export default function SalesChannelScreen() {
           Submit
         </Button>
 
-        <Button variant="outline" onPress={() => router.replace('/settings')}>
+        <Button variant="outline" onPress={() => router.back()}>
           Cancel
         </Button>
       </View>

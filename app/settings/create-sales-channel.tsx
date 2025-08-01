@@ -24,14 +24,14 @@ export default function CreateSalesChannelScreen() {
               },
               {
                 onSuccess: async () => {
-                  router.replace('/settings');
+                  router.dismissTo('/settings');
                 },
               },
             );
           }}
         />
 
-        <Button variant="outline" className="mt-4" onPress={() => router.replace('/settings/sales-channel')}>
+        <Button variant="outline" className="mt-4" onPress={() => router.back()}>
           Cancel
         </Button>
       </KeyboardAvoidingView>
