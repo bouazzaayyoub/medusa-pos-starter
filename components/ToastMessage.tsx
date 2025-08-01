@@ -6,13 +6,12 @@ import {
 } from '@/components/InfoBanner';
 import { clx } from '@/utils/clx';
 import { Text, View } from 'react-native';
-import { ToastProps } from 'react-native-toast-message';
 
 export type ToastMessageProps = Omit<InfoBannerProps, 'children'> & {
   heading?: string;
-  text?: string;
   headingClassName?: string;
-} & ToastProps;
+  text?: string;
+};
 
 export const ToastMessage: React.FC<ToastMessageProps> = ({
   heading,
