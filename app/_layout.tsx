@@ -109,9 +109,9 @@ function App() {
         />
         <Stack.Screen name="+not-found" />
 
-        <Stack.Screen name="sales-channel" options={{ headerShown: false }} />
+        <Stack.Screen name="settings/sales-channel" options={{ headerShown: false }} />
 
-        <Stack.Screen name="create-sales-channel" options={{ headerShown: false }} />
+        <Stack.Screen name="settings/create-sales-channel" options={{ headerShown: false }} />
       </Stack.Protected>
 
       <Stack.Protected
