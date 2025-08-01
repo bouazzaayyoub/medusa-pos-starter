@@ -61,7 +61,7 @@ export default function SettingsScreen() {
       <Text className="text-2xl mb-4">Stock location</Text>
 
       <Button
-        onPress={() => router.push('/stock-location')}
+        onPress={() => router.push('/settings/stock-location')}
         variant="outline"
         icon={<Antenna size={16} />}
         iconPosition="left"

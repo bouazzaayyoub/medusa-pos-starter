@@ -108,9 +108,9 @@ function App() {
           }}
         />
 
-        <Stack.Screen name="stock-location" options={{ headerShown: false }} />
+        <Stack.Screen name="settings/stock-location" options={{ headerShown: false }} />
 
-        <Stack.Screen name="create-stock-location" options={{ headerShown: false }} />
+        <Stack.Screen name="settings/create-stock-location" options={{ headerShown: false }} />
 
         <Stack.Screen name="settings/region" options={{ headerShown: false }} />
 
