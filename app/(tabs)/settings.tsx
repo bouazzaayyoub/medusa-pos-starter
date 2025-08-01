@@ -37,7 +37,7 @@ export default function SettingsScreen() {
       <Text className="text-2xl mb-4">Sales Channel</Text>
 
       <Button
-        onPress={() => router.push('/setup-wizard')}
+        onPress={() => router.push('/settings/sales-channel')}
         variant="outline"
         icon={<Antenna size={16} />}
         iconPosition="left"
@@ -49,7 +49,7 @@ export default function SettingsScreen() {
       <Text className="text-2xl mb-4">Region</Text>
 
       <Button
-        onPress={() => router.push('/setup-wizard')}
+        onPress={() => router.push('/settings/region')}
         variant="outline"
         icon={<Antenna size={16} />}
         iconPosition="left"
@@ -61,7 +61,7 @@ export default function SettingsScreen() {
       <Text className="text-2xl mb-4">Stock location</Text>
 
       <Button
-        onPress={() => router.push('/setup-wizard')}
+        onPress={() => router.push('/settings/stock-location')}
         variant="outline"
         icon={<Antenna size={16} />}
         iconPosition="left"

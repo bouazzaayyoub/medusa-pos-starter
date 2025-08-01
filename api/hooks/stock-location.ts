@@ -1,6 +1,6 @@
 import { useMedusaSdk } from '@/contexts/auth';
-import { AdminCreateStockLocation, AdminStockLocationListParams } from '@medusajs/types';
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { AdminCreateStockLocation, AdminStockLocationListParams, AdminStockLocationResponse } from '@medusajs/types';
+import { useInfiniteQuery, useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query';
 
 const PER_PAGE = 20;
 
@@ -28,7 +28,12 @@ export const useStockLocations = (query?: Omit<AdminStockLocationListParams, 'li
   });
 };
 
-export const useCreateStockLocation = () => {
+export const useCreateStockLocation = (
+  options?: Omit<
+    UseMutationOptions<AdminStockLocationResponse, Error, AdminCreateStockLocation>,
+    'mutationKey' | 'mutationFn'
+  >,
+) => {
   const sdk = useMedusaSdk();
   const queryClient = useQueryClient();
 
@@ -37,11 +42,14 @@ export const useCreateStockLocation = () => {
     mutationFn: async (data: AdminCreateStockLocation) => {
       return sdk.admin.stockLocation.create(data);
     },
-    onSuccess: async () => {
+    ...options,
+    onSuccess: async (...args) => {
       await queryClient.invalidateQueries({
         queryKey: ['stock-locations'],
         exact: false,
       });
+
+      return options?.onSuccess?.(...args);
     },
   });
 };
