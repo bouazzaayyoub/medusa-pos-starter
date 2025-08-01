@@ -246,9 +246,10 @@ const ProductDetails: React.FC<{ animateOut: (callback?: () => void) => void }> 
           disabled={!selectedVariant}
           isPending={addToDraftOrder.isPending}
           onPress={() => {
-            if (!selectedVariant || !animateOut) {
+            if (!selectedVariant) {
               return;
             }
+
             addToDraftOrder.mutate(
               {
                 items: [
