@@ -4,12 +4,13 @@ import { SearchInput } from '@/components/SearchInput';
 import { Layout } from '@/components/ui/Layout';
 import { Text } from '@/components/ui/Text';
 import { useSettings } from '@/contexts/settings';
+import { useBreakpointValue } from '@/hooks/useBreakpointValue';
+import { clx } from '@/utils/clx';
 import { AdminProduct } from '@medusajs/types';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { FlashList } from '@shopify/flash-list';
+import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
-import { Image, Platform, TouchableOpacity, View } from 'react-native';
+import * as React from 'react';
+import { Image, TouchableOpacity, View } from 'react-native';
 
 const isPlaceholderProduct = (
   product: AdminProduct | { id: `placeholder_${string}` },
@@ -19,8 +20,8 @@ const isPlaceholderProduct = (
 
 export default function ProductsScreen() {
   const settings = useSettings();
-  const bottomTabBarHeight = useBottomTabBarHeight();
-  const [searchQuery, setSearchQuery] = useState('');
+  const numColumns = useBreakpointValue({ base: 2, md: 3, xl: 4 });
+  const [searchQuery, setSearchQuery] = React.useState('');
   const productsQuery = useProducts({
     q: searchQuery ? searchQuery : undefined,
     sales_channel_id: settings.data?.sales_channel?.id ?? undefined,
@@ -35,10 +36,15 @@ export default function ProductsScreen() {
   }, []);
 
   const renderProduct = React.useCallback(
-    ({ item }: { item: AdminProduct | { id: `placeholder_${string}` } }) => {
+    ({ item, index }: ListRenderItemInfo<AdminProduct | { id: `placeholder_${string}` }>) => {
       if (isPlaceholderProduct(item)) {
         return (
-          <View className="gap-4 flex w-full px-1">
+          <View
+            className={clx('gap-4 flex w-full px-1', {
+              'pl-0': index % numColumns === 0,
+              'pr-0': (index + 1) % numColumns === 0,
+            })}
+          >
             <View className="bg-gray-200 aspect-square rounded-lg overflow-hidden" />
             <View>
               <View className="mb-1 h-4 rounded-md bg-gray-200" />
@@ -60,7 +66,12 @@ export default function ProductsScreen() {
       const maxPrice = amounts.length ? Math.max(...amounts) : undefined;
 
       return (
-        <View className="px-1 w-full">
+        <View
+          className={clx('px-1 w-full', {
+            'pl-0': index % numColumns === 0,
+            'pr-0': (index + 1) % numColumns === 0,
+          })}
+        >
           <TouchableOpacity className="flex w-full gap-4" onPress={() => handleProductPress(item)} activeOpacity={0.7}>
             <View className="bg-gray-200 aspect-square rounded-lg overflow-hidden">
               {thumbnail && <Image source={{ uri: thumbnail }} className="w-full h-full object-cover" />}
@@ -92,7 +103,7 @@ export default function ProductsScreen() {
         </View>
       );
     },
-    [handleProductPress, settings.data?.region?.currency_code],
+    [handleProductPress, numColumns, settings.data?.region?.currency_code],
   );
 
   const data = React.useMemo(() => {
@@ -116,7 +127,7 @@ export default function ProductsScreen() {
 
       <FlashList
         data={data}
-        numColumns={2}
+        numColumns={numColumns}
         renderItem={renderProduct}
         keyExtractor={(item) => item.id}
         estimatedItemSize={70}
@@ -129,11 +140,7 @@ export default function ProductsScreen() {
             <Text className="text-center text-xl mt-2">No products match{'\n'}the search</Text>
           </View>
         }
-        contentContainerStyle={Platform.select({
-          ios: {
-            paddingBottom: bottomTabBarHeight + 10,
-          },
-        })}
+        contentContainerClassName="pb-4"
         ListFooterComponent={
           productsQuery.isFetchingNextPage ? (
             <View className="flex-row flex-wrap">

@@ -2,7 +2,6 @@
 import { AppStatusBar } from '@/components/AppStatusBar';
 import '../global.css';
 
-import { ProductDetailsHeader } from '@/components/ProductDetailsHeader';
 import { SplashScreenController } from '@/components/SplashScreenController';
 import { AuthProvider, useAuthCtx } from '@/contexts/auth';
 import { useSettings } from '@/contexts/settings';
@@ -78,9 +77,13 @@ function App() {
         <Stack.Screen
           name="product-details"
           options={{
-            presentation: 'modal',
+            presentation: 'transparentModal',
             title: 'Product Details',
-            header: () => <ProductDetailsHeader />,
+            headerShown: false,
+            animation: 'none',
+            animationDuration: 0,
+            gestureEnabled: false,
+            fullScreenGestureShadowEnabled: false,
           }}
         />
         <Stack.Screen
@@ -104,10 +107,20 @@ function App() {
             animation: 'none',
           }}
         />
-        <Stack.Screen name="+not-found" />
+
         <Stack.Screen name="stock-location" options={{ headerShown: false }} />
 
         <Stack.Screen name="create-stock-location" options={{ headerShown: false }} />
+
+        <Stack.Screen name="settings/region" options={{ headerShown: false }} />
+
+        <Stack.Screen name="settings/create-region" options={{ headerShown: false }} />
+
+        <Stack.Screen name="settings/sales-channel" options={{ headerShown: false }} />
+
+        <Stack.Screen name="settings/create-sales-channel" options={{ headerShown: false }} />
+
+        <Stack.Screen name="+not-found" options={{ headerShown: false }} />
       </Stack.Protected>
 
       <Stack.Protected

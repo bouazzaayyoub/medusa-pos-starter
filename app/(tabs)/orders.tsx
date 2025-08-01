@@ -8,12 +8,13 @@ import { SearchInput } from '@/components/SearchInput';
 import { Layout } from '@/components/ui/Layout';
 import { OrderStatus } from '@/components/ui/OrderStatus';
 import { Text } from '@/components/ui/Text';
+import { useBreakpointValue } from '@/hooks/useBreakpointValue';
+import { clx } from '@/utils/clx';
 import { AdminOrder } from '@medusajs/types';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { FlashList } from '@shopify/flash-list';
+import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Platform, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 const isPlaceholderOrder = (
   order: AdminOrder | { id: `placeholder_${string}` },
@@ -28,10 +29,10 @@ const isValidOrderStatus = (status: string): status is (typeof allowedOrderStatu
 };
 
 export default function OrdersScreen() {
-  const bottomTabBarHeight = useBottomTabBarHeight();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
   const [dateRange, setDateRange] = useState<{ startDate: Date; endDate: Date } | null>(null);
+  const numColumns = useBreakpointValue({ base: 1, md: 2, xl: 3 });
 
   const validatedStatusFilter = statusFilter.filter(isValidOrderStatus);
 
@@ -65,17 +66,24 @@ export default function OrdersScreen() {
   }, []);
 
   const renderOrder = React.useCallback(
-    ({ item }: { item: AdminOrder | { id: `placeholder_${string}` } }) => {
+    ({ item, index }: ListRenderItemInfo<AdminOrder | { id: `placeholder_${string}` }>) => {
       if (isPlaceholderOrder(item)) {
         return (
-          <View className="p-4 border gap-2 border-gray-200 rounded-2xl">
-            <View className="bg-gray-200 h-6 w-full rounded-md" />
-            <View className="flex-row justify-between">
-              <View className="gap-2">
-                <View className="bg-gray-200 h-4 w-16 rounded-md" />
-                <View className="bg-gray-200 h-4 w-16 rounded-md" />
+          <View
+            className={clx('px-2 w-full', {
+              'pl-0': index % numColumns === 0,
+              'pr-0': (index + 1) % numColumns === 0,
+            })}
+          >
+            <View className="p-4 border gap-2 border-gray-200 rounded-2xl w-full">
+              <View className="bg-gray-200 h-6 w-full rounded-md" />
+              <View className="flex-row justify-between">
+                <View className="gap-2">
+                  <View className="bg-gray-200 h-4 w-16 rounded-md" />
+                  <View className="bg-gray-200 h-4 w-16 rounded-md" />
+                </View>
+                <View className="bg-gray-200 mt-auto h-4 w-32 rounded-md" />
               </View>
-              <View className="bg-gray-200 mt-auto h-4 w-32 rounded-md" />
             </View>
           </View>
         );
@@ -89,41 +97,48 @@ export default function OrdersScreen() {
             : item.customer?.email || 'Unknown Customer';
 
       return (
-        <TouchableOpacity
-          className="p-4 border justify-between flex-row gap-4 border-gray-200 rounded-2xl"
-          onPress={() => handleOrderPress(item)}
-          activeOpacity={0.7}
+        <View
+          className={clx('px-2 w-full', {
+            'pl-0': index % numColumns === 0,
+            'pr-0': (index + 1) % numColumns === 0,
+          })}
         >
-          <View className="gap-4 flex-1">
-            <View className="flex-1">
-              <Text textBreakStrategy="balanced" className="text-xl shrink">
-                Order #{item.display_id || item.id.slice(-6)}
-              </Text>
-            </View>
-            <View className="flex-row gap-2">
-              <UserRound size={16} className="mt-1" />
+          <TouchableOpacity
+            className="p-4 border justify-between flex-row gap-4 border-gray-200 rounded-2xl w-full"
+            onPress={() => handleOrderPress(item)}
+            activeOpacity={0.7}
+          >
+            <View className="gap-4 flex-1">
               <View className="flex-1">
-                <Text textBreakStrategy="balanced" className="shrink">
-                  {customerName}
+                <Text textBreakStrategy="balanced" className="text-xl shrink">
+                  Order #{item.display_id || item.id.slice(-6)}
                 </Text>
               </View>
+              <View className="flex-row gap-2">
+                <UserRound size={16} className="mt-1" />
+                <View className="flex-1">
+                  <Text textBreakStrategy="balanced" className="shrink">
+                    {customerName}
+                  </Text>
+                </View>
+              </View>
+              <Text>
+                {item.total.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: item.currency_code,
+                  currencyDisplay: 'narrowSymbol',
+                })}
+              </Text>
             </View>
-            <Text>
-              {item.total.toLocaleString('en-US', {
-                style: 'currency',
-                currency: item.currency_code,
-                currencyDisplay: 'narrowSymbol',
-              })}
-            </Text>
-          </View>
-          <View className="gap-4">
-            <Text className="text-gray-300 mb-auto text-right flex-1 flex-wrap">{formatDate(item.created_at)}</Text>
-            <OrderStatus order={item} />
-          </View>
-        </TouchableOpacity>
+            <View className="gap-4">
+              <Text className="text-gray-300 mb-auto text-right flex-1 flex-wrap">{formatDate(item.created_at)}</Text>
+              <OrderStatus order={item} />
+            </View>
+          </TouchableOpacity>
+        </View>
       );
     },
-    [handleOrderPress],
+    [handleOrderPress, numColumns],
   );
 
   const data = React.useMemo(() => {
@@ -173,6 +188,7 @@ export default function OrdersScreen() {
         data={data}
         renderItem={renderOrder}
         keyExtractor={(item) => item.id}
+        numColumns={numColumns}
         estimatedItemSize={120}
         refreshing={ordersQuery.isRefetching}
         ItemSeparatorComponent={() => <View className="w-full h-4" />}
@@ -183,11 +199,7 @@ export default function OrdersScreen() {
             <Text className="text-center text-xl mt-2">No orders match{'\n'}the search</Text>
           </View>
         }
-        contentContainerStyle={Platform.select({
-          ios: {
-            paddingBottom: bottomTabBarHeight + 10,
-          },
-        })}
+        contentContainerClassName="pb-4"
         ListFooterComponent={
           ordersQuery.isFetchingNextPage ? (
             <View className="gap-4 mt-4">

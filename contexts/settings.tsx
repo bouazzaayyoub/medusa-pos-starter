@@ -71,17 +71,26 @@ export const useSettings = () => {
 };
 
 export const useUpdateSettings = (
-  options?: Omit<UseMutationOptions<SettingsStateType, DefaultError, SettingsStateType>, 'mutationKey' | 'mutationFn'>,
+  options?: Omit<UseMutationOptions<void, DefaultError, Partial<SettingsStateType>>, 'mutationKey' | 'mutationFn'>,
 ) => {
   const client = useQueryClient();
 
   return useMutation({
     mutationKey: ['update-settings'],
     mutationFn: async (settings) => {
-      await SecureStore.setItemAsync('sales_channel_id', settings.sales_channel_id);
-      await SecureStore.setItemAsync('stock_location_id', settings.stock_location_id);
-      await SecureStore.setItemAsync('region_id', settings.region_id);
-      return settings;
+      if (!settings.sales_channel_id && !settings.stock_location_id && !settings.region_id) {
+        throw new Error('At least one setting must be provided');
+      }
+
+      if (settings.sales_channel_id) {
+        await SecureStore.setItemAsync('sales_channel_id', settings.sales_channel_id);
+      }
+      if (settings.stock_location_id) {
+        await SecureStore.setItemAsync('stock_location_id', settings.stock_location_id);
+      }
+      if (settings.region_id) {
+        await SecureStore.setItemAsync('region_id', settings.region_id);
+      }
     },
     ...options,
     onSuccess: async (...args) => {

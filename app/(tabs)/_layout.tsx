@@ -1,6 +1,5 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform } from 'react-native';
 
 import { useCurrentDraftOrder } from '@/api/hooks/draft-orders';
 import { HapticTab } from '@/components/HapticTab';
@@ -20,14 +19,6 @@ export default function TabLayout() {
         tabBarInactiveTintColor: '#B5B5B5',
         headerShown: false,
         tabBarButton: HapticTab,
-        // tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
         animation: 'shift',
       }}
     >
