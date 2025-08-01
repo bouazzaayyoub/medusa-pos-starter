@@ -1,6 +1,6 @@
 import { useMedusaSdk } from '@/contexts/auth';
-import { AdminCreateSalesChannel, AdminSalesChannelListParams } from '@medusajs/types';
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { AdminCreateSalesChannel, AdminSalesChannelListParams, AdminSalesChannelResponse } from '@medusajs/types';
+import { useInfiniteQuery, useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query';
 
 const PER_PAGE = 20;
 
@@ -28,7 +28,12 @@ export const useSalesChannels = (query?: Omit<AdminSalesChannelListParams, 'offs
   });
 };
 
-export const useCreateSalesChannel = () => {
+export const useCreateSalesChannel = (
+  options?: Omit<
+    UseMutationOptions<AdminSalesChannelResponse, Error, AdminCreateSalesChannel>,
+    'mutationKey' | 'mutationFn'
+  >,
+) => {
   const sdk = useMedusaSdk();
   const queryClient = useQueryClient();
 
@@ -37,11 +42,14 @@ export const useCreateSalesChannel = () => {
     mutationFn: async (data: AdminCreateSalesChannel) => {
       return sdk.admin.salesChannel.create(data);
     },
-    onSuccess: async () => {
+    ...options,
+    onSuccess: async (...args) => {
       await queryClient.invalidateQueries({
         queryKey: ['sales-channels'],
         exact: false,
       });
+
+      return options?.onSuccess?.(...args);
     },
   });
 };

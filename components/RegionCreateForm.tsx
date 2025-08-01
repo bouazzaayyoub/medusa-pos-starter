@@ -3,7 +3,6 @@ import { useCreateRegion } from '@/api/hooks/regions';
 import { COUNTRIES } from '@/constants/countries';
 import { AdminRegion } from '@medusajs/types';
 import React from 'react';
-import { Alert } from 'react-native';
 import * as z from 'zod/v4';
 import { Form } from './form/Form';
 import { FormButton } from './form/FormButton';
@@ -35,25 +34,23 @@ const RegionCreateForm: React.FC<RegionCreateFormProps> = ({
     is_tax_inclusive: false,
   },
 }) => {
-  const createRegion = useCreateRegion();
+  const createRegion = useCreateRegion({
+    onSuccess: (data) => {
+      onRegionCreated(data.region);
+    },
+  });
   const currenciesQuery = useCurrencies();
 
-  const handleCreateRegion = async (data: RegionFormData) => {
-    try {
-      const result = await createRegion.mutateAsync({
+  const handleCreateRegion = (data: RegionFormData) =>
+    createRegion
+      .mutateAsync({
         name: data.name,
         currency_code: data.currency_code,
         countries: data.country_codes || [],
         automatic_taxes: data.automatic_taxes,
         is_tax_inclusive: data.is_tax_inclusive,
-      });
-      onRegionCreated(result.region);
-      return result.region;
-    } catch (error) {
-      Alert.alert('Error', 'Failed to create region');
-      throw error;
-    }
-  };
+      })
+      .catch(() => {});
 
   const currencyOptions =
     currenciesQuery.data?.pages?.flatMap((page) =>
@@ -101,7 +98,7 @@ const RegionCreateForm: React.FC<RegionCreateFormProps> = ({
         description="Prices include taxes (tax-inclusive) vs. taxes added at checkout (tax-exclusive)"
       />
 
-      <FormButton isPending={createRegion.isPending} disabled={createRegion.isPending} className="mt-auto">
+      <FormButton isPending={createRegion.isPending} className="mt-auto">
         Create Region
       </FormButton>
     </Form>
