@@ -3,7 +3,6 @@ import { ProvinceField } from '@/components/form/ProvinceField';
 import { COUNTRIES } from '@/constants/countries';
 import { AdminStockLocation } from '@medusajs/types';
 import React from 'react';
-import { Alert } from 'react-native';
 import * as z from 'zod/v4';
 import { Form } from './form/Form';
 import { FormButton } from './form/FormButton';
@@ -28,17 +27,20 @@ const stockLocationSchema = z.object({
 type StockLocationFormData = z.infer<typeof stockLocationSchema>;
 
 const StockLocationCreateForm: React.FC<StockLocationCreateFormProps> = ({ onStockLocationCreated, defaultValues }) => {
-  const createStockLocation = useCreateStockLocation();
+  const createStockLocation = useCreateStockLocation({
+    onSuccess: (data) => {
+      onStockLocationCreated(data.stock_location);
+    },
+  });
 
-  // Prepare country options for SelectField
   const countryOptions = COUNTRIES.map((country) => ({
     label: country.name,
     value: country.alpha2,
   }));
 
-  const handleCreateStockLocation = async (data: StockLocationFormData) => {
-    try {
-      const result = await createStockLocation.mutateAsync({
+  const handleCreateStockLocation = (data: StockLocationFormData) =>
+    createStockLocation
+      .mutateAsync({
         name: data.name,
         address: {
           address_1: data.address_1,
@@ -48,14 +50,8 @@ const StockLocationCreateForm: React.FC<StockLocationCreateFormProps> = ({ onSto
           province: data.province || '',
           postal_code: data.postal_code || '',
         },
-      });
-      onStockLocationCreated(result.stock_location);
-      return result.stock_location;
-    } catch (error) {
-      Alert.alert('Error', 'Failed to create stock location');
-      throw error;
-    }
-  };
+      })
+      .catch(() => {});
 
   return (
     <Form
@@ -100,9 +96,7 @@ const StockLocationCreateForm: React.FC<StockLocationCreateFormProps> = ({ onSto
 
       <ProvinceField name="province" countryFieldName="country_code" placeholder="Province/State (optional)" />
 
-      <FormButton isPending={createStockLocation.isPending} disabled={createStockLocation.isPending}>
-        Create Stock Location
-      </FormButton>
+      <FormButton isPending={createStockLocation.isPending}>Create Stock Location</FormButton>
     </Form>
   );
 };
