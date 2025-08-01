@@ -2,7 +2,6 @@
 import { AppStatusBar } from '@/components/AppStatusBar';
 import '../global.css';
 
-import { ProductDetailsHeader } from '@/components/ProductDetailsHeader';
 import { SplashScreenController } from '@/components/SplashScreenController';
 import { AuthProvider, useAuthCtx } from '@/contexts/auth';
 import { useSettings } from '@/contexts/settings';
@@ -78,9 +77,13 @@ function App() {
         <Stack.Screen
           name="product-details"
           options={{
-            presentation: 'modal',
+            presentation: 'transparentModal',
             title: 'Product Details',
-            header: () => <ProductDetailsHeader />,
+            headerShown: false,
+            animation: 'none',
+            animationDuration: 0,
+            gestureEnabled: false,
+            fullScreenGestureShadowEnabled: false,
           }}
         />
         <Stack.Screen

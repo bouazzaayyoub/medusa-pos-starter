@@ -28,13 +28,12 @@ import { QuantityPicker } from '@/components/ui/QuantityPicker';
 import { Text } from '@/components/ui/Text';
 import { useSettings } from '@/contexts/settings';
 import { AdminDraftOrder, AdminOrderLineItem, AdminPromotion } from '@medusajs/types';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import type { FlashListProps, FlashList as FlashListType } from '@shopify/flash-list';
 import { AnimatedFlashList as FlashList, ListRenderItem } from '@shopify/flash-list';
 import { useIsMutating } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import * as React from 'react';
-import { Alert, Image, Platform, Pressable, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Pressable, TouchableOpacity, View } from 'react-native';
 import Animated, { SequencedTransition, SlideOutLeft } from 'react-native-reanimated';
 import { useSafeAreaFrame } from 'react-native-safe-area-context';
 import * as z from 'zod/v4';
@@ -389,7 +388,6 @@ export default function CartScreen() {
   const cancelDraftOrder = useCancelDraftOrder();
   const updateDraftOrderItem = useUpdateDraftOrderItem();
   const isUpdatingDraftOrder = useIsMutating({ mutationKey: ['draft-order'], exact: false });
-  const bottomTabBarHeight = useBottomTabBarHeight();
   const itemsListRef = React.useRef<FlashListType<AdminOrderLineItem>>(null);
 
   const onItemRemove = React.useCallback(
@@ -432,26 +430,12 @@ export default function CartScreen() {
   );
 
   if (draftOrder.isLoading || settings.isLoading) {
-    return (
-      <CartSkeleton
-        style={Platform.select({
-          ios: {
-            paddingBottom: bottomTabBarHeight + 10,
-          },
-        })}
-      />
-    );
+    return <CartSkeleton />;
   }
 
   if (draftOrder.isError || settings.isError) {
     return (
-      <Layout
-        style={Platform.select({
-          ios: {
-            paddingBottom: bottomTabBarHeight + 10,
-          },
-        })}
-      >
+      <Layout>
         <Text className="text-4xl">Cart</Text>
         <View className="flex-1 items-center  gap-2 justify-center">
           <InfoBanner variant="ghost" colorScheme="error" className="w-40">
@@ -474,13 +458,7 @@ export default function CartScreen() {
 
   if (!draftOrder.data?.draft_order || !draftOrder.data?.draft_order.items.length) {
     return (
-      <Layout
-        style={Platform.select({
-          ios: {
-            paddingBottom: bottomTabBarHeight + 10,
-          },
-        })}
-      >
+      <Layout>
         <Text className="text-4xl">Cart</Text>
         <View className="flex-1 items-center gap-1 justify-center">
           <ShoppingCart size={24} />
@@ -554,13 +532,7 @@ export default function CartScreen() {
         }
       />
 
-      <View
-        style={Platform.select({
-          ios: {
-            paddingBottom: bottomTabBarHeight + 10,
-          },
-        })}
-      >
+      <View className="pb-2.5">
         {windowDimensions.width >= 768 && windowDimensions.height >= 900 && (
           <CartSummaryHeader
             onAddPromotion={(code) => addPromotion.mutate(code)}
