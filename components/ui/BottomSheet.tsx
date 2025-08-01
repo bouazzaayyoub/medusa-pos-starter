@@ -1,6 +1,7 @@
 import { X } from '@/components/icons/x';
 import { Text } from '@/components/ui/Text';
 import { clx } from '@/utils/clx';
+import { useKeyboard } from '@react-native-community/hooks';
 import React from 'react';
 import {
   Animated,
@@ -10,10 +11,9 @@ import {
   PanResponder,
   PanResponderGestureState,
   TouchableOpacity,
-  useWindowDimensions,
   View,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaFrame, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export interface BottomSheetProps extends Pick<ModalProps, 'visible' | 'onRequestClose'> {
   title?: string;
@@ -44,7 +44,8 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
   ...modalProps
 }) => {
   const safeAreaInsets = useSafeAreaInsets();
-  const windowDimensions = useWindowDimensions();
+  const windowDimensions = useSafeAreaFrame();
+  const keyboard = useKeyboard();
 
   const translateY = React.useRef(new Animated.Value(300)).current;
   const overlayOpacity = React.useRef(new Animated.Value(0)).current;
@@ -240,7 +241,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
           <View
             className={clx('bg-white rounded-2xl w-full overflow-hidden shrink grow-0', containerClassName)}
             style={{
-              paddingBottom: safeAreaInsets.bottom,
+              paddingBottom: keyboard.keyboardShown ? keyboard.keyboardHeight : safeAreaInsets.bottom,
             }}
           >
             <View className="w-full items-center py-2 shrink-0 grow-0" {...panResponder.panHandlers}>
