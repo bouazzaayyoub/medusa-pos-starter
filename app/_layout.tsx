@@ -108,9 +108,9 @@ function App() {
           }}
         />
 
-        <Stack.Screen name="region" options={{ headerShown: false }} />
+        <Stack.Screen name="settings/region" options={{ headerShown: false }} />
 
-        <Stack.Screen name="create-region" options={{ headerShown: false }} />
+        <Stack.Screen name="settings/create-region" options={{ headerShown: false }} />
 
         <Stack.Screen name="settings/sales-channel" options={{ headerShown: false }} />
 
