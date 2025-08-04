@@ -97,10 +97,10 @@ export function MultiSelectField({
 
   useEffect(() => {
     if (showFloating) {
-      floatingPlaceholderTranslateY.value = withTiming(-12, { duration: 150 });
+      floatingPlaceholderTranslateY.value = withTiming(8, { duration: 150 });
       floatingPlaceholderScale.value = withTiming(0.67, { duration: 150 });
     } else {
-      floatingPlaceholderTranslateY.value = withTiming(0, { duration: 150 });
+      floatingPlaceholderTranslateY.value = withTiming(15, { duration: 150 });
       floatingPlaceholderScale.value = withTiming(1, { duration: 150 });
     }
   }, [floatingPlaceholderScale, floatingPlaceholderTranslateY, showFloating]);
@@ -130,14 +130,24 @@ export function MultiSelectField({
   return (
     <View className={clx('w-full', className)}>
       <View className="relative">
+        {floatingPlaceholder && (
+          <Animated.Text
+            className={clx('absolute left-3 z-10 text-base', error ? 'text-error-500' : 'text-gray-300')}
+            style={floatingPlaceholderStyle}
+            pointerEvents="none"
+          >
+            {placeholder}
+          </Animated.Text>
+        )}
+
         <TouchableOpacity
           onPress={() => setIsVisible(true)}
           className={clx(
-            'bg-white rounded-xl px-4 py-5 text-lg leading-6 border border-gray-200 flex-row justify-between items-center',
+            'bg-white rounded-xl px-3 py-4 text-lg leading-6 border border-gray-200 flex-row justify-between items-center',
             {
               'border-error-500': error,
               [buttonClassName]: buttonClassName,
-              'pt-6 pb-4': floatingPlaceholder && variant === 'primary',
+              'pt-7 pb-1': floatingPlaceholder && variant === 'primary',
               'bg-black': selectedOptions.length > 0 && variant === 'secondary',
               'rounded-full py-3 justify-center': variant === 'secondary',
             },
@@ -180,16 +190,6 @@ export function MultiSelectField({
           </View>
         </TouchableOpacity>
         <ChevronDown size={24} className="text-gray-300 absolute top-1/2 -translate-y-1/2 right-4" />
-
-        {floatingPlaceholder && (
-          <Animated.Text
-            className={clx('absolute left-4 z-10 text-lg top-5', error ? 'text-error-500' : 'text-gray-300')}
-            style={floatingPlaceholderStyle}
-            pointerEvents="none"
-          >
-            {placeholder}
-          </Animated.Text>
-        )}
       </View>
 
       {error && <Text className={clx('text-error-500 text-sm mt-1', errorClassName)}>{error.message}</Text>}
