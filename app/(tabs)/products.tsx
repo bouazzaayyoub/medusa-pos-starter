@@ -117,13 +117,8 @@ export default function ProductsScreen() {
   }, [productsQuery]);
 
   return (
-    <Layout>
-      <SearchInput
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        placeholder="Search products..."
-        className="mb-6"
-      />
+    <Layout className="gap-6">
+      <SearchInput value={searchQuery} onChangeText={setSearchQuery} placeholder="Search products..." />
 
       <FlashList
         data={data}
