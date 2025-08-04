@@ -18,6 +18,25 @@ const isPlaceholderProduct = (
   return typeof product.id === 'string' && product.id.startsWith('placeholder_');
 };
 
+const ProductPlaceholder: React.FC<{ index: number; numColumns: number }> = ({ index, numColumns }) => {
+  return (
+    <View
+      className={clx('px-1 flex-1', {
+        'pl-0': index % numColumns === 0,
+        'pr-0': (index + 1) % numColumns === 0,
+      })}
+    >
+      <View className="flex-1 gap-4">
+        <View className="bg-gray-200 aspect-square rounded-lg overflow-hidden" />
+        <View>
+          <View className="mb-1 h-4 rounded-md bg-gray-200" />
+          <View className="mb-1 h-4 w-1/3 rounded-md bg-gray-200" />
+        </View>
+      </View>
+    </View>
+  );
+};
+
 export default function ProductsScreen() {
   const settings = useSettings();
   const numColumns = useBreakpointValue({ base: 2, md: 3, xl: 4 });
@@ -38,20 +57,7 @@ export default function ProductsScreen() {
   const renderProduct = React.useCallback(
     ({ item, index }: ListRenderItemInfo<AdminProduct | { id: `placeholder_${string}` }>) => {
       if (isPlaceholderProduct(item)) {
-        return (
-          <View
-            className={clx('gap-4 flex w-full px-1', {
-              'pl-0': index % numColumns === 0,
-              'pr-0': (index + 1) % numColumns === 0,
-            })}
-          >
-            <View className="bg-gray-200 aspect-square rounded-lg overflow-hidden" />
-            <View>
-              <View className="mb-1 h-4 rounded-md bg-gray-200" />
-              <View className="mb-1 h-4 w-1/3 rounded-md bg-gray-200" />
-            </View>
-          </View>
-        );
+        return <ProductPlaceholder index={index} numColumns={numColumns} />;
       }
 
       const thumbnail = item.thumbnail || item.images?.[0]?.url;
@@ -138,78 +144,21 @@ export default function ProductsScreen() {
         contentContainerClassName="pb-4"
         ListFooterComponent={
           productsQuery.isFetchingNextPage ? (
-            <View className="flex-row flex-wrap">
-              <View className="flex w-1/2 mb-6 px-1">
-                <View className="flex-1 gap-4">
-                  <View className="bg-gray-200 aspect-square rounded-lg overflow-hidden" />
-                  <View>
-                    <View className="mb-1 h-4 rounded-md bg-gray-200" />
-                    <View className="mb-1 h-4 w-1/3 rounded-md bg-gray-200" />
-                  </View>
-                </View>
+            <View className="gap-6">
+              <View className="flex-row">
+                {Array.from({ length: numColumns }, (_, index) => (
+                  <ProductPlaceholder key={index} index={index} numColumns={numColumns} />
+                ))}
               </View>
-              <View className="flex w-1/2 mb-6 px-1">
-                <View className="flex-1 gap-4">
-                  <View className="bg-gray-200 aspect-square rounded-lg overflow-hidden" />
-                  <View>
-                    <View className="mb-1 h-4 rounded-md bg-gray-200" />
-                    <View className="mb-1 h-4 w-1/3 rounded-md bg-gray-200" />
-                  </View>
-                </View>
+              <View className="flex-row">
+                {Array.from({ length: numColumns }, (_, index) => (
+                  <ProductPlaceholder key={index} index={index} numColumns={numColumns} />
+                ))}
               </View>
-              <View className="flex w-1/2 mb-6 px-1">
-                <View className="flex-1 gap-4">
-                  <View className="bg-gray-200 aspect-square rounded-lg overflow-hidden" />
-                  <View>
-                    <View className="mb-1 h-4 rounded-md bg-gray-200" />
-                    <View className="mb-1 h-4 w-1/3 rounded-md bg-gray-200" />
-                  </View>
-                </View>
-              </View>
-              <View className="flex w-1/2 mb-6 px-1">
-                <View className="flex-1 gap-4">
-                  <View className="bg-gray-200 aspect-square rounded-lg overflow-hidden" />
-                  <View>
-                    <View className="mb-1 h-4 rounded-md bg-gray-200" />
-                    <View className="mb-1 h-4 w-1/3 rounded-md bg-gray-200" />
-                  </View>
-                </View>
-              </View>
-              <View className="flex w-1/2 mb-6 px-1">
-                <View className="flex-1 gap-4">
-                  <View className="bg-gray-200 aspect-square rounded-lg overflow-hidden" />
-                  <View>
-                    <View className="mb-1 h-4 rounded-md bg-gray-200" />
-                    <View className="mb-1 h-4 w-1/3 rounded-md bg-gray-200" />
-                  </View>
-                </View>
-              </View>
-              <View className="flex w-1/2 mb-6 px-1">
-                <View className="flex-1 gap-4">
-                  <View className="bg-gray-200 aspect-square rounded-lg overflow-hidden" />
-                  <View>
-                    <View className="mb-1 h-4 rounded-md bg-gray-200" />
-                    <View className="mb-1 h-4 w-1/3 rounded-md bg-gray-200" />
-                  </View>
-                </View>
-              </View>
-              <View className="flex w-1/2 mb-6 px-1">
-                <View className="flex-1 gap-4">
-                  <View className="bg-gray-200 aspect-square rounded-lg overflow-hidden" />
-                  <View>
-                    <View className="mb-1 h-4 rounded-md bg-gray-200" />
-                    <View className="mb-1 h-4 w-1/3 rounded-md bg-gray-200" />
-                  </View>
-                </View>
-              </View>
-              <View className="flex w-1/2 mb-6 px-1">
-                <View className="flex-1 gap-4">
-                  <View className="bg-gray-200 aspect-square rounded-lg overflow-hidden" />
-                  <View>
-                    <View className="mb-1 h-4 rounded-md bg-gray-200" />
-                    <View className="mb-1 h-4 w-1/3 rounded-md bg-gray-200" />
-                  </View>
-                </View>
+              <View className="flex-row">
+                {Array.from({ length: numColumns }, (_, index) => (
+                  <ProductPlaceholder key={index} index={index} numColumns={numColumns} />
+                ))}
               </View>
             </View>
           ) : null

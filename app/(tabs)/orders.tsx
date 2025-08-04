@@ -28,6 +28,31 @@ const isValidOrderStatus = (status: string): status is (typeof allowedOrderStatu
   return allowedOrderStatuses.includes(status as (typeof allowedOrderStatuses)[number]);
 };
 
+const OrderPlaceholder: React.FC<{ index: number; numColumns: number }> = ({ index, numColumns }) => {
+  return (
+    <View
+      className={clx('px-2 flex-1', {
+        'pl-0': index % numColumns === 0,
+        'pr-0': (index + 1) % numColumns === 0,
+      })}
+    >
+      <View className="p-4 border gap-2 border-gray-200 rounded-2xl w-full">
+        <View className="w-full flex-row gap-2 justify-between">
+          <View className="bg-gray-200 h-6 w-1/3 rounded-md" />
+          <View className="bg-gray-200 h-5 w-24 rounded-md" />
+        </View>
+        <View className="flex-row justify-between">
+          <View className="gap-2 w-1/2">
+            <View className="bg-gray-200 h-4 w-full rounded-md" />
+            <View className="bg-gray-200 h-4 w-20 rounded-md" />
+          </View>
+          <View className="bg-gray-200 mt-auto h-8 w-32 rounded-full" />
+        </View>
+      </View>
+    </View>
+  );
+};
+
 export default function OrdersScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
@@ -68,25 +93,7 @@ export default function OrdersScreen() {
   const renderOrder = React.useCallback(
     ({ item, index }: ListRenderItemInfo<AdminOrder | { id: `placeholder_${string}` }>) => {
       if (isPlaceholderOrder(item)) {
-        return (
-          <View
-            className={clx('px-2 w-full', {
-              'pl-0': index % numColumns === 0,
-              'pr-0': (index + 1) % numColumns === 0,
-            })}
-          >
-            <View className="p-4 border gap-2 border-gray-200 rounded-2xl w-full">
-              <View className="bg-gray-200 h-6 w-full rounded-md" />
-              <View className="flex-row justify-between">
-                <View className="gap-2">
-                  <View className="bg-gray-200 h-4 w-16 rounded-md" />
-                  <View className="bg-gray-200 h-4 w-16 rounded-md" />
-                </View>
-                <View className="bg-gray-200 mt-auto h-4 w-32 rounded-md" />
-              </View>
-            </View>
-          </View>
-        );
+        return <OrderPlaceholder index={index} numColumns={numColumns} />;
       }
 
       const customerName =
@@ -203,18 +210,21 @@ export default function OrdersScreen() {
         ListFooterComponent={
           ordersQuery.isFetchingNextPage ? (
             <View className="gap-4 mt-4">
-              {Array.from({ length: 3 }).map((_, index) => (
-                <View key={index} className="p-4 border gap-2 border-gray-200 rounded-2xl">
-                  <View className="bg-gray-200 h-6 w-full rounded-md" />
-                  <View className="flex-row justify-between">
-                    <View className="gap-2">
-                      <View className="bg-gray-200 h-4 w-16 rounded-md" />
-                      <View className="bg-gray-200 h-4 w-16 rounded-md" />
-                    </View>
-                    <View className="bg-gray-200 mt-auto h-4 w-32 rounded-md" />
-                  </View>
-                </View>
-              ))}
+              <View className="flex-row">
+                {Array.from({ length: numColumns }).map((_, index) => (
+                  <OrderPlaceholder key={index} index={index} numColumns={numColumns} />
+                ))}
+              </View>
+              <View className="flex-row">
+                {Array.from({ length: numColumns }).map((_, index) => (
+                  <OrderPlaceholder key={index} index={index} numColumns={numColumns} />
+                ))}
+              </View>
+              <View className="flex-row">
+                {Array.from({ length: numColumns }).map((_, index) => (
+                  <OrderPlaceholder key={index} index={index} numColumns={numColumns} />
+                ))}
+              </View>
             </View>
           ) : null
         }
