@@ -6,7 +6,7 @@ import { UserRound } from '@/components/icons/user-round';
 import { MultiSelectFilter } from '@/components/MultiSelectFilter';
 import { SearchInput } from '@/components/SearchInput';
 import { Layout } from '@/components/ui/Layout';
-import { OrderStatus } from '@/components/ui/OrderStatus';
+import { OrderListStatus } from '@/components/ui/OrderStatus';
 import { Text } from '@/components/ui/Text';
 import { useBreakpointValue } from '@/hooks/useBreakpointValue';
 import { clx } from '@/utils/clx';
@@ -139,7 +139,7 @@ export default function OrdersScreen() {
             </View>
             <View className="gap-4">
               <Text className="text-gray-300 mb-auto text-right flex-1 flex-wrap">{formatDate(item.created_at)}</Text>
-              <OrderStatus order={item} />
+              <OrderListStatus order={item} />
             </View>
           </TouchableOpacity>
         </View>
