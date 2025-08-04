@@ -1,8 +1,9 @@
 import { DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL } from '@/api/hooks/draft-orders';
 import { useOrder } from '@/api/hooks/orders';
+import { InfoBanner } from '@/components/InfoBanner';
 import { LoadingBanner } from '@/components/LoadingBanner';
 import { BottomSheet } from '@/components/ui/BottomSheet';
-import { Button } from '@/components/ui/Button';
+import { FulfillmentStatus, OrderStatus, PaymentStatus } from '@/components/ui/OrderStatus';
 import { Text } from '@/components/ui/Text';
 import { useSettings } from '@/contexts/settings';
 import { AdminOrder, AdminOrderLineItem } from '@medusajs/types';
@@ -32,9 +33,9 @@ const CustomerInformation: React.FC<{
   if (isPosDefaultCustomer) {
     return (
       <View className="mb-4 gap-4">
-        <Text className="text-xl">Information</Text>
+        <Text className="text-xl">Customer</Text>
         <View>
-          <Text className="text-gray-300 text-sm">
+          <Text className="text-sm text-gray-300">
             No customer information available. This order was created on POS without a customer.
           </Text>
         </View>
@@ -50,18 +51,147 @@ const CustomerInformation: React.FC<{
   ].filter((item) => item.value && item.value.trim().length > 0);
 
   return (
-    <View className="gap-4 mb-4">
-      <Text className="text-xl">Information</Text>
+    <View className="mb-4 gap-4">
+      <Text className="text-xl">Customer</Text>
       {info.map((item, index) => (
         <View key={item.label}>
-          <View className="flex-row justify-between gap-4 items-center">
-            <Text className="text-gray-300 flex-1 text-sm">{item.label}</Text>
-            <Text className="flex-1 text-sm flex-wrap text-right">{item.value}</Text>
+          <View className="flex-row items-center justify-between gap-4">
+            <Text className="max-w-32 flex-1 text-sm text-gray-300">{item.label}</Text>
+            <Text className="flex-1 flex-wrap text-right text-sm">{item.value}</Text>
           </View>
-          {index < info.length - 1 && <View className="h-hairline bg-gray-200 mt-2 w-full" />}
+          {index < info.length - 1 && <View className="mt-2 h-hairline w-full bg-gray-200" />}
         </View>
       ))}
     </View>
+  );
+};
+
+const OrderInformation: React.FC<{
+  order: AdminOrder;
+  currency: string;
+}> = ({ order, currency }) => {
+  const automaticTaxesOn = !!order.region?.automatic_taxes;
+  const shippingTotal = automaticTaxesOn ? order.shipping_total : order.shipping_subtotal;
+
+  return (
+    <>
+      <Text className="mb-4 text-xl">Order Details</Text>
+      <View className="mb-6 gap-2">
+        <View className="flex-row items-center justify-between gap-4">
+          <Text className="flex-1 text-sm text-gray-300">Order Status</Text>
+          <OrderStatus order={order} />
+        </View>
+        <View className="flex-row items-center justify-between gap-4">
+          <Text className="flex-1 text-sm text-gray-300">Payment Status</Text>
+          <PaymentStatus order={order} />
+        </View>
+        <View className="flex-row items-center justify-between gap-4">
+          <Text className="flex-1 text-sm text-gray-300">Fulfillment Status</Text>
+          <FulfillmentStatus order={order} />
+        </View>
+      </View>
+      <CustomerInformation order={order} />
+      <Text className="mb-4 text-xl">Summary</Text>
+      <View className="gap-2">
+        <View className="flex-row items-center justify-between gap-4">
+          <Text className="flex-1 text-sm text-gray-300">
+            {automaticTaxesOn ? 'Subtotal (incl. taxes)' : 'Subtotal'}
+          </Text>
+          <Text className="flex-1 flex-wrap text-right text-sm">
+            {order.item_total.toLocaleString('en-US', {
+              style: 'currency',
+              currency,
+              currencyDisplay: 'narrowSymbol',
+            })}
+          </Text>
+        </View>
+        {shippingTotal > 0 && (
+          <View className="flex-row items-center justify-between gap-4">
+            <Text className="flex-1 text-sm text-gray-300">
+              {automaticTaxesOn ? 'Shipping (incl. taxes)' : 'Shipping'}
+            </Text>
+            <Text className="flex-1 flex-wrap text-right text-sm">
+              {shippingTotal.toLocaleString('en-US', {
+                style: 'currency',
+                currency,
+                currencyDisplay: 'narrowSymbol',
+              })}
+            </Text>
+          </View>
+        )}
+        {order.discount_total > 0 && (
+          <View className="flex-row items-center justify-between gap-4">
+            <Text className="flex-1 text-sm text-gray-300">Discount</Text>
+            <Text className="flex-1 flex-wrap text-right text-sm">
+              {(order.discount_total * -1).toLocaleString('en-US', {
+                style: 'currency',
+                currency,
+                currencyDisplay: 'narrowSymbol',
+              })}
+            </Text>
+          </View>
+        )}
+        <View className="flex-row items-center justify-between gap-4">
+          <Text className="flex-1 text-sm text-gray-300">Tax Total{automaticTaxesOn ? ' (included)' : ''}</Text>
+          <Text className="flex-1 flex-wrap text-right text-sm">
+            {order.tax_total.toLocaleString('en-US', {
+              style: 'currency',
+              currency,
+              currencyDisplay: 'narrowSymbol',
+            })}
+          </Text>
+        </View>
+        <View className="h-hairline w-full bg-gray-200" />
+        <View className="flex-row items-center justify-between gap-4">
+          <Text className="flex-1 text-sm text-gray-300">Paid Total</Text>
+          <Text className="flex-1 flex-wrap text-right text-sm">
+            {order.payment_collections
+              .reduce(
+                (acc, collection) => acc + (collection.captured_amount ?? 0) - (collection.refunded_amount ?? 0),
+                0,
+              )
+              .toLocaleString('en-US', {
+                style: 'currency',
+                currency,
+                currencyDisplay: 'narrowSymbol',
+              })}
+          </Text>
+        </View>
+        <View className="flex-row items-center justify-between gap-4">
+          <Text className="flex-1 text-sm text-gray-300">Credit Lines Total</Text>
+          <Text className="flex-1 flex-wrap text-right text-sm">
+            {(order.credit_lines ?? [])
+              .reduce((acc, collection) => acc + ((collection.amount as unknown as number) ?? 0), 0)
+              .toLocaleString('en-US', {
+                style: 'currency',
+                currency,
+                currencyDisplay: 'narrowSymbol',
+              })}
+          </Text>
+        </View>
+        <View className="flex-row items-center justify-between gap-4">
+          <Text className="flex-1 text-sm text-gray-300">Outstanding Amount</Text>
+          <Text className="flex-1 flex-wrap text-right text-sm">
+            {(order.summary.pending_difference ?? 0).toLocaleString('en-US', {
+              style: 'currency',
+              currency,
+              currencyDisplay: 'narrowSymbol',
+            })}
+          </Text>
+        </View>
+      </View>
+      <View className="my-4 h-hairline w-full bg-gray-200" />
+      <View className="mb-4 flex-row items-center justify-between gap-4">
+        <Text className="flex-1 text-lg">Total</Text>
+        <Text className="flex-1 flex-wrap text-right text-lg">
+          {order.total.toLocaleString('en-US', {
+            style: 'currency',
+            currency,
+            currencyDisplay: 'narrowSymbol',
+          })}
+        </Text>
+      </View>
+    </>
   );
 };
 
@@ -76,32 +206,43 @@ export default function OrderDetailsScreen() {
   const orderQuery = useOrder(orderId);
   const [visible, setVisible] = React.useState(false);
 
-  const currency = orderQuery.data?.order.region?.currency_code || settings.data?.region?.currency_code || 'EUR';
+  const currency =
+    orderQuery.data?.order.currency_code ||
+    orderQuery.data?.order.region?.currency_code ||
+    settings.data?.region?.currency_code ||
+    'EUR';
 
-  const renderItem = ({ item }: { item: AdminOrderLineItem }) => {
-    const thumbnail = item.thumbnail || item.product?.thumbnail || item.product?.images?.[0]?.url;
-    return (
-      <TouchableOpacity className="flex-row gap-4">
-        <View className="bg-gray-300 h-16 aspect-square rounded-lg overflow-hidden">
-          {thumbnail && <Image source={{ uri: thumbnail }} className="w-full h-full object-cover" />}
-        </View>
-        <View>
-          <Text>{item.title}</Text>
-          <Text className="text-gray-300 text-sm mt-auto">{item.variant?.options?.map((o) => o.value).join(', ')}</Text>
-        </View>
-        <View className="ml-auto">
-          <Text>
-            {item.total.toLocaleString('en-US', {
-              style: 'currency',
-              currency,
-              currencyDisplay: 'narrowSymbol',
-            })}
-          </Text>
-          <Text className="text-gray-300 text-sm mt-auto text-right">Qty: {item.quantity.toLocaleString('en-US')}</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
+  const renderItem = React.useCallback(
+    ({ item }: { item: AdminOrderLineItem }) => {
+      const thumbnail = item.thumbnail || item.product?.thumbnail || item.product?.images?.[0]?.url;
+      return (
+        <TouchableOpacity className="flex-row gap-4">
+          <View className="aspect-square h-16 overflow-hidden rounded-lg bg-gray-300">
+            {thumbnail && <Image source={{ uri: thumbnail }} className="h-full w-full object-cover" />}
+          </View>
+          <View>
+            <Text>{item.title}</Text>
+            <Text className="mt-auto text-sm text-gray-300">
+              {item.variant?.options?.map((o) => o.value).join(', ')}
+            </Text>
+          </View>
+          <View className="ml-auto">
+            <Text>
+              {item.total.toLocaleString('en-US', {
+                style: 'currency',
+                currency,
+                currencyDisplay: 'narrowSymbol',
+              })}
+            </Text>
+            <Text className="mt-auto text-right text-sm text-gray-300">
+              Qty: {item.quantity.toLocaleString('en-US')}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      );
+    },
+    [currency],
+  );
 
   useEffect(() => {
     setTimeout(() => {
@@ -113,83 +254,40 @@ export default function OrderDetailsScreen() {
 
   return (
     <BottomSheet visible={visible} onClose={() => router.back()} showCloseButton={false} dismissOnOverlayPress>
-      {({ animateOut }) => (
-        <>
-          <View className="flex-row gap-4 mb-4 items-center justify-between">
-            <Text className="text-2xl">Order #{orderNumber}</Text>
-            <Text className="text-gray-300">{orderDate}</Text>
-          </View>
-          {orderQuery.isLoading || settings.isLoading ? (
-            <LoadingBanner variant="ghost" className="my-11">
-              Fetching order details...
-            </LoadingBanner>
-          ) : (
-            <FlatList
-              data={orderQuery.data?.order.items}
-              renderItem={renderItem}
-              ItemSeparatorComponent={() => <View className="w-full h-hairline bg-gray-200 my-6" />}
-              contentContainerClassName="pt-4 grow-0"
-              className="grow-0 shrink"
-              ListFooterComponent={() =>
-                orderQuery.isSuccess && settings.isSuccess ? (
-                  <>
-                    <CustomerInformation order={orderQuery.data.order} />
-                    <Text className="mb-4 text-xl">Price</Text>
-                    <View className="gap-2">
-                      <View className="flex-row justify-between gap-4 items-center">
-                        <Text className="text-gray-300 flex-1 text-sm">Taxes</Text>
-                        <Text className="flex-1 text-sm flex-wrap text-right">
-                          {orderQuery.data.order.tax_total.toLocaleString('en-US', {
-                            style: 'currency',
-                            currency,
-                            currencyDisplay: 'narrowSymbol',
-                          })}
-                        </Text>
-                      </View>
-                      <View className="flex-row justify-between gap-4 items-center">
-                        <Text className="text-gray-300 flex-1 text-sm">Subtotal</Text>
-                        <Text className="flex-1 text-sm flex-wrap text-right">
-                          {orderQuery.data.order.subtotal.toLocaleString('en-US', {
-                            style: 'currency',
-                            currency,
-                            currencyDisplay: 'narrowSymbol',
-                          })}
-                        </Text>
-                      </View>
-                      {orderQuery.data.order.discount_total > 0 && (
-                        <View className="flex-row justify-between gap-4 items-center">
-                          <Text className="text-gray-300 flex-1 text-sm">Discount</Text>
-                          <Text className="flex-1 text-sm flex-wrap text-right">
-                            {(orderQuery.data.order.discount_total * -1).toLocaleString('en-US', {
-                              style: 'currency',
-                              currency,
-                              currencyDisplay: 'narrowSymbol',
-                            })}
-                          </Text>
-                        </View>
-                      )}
-                    </View>
-                    <View className="h-hairline bg-gray-200 my-4 w-full" />
-                    <View className="flex-row justify-between gap-4 mb-4 items-center">
-                      <Text className="flex-1 text-lg">Total</Text>
-                      <Text className="flex-1 text-lg flex-wrap text-right">
-                        {orderQuery.data.order.total.toLocaleString('en-US', {
-                          style: 'currency',
-                          currency: orderQuery.data.order.region?.currency_code || settings.data?.region?.currency_code,
-                          currencyDisplay: 'narrowSymbol',
-                        })}
-                      </Text>
-                    </View>
-                  </>
-                ) : null
-              }
-              ListFooterComponentClassName="mt-14"
-            />
-          )}
-          <Button variant="outline" onPress={() => animateOut(() => router.back())} className="mt-4">
-            Close
-          </Button>
-        </>
+      <View className="mb-4 flex-row items-center justify-between gap-4">
+        <Text className="text-2xl">Order #{orderNumber}</Text>
+        <Text className="text-gray-300">{orderDate}</Text>
+      </View>
+      {orderQuery.isLoading || settings.isLoading ? (
+        <LoadingBanner variant="ghost" className="my-11">
+          Fetching order details...
+        </LoadingBanner>
+      ) : orderQuery.isError ? (
+        <View className="py-11">
+          <InfoBanner colorScheme="error">
+            {orderQuery.error.message || 'An unknown error occurred while fetching the order details.'}
+          </InfoBanner>
+        </View>
+      ) : settings.isError ? (
+        <View className="py-11">
+          <InfoBanner colorScheme="error">
+            {settings.error.message || 'An unknown error occurred while fetching the settings.'}
+          </InfoBanner>
+        </View>
+      ) : orderQuery.isSuccess && orderQuery.data ? (
+        <FlatList
+          data={orderQuery.data.order.items}
+          renderItem={renderItem}
+          ItemSeparatorComponent={() => <View className="my-6 h-hairline w-full bg-gray-200" />}
+          className="shrink grow-0"
+          contentContainerClassName="pt-4 grow-0 pb-safe-offset-4"
+          ListFooterComponentClassName="mt-14"
+          ListFooterComponent={<OrderInformation order={orderQuery.data.order} currency={currency} />}
+        />
+      ) : (
+        <View className="py-11">
+          <InfoBanner colorScheme="error">An unknown error occurred while fetching the order details.</InfoBanner>
+        </View>
       )}
     </BottomSheet>
   );

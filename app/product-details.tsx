@@ -33,7 +33,7 @@ const ProductImagesCarousel: React.FC<{ images: AdminProductImage[] }> = ({ imag
   }, []);
 
   const renderItem = React.useCallback<CarouselRenderItem<AdminProductImage>>(({ item }) => {
-    return <Image source={{ uri: item.url }} className="w-full h-full object-cover" />;
+    return <Image source={{ uri: item.url }} className="h-full w-full object-cover" />;
   }, []);
 
   const onPressPagination = React.useCallback(
@@ -135,7 +135,7 @@ const ProductDetails: React.FC<{ animateOut: (callback?: () => void) => void }> 
 
   if (productQuery.isError) {
     return (
-      <View className="flex-1 justify-center items-center p-6">
+      <View className="flex-1 items-center justify-center p-6">
         <Text className="text-center text-lg">Error loading product details</Text>
       </View>
     );
@@ -143,7 +143,7 @@ const ProductDetails: React.FC<{ animateOut: (callback?: () => void) => void }> 
 
   if (!productQuery.data) {
     return (
-      <View className="flex-1 justify-center items-center p-6">
+      <View className="flex-1 items-center justify-center p-6">
         <Text className="text-center text-lg">Product not found</Text>
       </View>
     );
@@ -159,18 +159,18 @@ const ProductDetails: React.FC<{ animateOut: (callback?: () => void) => void }> 
   const price = selectedVariant?.prices?.find((price) => price.currency_code === currencyCode);
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <View className="mb-6 bg-gray-100 rounded-xl overflow-hidden">
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="pb-safe-offset-4">
+      <View className="mb-6 overflow-hidden rounded-xl bg-gray-100">
         {productQuery.data.product.images && productQuery.data.product.images.length ? (
           <ProductImagesCarousel images={productQuery.data.product.images} />
         ) : (
-          <View className="flex-1 justify-center items-center bg-gray-300">
+          <View className="flex-1 items-center justify-center bg-gray-300">
             <Text className="text-gray-500">No Image</Text>
           </View>
         )}
       </View>
 
-      <View className="flex-row mb-4 justify-between items-center">
+      <View className="mb-4 flex-row items-center justify-between">
         <Text className="text-xl">{productName}</Text>
         {price && (
           <View className="flex-row">
@@ -193,10 +193,10 @@ const ProductDetails: React.FC<{ animateOut: (callback?: () => void) => void }> 
         )}
       </View>
 
-      <Text className="text-gray-400 text-sm mb-6">{productQuery.data.product.description}</Text>
+      <Text className="mb-6 text-sm text-gray-400">{productQuery.data.product.description}</Text>
 
       {productQuery.data.product.options && (
-        <View className="gap-6 mb-4">
+        <View className="mb-4 gap-6">
           {productQuery.data.product.options.map((option) => (
             <OptionPicker
               key={option.id}
@@ -204,6 +204,20 @@ const ProductDetails: React.FC<{ animateOut: (callback?: () => void) => void }> 
               values={(option.values ?? []).map((value) => ({
                 id: value.id,
                 value: value.value,
+                className: productQuery.data.product.variants?.some((variant) => {
+                  const newSelectedOptions = {
+                    ...selectedOptions,
+                    [option.id]: value.value,
+                  };
+
+                  return Object.entries(newSelectedOptions).every(([optionId, optionValue]) =>
+                    variant.options?.some(
+                      (variantOption) => variantOption.option_id === optionId && variantOption.value === optionValue,
+                    ),
+                  );
+                })
+                  ? undefined
+                  : 'opacity-50',
               }))}
               onValueChange={(value) => {
                 setSelectedOptions((prev) => ({

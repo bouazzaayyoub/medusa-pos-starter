@@ -117,6 +117,7 @@ export function MultiSelectField({
           keyboardShouldPersistTaps="always"
           renderItem={renderItem}
           ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200" />}
+          contentContainerClassName="pb-safe-offset-4"
           ListEmptyComponent={
             <View className="p-8 items-center">
               <Text className="text-gray-500">

@@ -65,9 +65,9 @@ const DraftOrderItem: React.FC<{ item: AdminOrderLineItem; onRemove?: (item: Adm
       rightClassName="bg-white"
       rightWidth={80}
       rightContent={(reset) => (
-        <View className="flex-1 w-full h-full justify-center items-center p-2">
+        <View className="h-full w-full flex-1 items-center justify-center p-2">
           <Pressable
-            className="flex-1 w-full h-full justify-center items-center rounded-xl bg-error-500"
+            className="h-full w-full flex-1 items-center justify-center rounded-xl bg-error-500"
             onPress={() => {
               reset();
               onRemove?.(item);
@@ -79,16 +79,16 @@ const DraftOrderItem: React.FC<{ item: AdminOrderLineItem; onRemove?: (item: Adm
       )}
     >
       <View className="flex-row gap-4 bg-white py-6">
-        <View className="h-[5.25rem] w-[5.25rem] rounded-xl bg-gray-200 overflow-hidden">
-          {thumbnail && <Image source={{ uri: thumbnail }} className="w-full h-full object-cover" />}
+        <View className="h-[5.25rem] w-[5.25rem] overflow-hidden rounded-xl bg-gray-200">
+          {thumbnail && <Image source={{ uri: thumbnail }} className="h-full w-full object-cover" />}
         </View>
-        <View className="flex-col gap-2 flex-1">
+        <View className="flex-1 flex-col gap-2">
           <Text>{item.product_title}</Text>
           {item.variant && item.variant.options && item.variant.options.length > 0 && (
             <View className="flex-row flex-wrap items-center gap-x-2 gap-y-1">
               {item.variant.options.map((option) => (
                 <View className="flex-row gap-1" key={option.id}>
-                  <Text className="text-gray-400 text-sm">{option.option?.title || option.option_id}:</Text>
+                  <Text className="text-sm text-gray-400">{option.option?.title || option.option_id}:</Text>
                   <Text className="text-sm">{option.value}</Text>
                 </View>
               ))}
@@ -146,9 +146,9 @@ const PromotionItem: React.FC<{
         isAutomatic
           ? undefined
           : (reset) => (
-              <View className="flex-1 w-full h-full justify-center items-center p-2">
+              <View className="h-full w-full flex-1 items-center justify-center p-2">
                 <Pressable
-                  className="flex-1 w-full h-full justify-center items-center rounded-xl bg-error-500"
+                  className="h-full w-full flex-1 items-center justify-center rounded-xl bg-error-500"
                   onPress={async () => {
                     await onRemove?.(item);
                     reset();
@@ -161,27 +161,27 @@ const PromotionItem: React.FC<{
       }
     >
       <View className="flex-row gap-4 bg-white py-6">
-        <View className="h-[5.25rem] w-[5.25rem] rounded-xl bg-green-100 overflow-hidden flex items-center justify-center">
+        <View className="flex h-[5.25rem] w-[5.25rem] items-center justify-center overflow-hidden rounded-xl bg-green-100">
           <View className="flex items-center justify-center">
             <Tag size={32} color="#10B981" />
           </View>
         </View>
-        <View className="flex-col gap-2 flex-1">
+        <View className="flex-1 flex-col gap-2">
           <View className="flex-row items-center gap-2">
             <Text className="font-medium">{item.code || 'Promotion'}</Text>
           </View>
           <View className="flex-row flex-wrap items-center gap-x-2 gap-y-1">
             <View className="flex-row gap-1">
-              <Text className="text-gray-400 text-sm">Type:</Text>
+              <Text className="text-sm text-gray-400">Type:</Text>
               <Text className="text-sm">{getPromotionTypeLabel(item.type)}</Text>
             </View>
             <View className="flex-row gap-1">
-              <Text className="text-gray-400 text-sm">Method:</Text>
+              <Text className="text-sm text-gray-400">Method:</Text>
               <Text className="text-sm">{isAutomatic ? 'Automatic' : 'Code'}</Text>
             </View>
             {item.campaign && (
               <View className="flex-row gap-1">
-                <Text className="text-gray-400 text-sm">Campaign:</Text>
+                <Text className="text-sm text-gray-400">Campaign:</Text>
                 <Text className="text-sm">{item.campaign.name}</Text>
               </View>
             )}
@@ -209,7 +209,7 @@ const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({ cu
         onPress={() => router.push('/customer-lookup')}
         variant="outline"
         icon={<UserRoundPlus size={20} />}
-        className="justify-between mb-6"
+        className="mb-6 justify-between"
       >
         Add Customer
       </Button>
@@ -228,7 +228,7 @@ const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({ cu
           },
         });
       }}
-      className="flex-row mb-6 pb-6 border-b border-gray-200 justify-between items-center"
+      className="mb-6 flex-row items-center justify-between border-b border-gray-200 pb-6"
     >
       {customerName.length > 0 ? (
         <View>
@@ -271,7 +271,7 @@ const PromotionBadge: React.FC<PromotionBadgeProps> = ({ onAddPromotion, isAddin
         onPress={() => setIsDialogOpen(true)}
         variant="outline"
         icon={<Tag size={16} />}
-        className="justify-between mb-4"
+        className="mb-4 justify-between"
       >
         Add Promotion
       </Button>
@@ -319,15 +319,15 @@ const CartSummaryHeader: React.FC<
   }
 > = ({ onAddPromotion, isAddingPromotion, isLoading, taxTotal, subtotal, discountTotal, currencyCode }) => {
   return (
-    <View className="pt-6 pb-4">
+    <View className="pb-4 pt-6">
       <PromotionBadge onAddPromotion={onAddPromotion} isAddingPromotion={isAddingPromotion} />
       <View className="gap-2">
         <View className="flex-row justify-between">
-          <Text className="text-gray-400 text-sm">Taxes</Text>
+          <Text className="text-sm text-gray-400">Taxes</Text>
           {isLoading ? (
-            <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
+            <View className="h-[17px] w-1/4 rounded-md bg-gray-200" />
           ) : (
-            <Text className="text-gray-400 text-sm">
+            <Text className="text-sm text-gray-400">
               {taxTotal.toLocaleString('en-US', {
                 style: 'currency',
                 currency: currencyCode,
@@ -337,11 +337,11 @@ const CartSummaryHeader: React.FC<
           )}
         </View>
         <View className="flex-row justify-between">
-          <Text className="text-gray-400 text-sm">Subtotal</Text>
+          <Text className="text-sm text-gray-400">Subtotal</Text>
           {isLoading ? (
-            <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
+            <View className="h-[17px] w-1/4 rounded-md bg-gray-200" />
           ) : (
-            <Text className="text-gray-400 text-sm">
+            <Text className="text-sm text-gray-400">
               {subtotal.toLocaleString('en-US', {
                 style: 'currency',
                 currency: currencyCode,
@@ -352,11 +352,11 @@ const CartSummaryHeader: React.FC<
         </View>
         {discountTotal > 0 && (
           <View className="flex-row justify-between">
-            <Text className="text-gray-400 text-sm">Discount</Text>
+            <Text className="text-sm text-gray-400">Discount</Text>
             {isLoading ? (
-              <View className="w-1/4 h-[17px] rounded-md bg-gray-200" />
+              <View className="h-[17px] w-1/4 rounded-md bg-gray-200" />
             ) : (
-              <Text className="text-gray-400 text-sm">
+              <Text className="text-sm text-gray-400">
                 {(discountTotal * -1)?.toLocaleString('en-US', {
                   style: 'currency',
                   currency: currencyCode,
@@ -437,7 +437,7 @@ export default function CartScreen() {
     return (
       <Layout>
         <Text className="text-4xl">Cart</Text>
-        <View className="flex-1 items-center  gap-2 justify-center">
+        <View className="flex-1 items-center  justify-center gap-2">
           <InfoBanner variant="ghost" colorScheme="error" className="w-40">
             Failed to load cart
           </InfoBanner>
@@ -460,7 +460,7 @@ export default function CartScreen() {
     return (
       <Layout>
         <Text className="text-4xl">Cart</Text>
-        <View className="flex-1 items-center gap-1 justify-center">
+        <View className="flex-1 items-center justify-center gap-1">
           <ShoppingCart size={24} />
           <Text className="text-xl">Your cart is empty</Text>
           <Text className="text-gray-300">Add products to begin</Text>
@@ -505,7 +505,7 @@ export default function CartScreen() {
 
   return (
     <Layout>
-      <Text className="text-4xl mb-6">Cart</Text>
+      <Text className="mb-6 text-4xl">Cart</Text>
       <CustomerBadge customer={draftOrder.data.draft_order.customer} />
       <FlashList
         ref={itemsListRef}
@@ -530,6 +530,7 @@ export default function CartScreen() {
             />
           ) : null
         }
+        showsVerticalScrollIndicator={false}
       />
 
       <View className="pb-2.5">
@@ -544,11 +545,11 @@ export default function CartScreen() {
             currencyCode={draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code}
           />
         )}
-        <View className="h-hairline bg-gray-200 mb-4" />
-        <View className="flex-row justify-between mb-6">
+        <View className="mb-4 h-hairline bg-gray-200" />
+        <View className="mb-6 flex-row justify-between">
           <Text className="text-lg">Total</Text>
           {draftOrder.isFetching || isUpdatingDraftOrder > 0 ? (
-            <View className="w-1/4 h-7 rounded-md bg-gray-200" />
+            <View className="h-7 w-1/4 rounded-md bg-gray-200" />
           ) : (
             <Text className="text-lg">
               {draftOrder.data.draft_order.total?.toLocaleString('en-US', {

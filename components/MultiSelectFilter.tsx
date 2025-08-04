@@ -154,6 +154,7 @@ export const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({
             const isSelected = value.includes(item.value);
             return defaultRenderOption(item, isSelected);
           }}
+          contentContainerClassName="pb-safe-offset-4"
           ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200" />}
           ListEmptyComponent={
             <View className="p-8 items-center">

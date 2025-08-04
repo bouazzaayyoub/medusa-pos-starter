@@ -6,7 +6,13 @@ import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
 export const ProductDetailsSkeleton = () => (
-  <BottomSheet visible={true} onClose={() => router.back()} showCloseButton={false} dismissOnOverlayPress>
+  <BottomSheet
+    visible={true}
+    onClose={() => router.back()}
+    showCloseButton={false}
+    dismissOnOverlayPress
+    contentClassName="pb-safe-offset-4"
+  >
     <View className="rounded-xl bg-gray-200 mb-4 aspect-[4/3] w-full" />
 
     <View className="flex-row mb-2 gap-14 items-center">
