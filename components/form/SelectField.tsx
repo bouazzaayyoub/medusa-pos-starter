@@ -32,7 +32,7 @@ export function SelectField({
   const defaultRenderOption = (option: SelectOption, isSelected: boolean, onSelect: (value: string) => void) => (
     <TouchableOpacity
       key={option.value}
-      className={clx('p-4 flex-row justify-between items-center bg-white')}
+      className={clx('flex-row items-center justify-between bg-white p-4')}
       onPress={() => onSelect(option.value)}
     >
       <Text
@@ -92,9 +92,9 @@ export function SelectField({
     return (
       <>
         {searchable && (
-          <View className="p-4 border-b border-gray-200">
+          <View className="border-b border-gray-200 p-4">
             <TextInput
-              className="border border-gray-200 rounded-lg px-4 py-3"
+              className="rounded-lg border border-gray-200 px-4 py-3"
               placeholder="Search options..."
               placeholderTextColor="#9CA3AF"
               value={searchQuery}
@@ -114,7 +114,7 @@ export function SelectField({
           ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200" />}
           contentContainerClassName="pb-safe-offset-4"
           ListEmptyComponent={
-            <View className="p-8 items-center">
+            <View className="items-center p-8">
               <Text className="text-gray-500">
                 {searchable && searchQuery ? 'No options found' : 'No options available'}
               </Text>

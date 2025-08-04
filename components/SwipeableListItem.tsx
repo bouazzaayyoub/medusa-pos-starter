@@ -205,9 +205,9 @@ export const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
           : []),
       ]}
     >
-      <View className="absolute inset-0 overflow-hidden flex-1 flex-row justify-between">
+      <View className="absolute inset-0 flex-1 flex-row justify-between overflow-hidden">
         <View
-          className={clx('w-1/2 z-10 flex-row justify-start items-start', leftClassName)}
+          className={clx('z-10 w-1/2 flex-row items-start justify-start', leftClassName)}
           accessible={!!leftContent}
           accessibilityElementsHidden={!leftContent}
         >
@@ -234,7 +234,7 @@ export const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
         </View>
         <View className="flex-none" />
         <View
-          className={clx('w-1/2 z-10 flex-row justify-end items-start', rightClassName)}
+          className={clx('z-10 w-1/2 flex-row items-start justify-end', rightClassName)}
           accessible={!!rightContent}
           accessibilityElementsHidden={!rightContent}
         >

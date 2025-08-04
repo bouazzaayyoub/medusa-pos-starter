@@ -32,9 +32,9 @@ export default function SettingsScreen() {
 
   return (
     <LayoutWithScroll>
-      <Text className="text-4xl mb-6">Settings</Text>
+      <Text className="mb-6 text-4xl">Settings</Text>
 
-      <Text className="text-2xl mb-4">Sales Channel</Text>
+      <Text className="mb-4 text-2xl">Sales Channel</Text>
 
       <Button
         onPress={() => router.push('/settings/sales-channel')}
@@ -46,7 +46,7 @@ export default function SettingsScreen() {
         {settings.data?.sales_channel?.name || '—'}
       </Button>
 
-      <Text className="text-2xl mb-4">Region</Text>
+      <Text className="mb-4 text-2xl">Region</Text>
 
       <Button
         onPress={() => router.push('/settings/region')}
@@ -58,7 +58,7 @@ export default function SettingsScreen() {
         {settings.data?.region?.name || '—'}
       </Button>
 
-      <Text className="text-2xl mb-4">Stock location</Text>
+      <Text className="mb-4 text-2xl">Stock location</Text>
 
       <Button
         onPress={() => router.push('/settings/stock-location')}
@@ -70,7 +70,7 @@ export default function SettingsScreen() {
         {settings.data?.stock_location?.name || '—'}
       </Button>
 
-      <Text className="text-2xl mb-4">Reset</Text>
+      <Text className="mb-4 text-2xl">Reset</Text>
 
       <Button
         variant="outline"
@@ -82,7 +82,7 @@ export default function SettingsScreen() {
         Clear Settings
       </Button>
 
-      <Text className="text-2xl mb-4">Account</Text>
+      <Text className="mb-4 text-2xl">Account</Text>
 
       <Button onPress={handleLogout} className="mb-4">
         Log Out

@@ -18,7 +18,7 @@ const MultiSelectOption: React.FC<{
 }> = ({ option, isSelected, toggleOption }) => (
   <TouchableOpacity
     key={option.value}
-    className={clx('p-4 flex-row justify-between items-center bg-white')}
+    className={clx('flex-row items-center justify-between bg-white p-4')}
     onPress={() => {
       toggleOption(option.value);
     }}
@@ -97,9 +97,9 @@ export function MultiSelectField({
     return (
       <>
         {searchable && (
-          <View className="p-4 border-b border-gray-200">
+          <View className="border-b border-gray-200 p-4">
             <TextInput
-              className="border border-gray-200 rounded-lg px-4 py-3"
+              className="rounded-lg border border-gray-200 px-4 py-3"
               placeholder="Search options..."
               placeholderTextColor="#9CA3AF"
               value={searchQuery}
@@ -119,7 +119,7 @@ export function MultiSelectField({
           ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200" />}
           contentContainerClassName="pb-safe-offset-4"
           ListEmptyComponent={
-            <View className="p-8 items-center">
+            <View className="items-center p-8">
               <Text className="text-gray-500">
                 {searchable && searchQuery ? 'No options found' : 'No options available'}
               </Text>
@@ -153,7 +153,7 @@ export function MultiSelectField({
             {selectedOptions.length > 0 && variant === 'primary' ? (
               <View className="flex flex-row flex-wrap gap-1">
                 {selectedOptions.map((option) => (
-                  <View key={option.value} className="bg-gray-100 rounded-lg px-2 py-1 flex-row items-center mr-1 mb-1">
+                  <View key={option.value} className="mb-1 mr-1 flex-row items-center rounded-lg bg-gray-100 px-2 py-1">
                     <Text className="text-sm text-gray-700">{option.label}</Text>
                     <TouchableOpacity
                       onPress={(e) => {
@@ -168,9 +168,9 @@ export function MultiSelectField({
                 ))}
               </View>
             ) : selectedOptions.length > 0 && variant === 'secondary' ? (
-              <View className="flex-row gap-3 items-center">
+              <View className="flex-row items-center gap-3">
                 <Text className="text-lg text-white">{pl}</Text>
-                <View className="bg-white rounded-full mt-0.5 items-center px-1 justify-center aspect-square">
+                <View className="mt-0.5 aspect-square items-center justify-center rounded-full bg-white px-1">
                   <Text className="text-xs font-bold">{selectedOptions.length}</Text>
                 </View>
               </View>

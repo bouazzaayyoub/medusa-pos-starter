@@ -33,7 +33,7 @@ export const Button: React.FC<ButtonProps> = ({
         {
           'bg-black': variant === 'solid',
           'border border-gray-200 bg-transparent': variant === 'outline',
-          'bg-gray-100 border-gray-100': disabled || isPending,
+          'border-gray-100 bg-gray-100': disabled || isPending,
         },
         className,
       )}

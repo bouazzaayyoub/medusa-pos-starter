@@ -13,8 +13,8 @@ export default function StockLocationScreen() {
 
   return (
     <Layout className="pb-2.5">
-      <Text className="text-4xl mb-6">Setting Up</Text>
-      <Text className="text-2xl mb-2">Select stock location</Text>
+      <Text className="mb-6 text-4xl">Setting Up</Text>
+      <Text className="mb-2 text-2xl">Select stock location</Text>
       <Text className="mb-6 text-gray-300">
         Select where inventory will be sourced from, or add a new location if needed.
       </Text>
@@ -24,7 +24,7 @@ export default function StockLocationScreen() {
         onStockLocationSelect={setSelectedStockLocation}
       />
 
-      <View className="gap-4 mt-6">
+      <View className="mt-6 gap-4">
         <Button variant="outline" onPress={() => router.push('/settings/create-stock-location')}>
           Create New Stock Location
         </Button>

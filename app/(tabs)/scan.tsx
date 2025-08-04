@@ -81,21 +81,21 @@ export default function ScanScreen() {
 
   if (hasPermission === null) {
     return (
-      <SafeAreaView className="flex-1 bg-black justify-center items-center">
+      <SafeAreaView className="flex-1 items-center justify-center bg-black">
         <ActivityIndicator size="large" color="white" />
-        <Text className="text-white mt-4">Requesting camera permission...</Text>
+        <Text className="mt-4 text-white">Requesting camera permission...</Text>
       </SafeAreaView>
     );
   }
 
   if (hasPermission === false) {
     return (
-      <SafeAreaView className="flex-1 bg-black justify-center items-center p-5">
-        <Text className="text-white text-2xl mb-4 text-center">Camera Access Required</Text>
-        <Text className="text-white text-center opacity-70 mb-8">
+      <SafeAreaView className="flex-1 items-center justify-center bg-black p-5">
+        <Text className="mb-4 text-center text-2xl text-white">Camera Access Required</Text>
+        <Text className="mb-8 text-center text-white opacity-70">
           Please enable camera access in settings to scan barcodes
         </Text>
-        <TouchableOpacity className="border border-white rounded-lg p-4 items-center" onPress={handleGoBack}>
+        <TouchableOpacity className="items-center rounded-lg border border-white p-4" onPress={handleGoBack}>
           <Text className="text-white">Go Back</Text>
         </TouchableOpacity>
       </SafeAreaView>
@@ -103,7 +103,7 @@ export default function ScanScreen() {
   }
 
   return (
-    <View className="flex-1 bg-black relative">
+    <View className="relative flex-1 bg-black">
       {/* Camera View - Full Screen */}
       <CameraView
         style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
@@ -118,34 +118,34 @@ export default function ScanScreen() {
       />
 
       {/* Top Navigation with Safe Area */}
-      <View className="absolute top-0 left-0 right-0 z-30 px-6 flex-row justify-between items-center py-safe-offset-3">
-        <TouchableOpacity className="w-12 h-12 justify-center items-center" onPress={handleGoBack}>
+      <View className="py-safe-offset-3 absolute left-0 right-0 top-0 z-30 flex-row items-center justify-between px-6">
+        <TouchableOpacity className="h-12 w-12 items-center justify-center" onPress={handleGoBack}>
           <X size={32} color="white" />
         </TouchableOpacity>
 
-        <TouchableOpacity className="w-12 h-12 justify-center items-center" onPress={toggleTorch}>
+        <TouchableOpacity className="h-12 w-12 items-center justify-center" onPress={toggleTorch}>
           {enableTorch ? <Zap size={26} color="white" /> : <ZapOff size={26} color="white" />}
         </TouchableOpacity>
       </View>
 
       {/* Center Reticle Overlay */}
-      <View className="flex-1 justify-center items-center px-8 relative">
+      <View className="relative flex-1 items-center justify-center px-8">
         <View className="items-center">
           {/* Reticle Frame */}
-          <View className="w-64 h-64 relative">
+          <View className="relative h-64 w-64">
             {/* Corner brackets */}
-            <View className="absolute top-[3px] left-[3px] right-[3px] bottom-[3px] bg-[#ffffff4d] rounded-[29px]" />
-            <View className="absolute top-0 left-0 w-20 h-20 border-l-[3px] border-t-[3px] border-white rounded-tl-[32px]" />
-            <View className="absolute top-0 right-0 w-20 h-20 border-r-[3px] border-t-[3px] border-white rounded-tr-[32px]" />
-            <View className="absolute bottom-0 left-0 w-20 h-20 border-l-[3px] border-b-[3px] border-white rounded-bl-[32px]" />
-            <View className="absolute bottom-0 right-0 w-20 h-20 border-r-[3px] border-b-[3px] border-white rounded-br-[32px]" />
+            <View className="absolute bottom-[3px] left-[3px] right-[3px] top-[3px] rounded-[29px] bg-[#ffffff4d]" />
+            <View className="absolute left-0 top-0 h-20 w-20 rounded-tl-[32px] border-l-[3px] border-t-[3px] border-white" />
+            <View className="absolute right-0 top-0 h-20 w-20 rounded-tr-[32px] border-r-[3px] border-t-[3px] border-white" />
+            <View className="absolute bottom-0 left-0 h-20 w-20 rounded-bl-[32px] border-b-[3px] border-l-[3px] border-white" />
+            <View className="absolute bottom-0 right-0 h-20 w-20 rounded-br-[32px] border-b-[3px] border-r-[3px] border-white" />
 
             {/* Loading indicator when searching */}
             {scanBarcodeMutation.isPending && (
               <Animated.View
                 entering={FadeIn}
                 exiting={FadeOut}
-                className="absolute inset-0 justify-center items-center"
+                className="absolute inset-0 items-center justify-center"
               >
                 <ActivityIndicator size="large" color="white" />
               </Animated.View>
@@ -155,7 +155,7 @@ export default function ScanScreen() {
           {/* Scan Text */}
           {!scanBarcodeMutation.isPending && (
             <Animated.View entering={FadeIn} exiting={FadeOut} className="absolute top-full mt-6">
-              <Text className="text-white text-xl text-center">Scan barcode</Text>
+              <Text className="text-center text-xl text-white">Scan barcode</Text>
             </Animated.View>
           )}
         </View>
@@ -166,9 +166,9 @@ export default function ScanScreen() {
         <Animated.View
           entering={FadeIn}
           exiting={FadeOut}
-          className="absolute bottom-0 left-0 right-0 px-6 pb-safe-offset-4 flex items-center"
+          className="pb-safe-offset-4 absolute bottom-0 left-0 right-0 flex items-center px-6"
         >
-          <View className="bg-white px-4 py-2 rounded-3xl">
+          <View className="rounded-3xl bg-white px-4 py-2">
             <Text className="text-center">Searching...</Text>
           </View>
         </Animated.View>
@@ -178,16 +178,16 @@ export default function ScanScreen() {
         <Animated.View
           entering={FadeIn}
           exiting={FadeOut}
-          className="absolute bottom-0 left-0 right-0 px-6 pb-safe-offset-4 flex items-center z-50"
+          className="pb-safe-offset-4 absolute bottom-0 left-0 right-0 z-50 flex items-center px-6"
         >
           <TouchableOpacity
-            className="bg-error-500 px-4 py-2 rounded-3xl"
+            className="rounded-3xl bg-error-500 px-4 py-2"
             onPress={() => {
               setErrorMessage(null);
               scanBarcodeMutation.reset();
             }}
           >
-            <Text className="text-white text-center">{errorMessage}</Text>
+            <Text className="text-center text-white">{errorMessage}</Text>
           </TouchableOpacity>
         </Animated.View>
       )}

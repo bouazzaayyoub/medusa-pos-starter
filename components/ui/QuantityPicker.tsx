@@ -81,7 +81,7 @@ export function QuantityPicker({
         <View
           className={clx(
             'items-center justify-center',
-            variant === 'default' ? 'border-x border-gray-200 w-8' : 'w-12',
+            variant === 'default' ? 'w-8 border-x border-gray-200' : 'w-12',
           )}
         >
           <TextInput
