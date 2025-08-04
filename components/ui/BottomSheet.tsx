@@ -241,7 +241,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
           <View
             className={clx('bg-white rounded-2xl w-full overflow-hidden shrink grow-0', containerClassName)}
             style={{
-              paddingBottom: keyboard.keyboardShown ? keyboard.keyboardHeight : safeAreaInsets.bottom,
+              paddingBottom: keyboard.keyboardShown ? keyboard.keyboardHeight : 0,
             }}
           >
             <View className="w-full items-center py-2 shrink-0 grow-0" {...panResponder.panHandlers}>
@@ -260,7 +260,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
 
             {!title && !showCloseButton && <View {...panResponder.panHandlers} className="h-8 shrink-0 grow-0" />}
 
-            <View className={clx('px-4 pb-4 shrink grow-0', contentClassName)}>
+            <View className={clx('px-4 shrink grow-0', contentClassName)}>
               {typeof children === 'function' ? children({ animateOut }) : children}
             </View>
           </View>

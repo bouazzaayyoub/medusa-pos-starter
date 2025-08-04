@@ -125,7 +125,7 @@ export const DateRangeFilter = ({
           onChange={handleDateChange}
           minDate={minDate}
           maxDate={maxDate}
-          className="px-4"
+          className="px-4 pb-safe-offset-4"
           classNames={{
             days: '',
             day_cell: 'p-0.5',
