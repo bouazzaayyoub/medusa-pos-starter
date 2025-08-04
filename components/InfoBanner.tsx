@@ -6,10 +6,34 @@ import { clx } from '@/utils/clx';
 import { View } from 'react-native';
 
 type InfoBannerProps = {
+  /**
+   * The variant of the banner, either 'ghost' or 'solid'.
+   * 'ghost' variant will have a more subtle appearance.
+   * 'solid' variant will have a more pronounced background color.
+   *
+   * @default 'solid'
+   */
   variant?: 'ghost' | 'solid';
+  /**
+   * The color scheme of the banner, which determines the background and text colors.
+   * Options are 'error', 'warning', and 'success'.
+   *
+   * @default 'warning'
+   */
   colorScheme?: 'error' | 'warning' | 'success';
+  /**
+   * Additional class names for the text inside the banner.
+   * This can be used to apply custom styles to the text.
+   */
   textClassName?: string;
+  /**
+   * Additional class names for the banner wrapper.
+   * This can be used to apply custom styles to the banner container.
+   */
   className?: string;
+  /**
+   * The content to be displayed inside the banner.
+   */
   children?: React.ReactNode;
 };
 
@@ -33,7 +57,6 @@ export const InfoBanner = ({
   );
 
   const textClasses = clx(
-    'flex-1 flex-wrap',
     {
       'text-error-500': colorScheme === 'error',
       'text-warning-500': colorScheme === 'warning',
@@ -50,7 +73,9 @@ export const InfoBanner = ({
 
   return (
     <View className={wrapperClasses}>
-      <Text className={textClasses}>{children}</Text>
+      <View className="flex-1 flex-wrap">
+        <Text className={textClasses}>{children}</Text>
+      </View>
       {icon}
     </View>
   );
