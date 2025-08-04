@@ -114,7 +114,14 @@ export const DateRangeFilter = ({
           setIsVisible(true);
         }}
       >
-        <Text className={displayValue ? 'flex-1 flex-wrap text-white' : 'text-lg'}>{displayValue || placeholder}</Text>
+        <Text
+          className={clx({
+            'flex-1 flex-wrap text-white': displayValue,
+            'text-lg': !displayValue,
+          })}
+        >
+          {displayValue || placeholder}
+        </Text>
         <ChevronDown size={24} className={clx('mt-1', { 'text-white': displayValue })} />
       </TouchableOpacity>
 
