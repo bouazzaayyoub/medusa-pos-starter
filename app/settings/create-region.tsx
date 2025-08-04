@@ -12,8 +12,8 @@ export default function CreateRegionScreen() {
   return (
     <LayoutWithScroll>
       <KeyboardAvoidingView className="flex-1">
-        <Text className="text-4xl mb-6">Setting Up</Text>
-        <Text className="text-2xl mb-2">Create a region</Text>
+        <Text className="mb-6 text-4xl">Setting Up</Text>
+        <Text className="mb-2 text-2xl">Create a region</Text>
         <Text className="mb-6 text-gray-300">
           Create a new region that defines your market area, currency, and tax settings.
         </Text>

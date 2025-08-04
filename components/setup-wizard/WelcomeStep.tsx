@@ -10,8 +10,8 @@ interface WelcomeStepProps {
 export const WelcomeStep: React.FC<WelcomeStepProps> = ({ onComplete }) => {
   return (
     <View className="flex-1 p-5">
-      <Text className="text-4xl mb-6">Welcome</Text>
-      <Text className="text-2xl mb-2">You&apos;re all set to start selling</Text>
+      <Text className="mb-6 text-4xl">Welcome</Text>
+      <Text className="mb-2 text-2xl">You&apos;re all set to start selling</Text>
       <Text className="mb-6 text-gray-600">
         Your Point of Sale system is now configured and ready to use. You can start managing your sales, products, and
         customers right away.

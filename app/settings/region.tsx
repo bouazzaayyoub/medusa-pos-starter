@@ -13,15 +13,15 @@ export default function RegionScreen() {
 
   return (
     <Layout className="pb-2.5">
-      <Text className="text-4xl mb-6">Setting Up</Text>
-      <Text className="text-2xl mb-2">Choose a region</Text>
+      <Text className="mb-6 text-4xl">Setting Up</Text>
+      <Text className="mb-2 text-2xl">Choose a region</Text>
       <Text className="mb-6 text-gray-300">
         Select a region that defines your market area, currency, and tax settings.
       </Text>
 
       <RegionList selectedRegionId={selectedRegion} onRegionSelect={setSelectedRegion} />
 
-      <View className="gap-4 mt-6">
+      <View className="mt-6 gap-4">
         <Button variant="outline" onPress={() => router.push('/settings/create-region')}>
           Create New Region
         </Button>

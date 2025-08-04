@@ -21,13 +21,13 @@ const isPlaceholderProduct = (
 const ProductPlaceholder: React.FC<{ index: number; numColumns: number }> = ({ index, numColumns }) => {
   return (
     <View
-      className={clx('px-1 flex-1', {
+      className={clx('flex-1 px-1', {
         'pl-0': index % numColumns === 0,
         'pr-0': (index + 1) % numColumns === 0,
       })}
     >
       <View className="flex-1 gap-4">
-        <View className="bg-gray-200 aspect-square rounded-lg overflow-hidden" />
+        <View className="aspect-square overflow-hidden rounded-lg bg-gray-200" />
         <View>
           <View className="mb-1 h-4 rounded-md bg-gray-200" />
           <View className="mb-1 h-4 w-1/3 rounded-md bg-gray-200" />
@@ -73,14 +73,14 @@ export default function ProductsScreen() {
 
       return (
         <View
-          className={clx('px-1 w-full', {
+          className={clx('w-full px-1', {
             'pl-0': index % numColumns === 0,
             'pr-0': (index + 1) % numColumns === 0,
           })}
         >
           <TouchableOpacity className="flex w-full gap-4" onPress={() => handleProductPress(item)} activeOpacity={0.7}>
-            <View className="bg-gray-200 aspect-square rounded-lg overflow-hidden">
-              {thumbnail && <Image source={{ uri: thumbnail }} className="w-full h-full object-cover" />}
+            <View className="aspect-square overflow-hidden rounded-lg bg-gray-200">
+              {thumbnail && <Image source={{ uri: thumbnail }} className="h-full w-full object-cover" />}
             </View>
             <View>
               <Text className="mb-1 font-light">{item.title}</Text>
@@ -133,12 +133,12 @@ export default function ProductsScreen() {
         keyExtractor={(item) => item.id}
         estimatedItemSize={70}
         refreshing={productsQuery.isRefetching}
-        ItemSeparatorComponent={() => <View className="w-full h-6" />}
+        ItemSeparatorComponent={() => <View className="h-6 w-full" />}
         automaticallyAdjustKeyboardInsets
         ListEmptyComponent={
-          <View className="flex-1 mt-60 items-center">
+          <View className="mt-60 flex-1 items-center">
             <CircleAlert size={24} />
-            <Text className="text-center text-xl mt-2">No products match{'\n'}the search</Text>
+            <Text className="mt-2 text-center text-xl">No products match{'\n'}the search</Text>
           </View>
         }
         contentContainerClassName="pb-4"

@@ -83,10 +83,10 @@ export function TextField({
         )}
         <TextInput
           className={clx(
-            'bg-white rounded-xl px-3 py-4 border border-gray-200 focus:border-active-500',
+            'rounded-xl border border-gray-200 bg-white px-3 py-4 focus:border-active-500',
             {
               '!border-error-500': error,
-              'pt-6 pb-2': floatingPlaceholder,
+              'pb-2 pt-6': floatingPlaceholder,
               'pr-9': error && errorVariation === 'inline',
             },
             inputClassName,
@@ -104,7 +104,7 @@ export function TextField({
           {...textInputProps}
         />
         {secureTextEntry && (
-          <TouchableOpacity className="absolute p-1 right-2" onPress={() => setShowValue(!showValue)}>
+          <TouchableOpacity className="absolute right-2 p-1" onPress={() => setShowValue(!showValue)}>
             {showValue ? (
               <Eye size={16} className={error ? 'text-error-500' : 'text-gray-300'} />
             ) : (

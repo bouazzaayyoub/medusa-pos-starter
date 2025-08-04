@@ -1,5 +1,4 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
 
 import { useCurrentDraftOrder } from '@/api/hooks/draft-orders';
 import { HapticTab } from '@/components/HapticTab';

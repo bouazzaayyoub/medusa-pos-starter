@@ -212,7 +212,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
       onRequestClose={onRequestClose}
     >
       <Animated.View
-        className={clx('flex-1 justify-end items-center bg-black/50', className)}
+        className={clx('flex-1 items-center justify-end bg-black/50', className)}
         style={{
           paddingLeft: safeAreaInsets.left,
           paddingRight: safeAreaInsets.right,
@@ -228,7 +228,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
           }}
           pointerEvents="none"
         >
-          <View className="w-full h-4" />
+          <View className="h-4 w-full" />
         </View>
 
         <Animated.View
@@ -239,16 +239,16 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
           }}
         >
           <View
-            className={clx('bg-white rounded-2xl w-full overflow-hidden shrink grow-0', containerClassName)}
+            className={clx('w-full shrink grow-0 overflow-hidden rounded-2xl bg-white', containerClassName)}
             style={{
               paddingBottom: keyboard.keyboardShown ? keyboard.keyboardHeight : 0,
             }}
           >
-            <View className="w-full items-center py-2 shrink-0 grow-0" {...panResponder.panHandlers}>
-              <View className="bg-gray-200 w-10 h-1 rounded-full" />
+            <View className="w-full shrink-0 grow-0 items-center py-2" {...panResponder.panHandlers}>
+              <View className="h-1 w-10 rounded-full bg-gray-200" />
             </View>
             {(title || showCloseButton) && (
-              <View className={clx('flex-row p-4 justify-between gap-2 items-center shrink-0 grow-0', headerClassName)}>
+              <View className={clx('shrink-0 grow-0 flex-row items-center justify-between gap-2 p-4', headerClassName)}>
                 <View className="flex-1">{title && <Text>{title}</Text>}</View>
                 {showCloseButton && (
                   <TouchableOpacity onPress={handleCloseIconPress} accessibilityLabel="Close dialog">
@@ -260,7 +260,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
 
             {!title && !showCloseButton && <View {...panResponder.panHandlers} className="h-8 shrink-0 grow-0" />}
 
-            <View className={clx('px-4 shrink grow-0', contentClassName)}>
+            <View className={clx('shrink grow-0 px-4', contentClassName)}>
               {typeof children === 'function' ? children({ animateOut }) : children}
             </View>
           </View>
