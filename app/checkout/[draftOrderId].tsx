@@ -12,6 +12,7 @@ import { Dialog } from '@/components/ui/Dialog';
 import { Layout } from '@/components/ui/Layout';
 import { Text } from '@/components/ui/Text';
 import { useSettings } from '@/contexts/settings';
+import { formatDate } from '@/utils/date';
 import { AdminOrderLineItem } from '@medusajs/types';
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import { router, useLocalSearchParams, usePathname } from 'expo-router';
@@ -208,7 +209,7 @@ export default function CheckoutScreen() {
           </Text>
         </View>
 
-        <View className="flex-row gap-2">
+        <View className="pb-safe flex-row gap-2">
           <Button
             variant="outline"
             className="flex-1"
@@ -253,7 +254,14 @@ export default function CheckoutScreen() {
           className="mb-2"
           onPress={() => {
             router.replace('/orders');
-            router.push(`/orders/${draftOrderId}`);
+            router.push({
+              pathname: '/orders/[orderId]',
+              params: {
+                orderId: draftOrderId,
+                orderNumber: draftOrder.data.display_id,
+                orderDate: formatDate(draftOrder.data.created_at),
+              },
+            });
           }}
         >
           View Order

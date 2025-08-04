@@ -511,6 +511,7 @@ export const useCompleteDraftOrder = (
 ) => {
   const sdk = useMedusaSdk();
   const queryClient = useQueryClient();
+  const settings = useSettings();
 
   return useMutation({
     mutationKey: ['draft-order', draftOrderId, 'complete'],
@@ -518,6 +519,48 @@ export const useCompleteDraftOrder = (
       if (!draftOrderId) {
         throw new Error('Draft order ID is required to complete the order');
       }
+
+      const { draft_order } = await sdk.admin.draftOrder.retrieve(draftOrderId, {
+        fields:
+          '+tax_total,+discount_total,+subtotal,+total,+items.variant.options.*,+items.variant.options.option.*,+items.variant.inventory_quantity,+customer.*,+customer.addresses.*',
+      });
+
+      const stockLocation = settings.data?.stock_location;
+      const billingAddress =
+        draft_order.customer?.addresses.find(
+          (address) => address.is_default_billing || address.id === draft_order.customer?.default_billing_address_id,
+        ) || draft_order.customer?.addresses[0];
+
+      await sdk.admin.draftOrder.beginEdit(draftOrderId);
+      await sdk.admin.draftOrder.update(draftOrderId, {
+        billing_address: billingAddress
+          ? {
+              first_name: billingAddress.first_name ?? undefined,
+              last_name: billingAddress.last_name ?? undefined,
+              company: billingAddress.company ?? undefined,
+              address_1: billingAddress.address_1 ?? undefined,
+              address_2: billingAddress.address_2 ?? undefined,
+              postal_code: billingAddress.postal_code ?? undefined,
+              city: billingAddress.city ?? undefined,
+              province: billingAddress.province ?? undefined,
+              country_code: billingAddress.country_code ?? undefined,
+              phone: billingAddress.phone ?? undefined,
+            }
+          : undefined,
+        shipping_address: stockLocation
+          ? {
+              company: stockLocation.name,
+              address_1: stockLocation.address?.address_1 ?? undefined,
+              address_2: stockLocation.address?.address_2 ?? undefined,
+              postal_code: stockLocation.address?.postal_code ?? undefined,
+              city: stockLocation.address?.city ?? undefined,
+              province: stockLocation.address?.province ?? undefined,
+              country_code: stockLocation.address?.country_code ?? undefined,
+              phone: stockLocation.address?.phone ?? undefined,
+            }
+          : undefined,
+      });
+      await sdk.admin.draftOrder.confirmEdit(draftOrderId);
 
       await sdk.admin.draftOrder.convertToOrder(draftOrderId);
       await sdk.client.fetch(`/admin/orders/${draftOrderId}/complete`, {

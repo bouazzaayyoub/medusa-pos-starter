@@ -10,6 +10,7 @@ import { OrderListStatus } from '@/components/ui/OrderStatus';
 import { Text } from '@/components/ui/Text';
 import { useBreakpointValue } from '@/hooks/useBreakpointValue';
 import { clx } from '@/utils/clx';
+import { formatDate } from '@/utils/date';
 import { AdminOrder } from '@medusajs/types';
 import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
 import { router } from 'expo-router';
@@ -73,15 +74,6 @@ export default function OrdersScreen() {
         }
       : undefined,
   });
-
-  const formatDate = (dateString: string | Date) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  };
 
   const handleOrderPress = React.useCallback((order: AdminOrder) => {
     router.push({
