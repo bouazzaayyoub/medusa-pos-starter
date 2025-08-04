@@ -35,7 +35,7 @@ export function SizePicker({
               onPress={() => !isDisabled && onSizeChange(size)}
               disabled={isDisabled}
               className={clx(
-                'w-10 h-10 rounded-full border items-center justify-center disabled:opacity-50',
+                'h-10 w-10 items-center justify-center rounded-full border disabled:opacity-50',
                 isSelected ? 'border-black bg-black' : 'border-gray-200 bg-white',
               )}
             >

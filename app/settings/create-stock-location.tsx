@@ -12,8 +12,8 @@ export default function CreateStockLocationScreen() {
   return (
     <LayoutWithScroll>
       <KeyboardAvoidingView className="flex-1">
-        <Text className="text-4xl mb-6">Setting Up</Text>
-        <Text className="text-2xl mb-2">Create a new stock location</Text>
+        <Text className="mb-6 text-4xl">Setting Up</Text>
+        <Text className="mb-2 text-2xl">Create a new stock location</Text>
         <Text className="mb-6 text-gray-300">
           Specify the details for the new stock location where inventory will be sourced.
         </Text>

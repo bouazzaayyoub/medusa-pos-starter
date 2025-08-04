@@ -13,27 +13,27 @@ export const ProductDetailsSkeleton = () => (
     dismissOnOverlayPress
     contentClassName="pb-safe-offset-4"
   >
-    <View className="rounded-xl bg-gray-200 mb-4 aspect-[4/3] w-full" />
+    <View className="mb-4 aspect-[4/3] w-full rounded-xl bg-gray-200" />
 
-    <View className="flex-row mb-2 gap-14 items-center">
-      <View className="rounded-md h-5 flex-1 bg-gray-200" />
-      <View className="rounded-md h-5 flex-1 bg-gray-200" />
+    <View className="mb-2 flex-row items-center gap-14">
+      <View className="h-5 flex-1 rounded-md bg-gray-200" />
+      <View className="h-5 flex-1 rounded-md bg-gray-200" />
     </View>
 
-    <View className="rounded-md h-5 mb-2 bg-gray-200" />
-    <View className="rounded-md h-5 mb-6 w-1/2 bg-gray-200" />
+    <View className="mb-2 h-5 rounded-md bg-gray-200" />
+    <View className="mb-6 h-5 w-1/2 rounded-md bg-gray-200" />
 
-    <View className="rounded-md h-5 mb-2 w-1/2 bg-gray-200" />
-    <View className="rounded-md h-5 mb-6 bg-gray-200" />
+    <View className="mb-2 h-5 w-1/2 rounded-md bg-gray-200" />
+    <View className="mb-6 h-5 rounded-md bg-gray-200" />
 
-    <View className="rounded-md h-5 mb-2 w-1/2 bg-gray-200" />
-    <View className="rounded-md h-5 mb-4 bg-gray-200" />
+    <View className="mb-2 h-5 w-1/2 rounded-md bg-gray-200" />
+    <View className="mb-4 h-5 rounded-md bg-gray-200" />
 
     <View className="flex-row items-center gap-4">
       <QuantityPicker quantity={1} onQuantityChange={() => {}} variant="ghost" disabled />
 
-      <TouchableOpacity disabled className="p-5 rounded-xl flex-1 bg-gray-200">
-        <Text className="text-gray-300 mx-auto text-xl leading-5">Add to cart</Text>
+      <TouchableOpacity disabled className="flex-1 rounded-xl bg-gray-200 p-5">
+        <Text className="mx-auto text-xl leading-5 text-gray-300">Add to cart</Text>
       </TouchableOpacity>
     </View>
   </BottomSheet>

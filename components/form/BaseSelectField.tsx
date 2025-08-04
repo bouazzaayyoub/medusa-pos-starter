@@ -143,13 +143,13 @@ export function BaseSelectField({
         <TouchableOpacity onPress={() => setIsVisible(true)} disabled={isDisabled}>
           <View
             className={clx(
-              'bg-white rounded-xl pl-3 pr-11 py-4 border border-gray-200 flex-row justify-between items-center',
+              'flex-row items-center justify-between rounded-xl border border-gray-200 bg-white py-4 pl-3 pr-11',
               {
                 'border-error-500': error,
                 [buttonClassName]: buttonClassName,
-                'pt-6 pb-2': floatingPlaceholder && variant === 'primary',
+                'pb-2 pt-6': floatingPlaceholder && variant === 'primary',
                 'bg-black': selectedOptions.length > 0 && variant === 'secondary',
-                'rounded-full py-3 justify-center': variant === 'secondary',
+                'justify-center rounded-full py-3': variant === 'secondary',
               },
             )}
           >
@@ -170,10 +170,10 @@ export function BaseSelectField({
           </View>
         </TouchableOpacity>
 
-        <ChevronDown size={24} className="text-gray-300 absolute top-1/2 -translate-y-1/2 right-4" />
+        <ChevronDown size={24} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300" />
       </View>
 
-      {error && <Text className={clx('text-error-500 text-sm mt-1', errorClassName)}>{error.message}</Text>}
+      {error && <Text className={clx('mt-1 text-sm text-error-500', errorClassName)}>{error.message}</Text>}
 
       <BottomSheet visible={isVisible} onClose={handleClose} showCloseButton={false}>
         {renderOptionsList({

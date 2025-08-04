@@ -76,15 +76,15 @@ export const Dialog: React.FC<DialogProps> = ({
 
   return (
     <Modal transparent={true} statusBarTranslucent {...modalProps} onRequestClose={onRequestClose}>
-      <SafeAreaView className={clx('flex-1 justify-center items-center bg-black/50', className)}>
+      <SafeAreaView className={clx('flex-1 items-center justify-center bg-black/50', className)}>
         <TouchableWithoutFeedback onPress={handleOverlayPress}>
           <View className="absolute inset-0" />
         </TouchableWithoutFeedback>
 
-        <View className="p-4 w-full max-h-full">
-          <View className={clx('bg-white rounded-2xl p-4 w-full overflow-hidden max-h-full', containerClassName)}>
+        <View className="max-h-full w-full p-4">
+          <View className={clx('max-h-full w-full overflow-hidden rounded-2xl bg-white p-4', containerClassName)}>
             {(title || showCloseButton) && (
-              <View className={clx('flex-row mb-4 justify-between gap-2 items-center', headerClassName)}>
+              <View className={clx('mb-4 flex-row items-center justify-between gap-2', headerClassName)}>
                 {title && <Text>{title}</Text>}
                 {showCloseButton && (
                   <TouchableOpacity onPress={handleCloseIconPress} accessibilityLabel="Close dialog">

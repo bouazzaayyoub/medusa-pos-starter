@@ -83,9 +83,9 @@ const isPlaceholderProduct = (
 
 const CustomerListPlaceholder: React.FC = () => {
   return (
-    <View className="py-3 justify-between items-center flex-row px-4 gap-4">
-      <View className="w-1/3 h-[17px] rounded-md bg-gray-200" />
-      <View className="w-1/3 h-[17px] rounded-md bg-gray-200" />
+    <View className="flex-row items-center justify-between gap-4 px-4 py-3">
+      <View className="h-[17px] w-1/3 rounded-md bg-gray-200" />
+      <View className="h-[17px] w-1/3 rounded-md bg-gray-200" />
     </View>
   );
 };
@@ -110,7 +110,7 @@ const CustomersList: React.FC<{
 
       return (
         <TouchableOpacity
-          className={clx('py-3 justify-between items-center flex-row px-4 gap-4', {
+          className={clx('flex-row items-center justify-between gap-4 px-4 py-3', {
             'bg-black': selectedCustomerId === item.id,
           })}
           onPress={() => onCustomerSelect(item)}
@@ -166,10 +166,10 @@ const CustomersList: React.FC<{
       renderItem={renderCustomer}
       keyExtractor={(item) => item.id}
       refreshing={customersQuery.isRefetching}
-      ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200 mx-4" />}
-      className="border overflow-hidden rounded-xl border-gray-200"
+      ItemSeparatorComponent={() => <View className="mx-4 h-hairline bg-gray-200" />}
+      className="overflow-hidden rounded-xl border border-gray-200"
       ListEmptyComponent={
-        <View className="py-10 px-4 gap-2 justify-center items-center">
+        <View className="items-center justify-center gap-2 px-4 py-10">
           <CircleAlert size={24} />
           {typeof q === 'string' && q.length > 1 ? (
             <Text className="text-center">No customers match{'\n'}the search</Text>
@@ -182,19 +182,19 @@ const CustomersList: React.FC<{
         customersQuery.isFetchingNextPage ? (
           <View>
             <CustomerListPlaceholder />
-            <View className="h-hairline bg-gray-200 mx-4" />
+            <View className="mx-4 h-hairline bg-gray-200" />
             <CustomerListPlaceholder />
-            <View className="h-hairline bg-gray-200 mx-4" />
+            <View className="mx-4 h-hairline bg-gray-200" />
             <CustomerListPlaceholder />
-            <View className="h-hairline bg-gray-200 mx-4" />
+            <View className="mx-4 h-hairline bg-gray-200" />
             <CustomerListPlaceholder />
-            <View className="h-hairline bg-gray-200 mx-4" />
+            <View className="mx-4 h-hairline bg-gray-200" />
             <CustomerListPlaceholder />
-            <View className="h-hairline bg-gray-200 mx-4" />
+            <View className="mx-4 h-hairline bg-gray-200" />
             <CustomerListPlaceholder />
-            <View className="h-hairline bg-gray-200 mx-4" />
+            <View className="mx-4 h-hairline bg-gray-200" />
             <CustomerListPlaceholder />
-            <View className="h-hairline bg-gray-200 mx-4" />
+            <View className="mx-4 h-hairline bg-gray-200" />
             <CustomerListPlaceholder />
           </View>
         ) : null
@@ -246,7 +246,7 @@ export default function CustomerLookupScreen() {
       />
 
       <Button
-        className="mt-4 mb-4"
+        className="mb-4 mt-4"
         disabled={!selectedCustomerId}
         onPress={() => {
           if (!selectedCustomerId) {
