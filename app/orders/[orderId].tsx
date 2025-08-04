@@ -283,6 +283,7 @@ export default function OrderDetailsScreen() {
           contentContainerClassName="pt-4 grow-0 pb-safe-offset-4"
           ListFooterComponentClassName="mt-14"
           ListFooterComponent={<OrderInformation order={orderQuery.data.order} currency={currency} />}
+          showsVerticalScrollIndicator={false}
         />
       ) : (
         <View className="py-11">
