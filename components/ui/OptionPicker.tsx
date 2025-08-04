@@ -4,7 +4,7 @@ import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
 interface OptionPickerProps {
-  values: { id: string; value: string }[];
+  values: { id: string; value: string; className?: string }[];
   selectedValue?: string;
   onValueChange: (value: { id: string; value: string }) => void;
   label: string;
@@ -22,7 +22,7 @@ export function OptionPicker({
 }: OptionPickerProps) {
   return (
     <View className={className}>
-      <Text className="text-gray-900 mb-2">{label}</Text>
+      <Text className="mb-2 text-gray-900">{label}</Text>
 
       <View className="flex-row flex-wrap gap-2">
         {values.map((valueItem) => {
@@ -35,11 +35,12 @@ export function OptionPicker({
               onPress={() => !isDisabled && onValueChange(valueItem)}
               disabled={isDisabled}
               className={clx(
-                'px-2 h-10 rounded-full border items-center justify-center flex-row gap-2 disabled:opacity-50',
+                'h-10 flex-row items-center justify-center gap-2 rounded-full border px-2 disabled:opacity-50',
                 {
                   'border-black bg-black': isSelected,
                   'border-gray-200 bg-white': !isSelected,
                 },
+                valueItem.className,
               )}
             >
               <Text
