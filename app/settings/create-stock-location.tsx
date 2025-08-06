@@ -2,9 +2,9 @@ import { KeyboardAvoidingView } from '@/components/KeyboardAvoidingView';
 import { StockLocationCreateForm } from '@/components/StockLocationCreateForm';
 import { Button } from '@/components/ui/Button';
 import { LayoutWithScroll } from '@/components/ui/Layout';
+import { Text } from '@/components/ui/Text';
 import { useUpdateSettings } from '@/contexts/settings';
 import { router } from 'expo-router';
-import { Text } from 'react-native';
 
 export default function CreateStockLocationScreen() {
   const updateSettings = useUpdateSettings();
