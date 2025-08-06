@@ -73,7 +73,7 @@ export const InfoBanner = ({
 
   return (
     <View className={wrapperClasses}>
-      <View className="flex-1 flex-wrap">
+      <View className="flex-1">
         <Text className={textClasses}>{children}</Text>
       </View>
       {icon}
