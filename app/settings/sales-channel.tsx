@@ -1,10 +1,11 @@
 import { SalesChannelList } from '@/components/SalesChannelList';
 import { Button } from '@/components/ui/Button';
 import { Layout } from '@/components/ui/Layout';
+import { Text } from '@/components/ui/Text';
 import { useSettings, useUpdateSettings } from '@/contexts/settings';
 import { router } from 'expo-router';
 import * as React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
 export default function SalesChannelScreen() {
   const settings = useSettings();

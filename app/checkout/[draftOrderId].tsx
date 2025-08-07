@@ -145,17 +145,23 @@ export default function CheckoutScreen() {
                 {customerName && (
                   <View className="mb-4 flex-row">
                     <Text className="w-24 text-gray-300">Full Name</Text>
-                    <Text className="flex-1 flex-wrap">{customerName}</Text>
+                    <View className="flex-1">
+                      <Text>{customerName}</Text>
+                    </View>
                   </View>
                 )}
                 <View className="mb-4 flex-row">
                   <Text className="w-24 text-gray-300">E-Mail</Text>
-                  <Text className="flex-1 flex-wrap">{customerEmail}</Text>
+                  <View className="flex-1">
+                    <Text>{customerEmail}</Text>
+                  </View>
                 </View>
                 {customerPhone && (
                   <View className="flex-row">
                     <Text className="w-24 text-gray-300">Phone</Text>
-                    <Text className="flex-1 flex-wrap">{customerPhone}</Text>
+                    <View className="flex-1">
+                      <Text>{customerPhone}</Text>
+                    </View>
                   </View>
                 )}
               </View>

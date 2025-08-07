@@ -130,7 +130,9 @@ export default function OrdersScreen() {
               </Text>
             </View>
             <View className="gap-4">
-              <Text className="mb-auto flex-1 flex-wrap text-right text-gray-300">{formatDate(item.created_at)}</Text>
+              <View className="flex-1">
+                <Text className="mb-auto text-right text-gray-300">{formatDate(item.created_at)}</Text>
+              </View>
               <OrderListStatus order={item} />
             </View>
           </TouchableOpacity>

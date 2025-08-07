@@ -56,8 +56,12 @@ const CustomerInformation: React.FC<{
       {info.map((item, index) => (
         <View key={item.label}>
           <View className="flex-row items-center justify-between gap-4">
-            <Text className="max-w-32 flex-1 text-sm text-gray-300">{item.label}</Text>
-            <Text className="flex-1 flex-wrap text-right text-sm">{item.value}</Text>
+            <View className="flex-1">
+              <Text className="max-w-32 text-sm text-gray-300">{item.label}</Text>
+            </View>
+            <View className="flex-1">
+              <Text className="text-right text-sm">{item.value}</Text>
+            </View>
           </View>
           {index < info.length - 1 && <View className="mt-2 h-hairline w-full bg-gray-200" />}
         </View>
@@ -78,15 +82,21 @@ const OrderInformation: React.FC<{
       <Text className="mb-4 text-xl">Order Details</Text>
       <View className="mb-6 gap-2">
         <View className="flex-row items-center justify-between gap-4">
-          <Text className="flex-1 text-sm text-gray-300">Order Status</Text>
+          <View className="flex-1">
+            <Text className="text-sm text-gray-300">Order Status</Text>
+          </View>
           <OrderStatus order={order} />
         </View>
         <View className="flex-row items-center justify-between gap-4">
-          <Text className="flex-1 text-sm text-gray-300">Payment Status</Text>
+          <View className="flex-1">
+            <Text className="text-sm text-gray-300">Payment Status</Text>
+          </View>
           <PaymentStatus order={order} />
         </View>
         <View className="flex-row items-center justify-between gap-4">
-          <Text className="flex-1 text-sm text-gray-300">Fulfillment Status</Text>
+          <View className="flex-1">
+            <Text className="text-sm text-gray-300">Fulfillment Status</Text>
+          </View>
           <FulfillmentStatus order={order} />
         </View>
       </View>
@@ -94,102 +104,130 @@ const OrderInformation: React.FC<{
       <Text className="mb-4 text-xl">Summary</Text>
       <View className="gap-2">
         <View className="flex-row items-center justify-between gap-4">
-          <Text className="flex-1 text-sm text-gray-300">
-            {automaticTaxesOn ? 'Subtotal (incl. taxes)' : 'Subtotal'}
-          </Text>
-          <Text className="flex-1 flex-wrap text-right text-sm">
-            {order.item_total.toLocaleString('en-US', {
-              style: 'currency',
-              currency,
-              currencyDisplay: 'narrowSymbol',
-            })}
-          </Text>
-        </View>
-        {shippingTotal > 0 && (
-          <View className="flex-row items-center justify-between gap-4">
-            <Text className="flex-1 text-sm text-gray-300">
-              {automaticTaxesOn ? 'Shipping (incl. taxes)' : 'Shipping'}
-            </Text>
-            <Text className="flex-1 flex-wrap text-right text-sm">
-              {shippingTotal.toLocaleString('en-US', {
+          <View className="flex-1">
+            <Text className="text-sm text-gray-300">{automaticTaxesOn ? 'Subtotal (incl. taxes)' : 'Subtotal'}</Text>
+          </View>
+          <View className="flex-1">
+            <Text className="text-right text-sm">
+              {order.item_total.toLocaleString('en-US', {
                 style: 'currency',
                 currency,
                 currencyDisplay: 'narrowSymbol',
               })}
             </Text>
+          </View>
+        </View>
+        {shippingTotal > 0 && (
+          <View className="flex-row items-center justify-between gap-4">
+            <View className="flex-1">
+              <Text className="text-sm text-gray-300">{automaticTaxesOn ? 'Shipping (incl. taxes)' : 'Shipping'}</Text>
+            </View>
+            <View className="flex-1">
+              <Text className="text-right text-sm">
+                {shippingTotal.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency,
+                  currencyDisplay: 'narrowSymbol',
+                })}
+              </Text>
+            </View>
           </View>
         )}
         {order.discount_total > 0 && (
           <View className="flex-row items-center justify-between gap-4">
-            <Text className="flex-1 text-sm text-gray-300">Discount</Text>
-            <Text className="flex-1 flex-wrap text-right text-sm">
-              {(order.discount_total * -1).toLocaleString('en-US', {
+            <View className="flex-1">
+              <Text className="text-sm text-gray-300">Discount</Text>
+            </View>
+            <View className="flex-1">
+              <Text className="text-right text-sm">
+                {(order.discount_total * -1).toLocaleString('en-US', {
+                  style: 'currency',
+                  currency,
+                  currencyDisplay: 'narrowSymbol',
+                })}
+              </Text>
+            </View>
+          </View>
+        )}
+        <View className="flex-row items-center justify-between gap-4">
+          <View className="flex-1">
+            <Text className="text-sm text-gray-300">Tax Total{automaticTaxesOn ? ' (included)' : ''}</Text>
+          </View>
+          <View className="flex-1">
+            <Text className="text-right text-sm">
+              {order.tax_total.toLocaleString('en-US', {
                 style: 'currency',
                 currency,
                 currencyDisplay: 'narrowSymbol',
               })}
             </Text>
           </View>
-        )}
-        <View className="flex-row items-center justify-between gap-4">
-          <Text className="flex-1 text-sm text-gray-300">Tax Total{automaticTaxesOn ? ' (included)' : ''}</Text>
-          <Text className="flex-1 flex-wrap text-right text-sm">
-            {order.tax_total.toLocaleString('en-US', {
-              style: 'currency',
-              currency,
-              currencyDisplay: 'narrowSymbol',
-            })}
-          </Text>
         </View>
         <View className="h-hairline w-full bg-gray-200" />
         <View className="flex-row items-center justify-between gap-4">
-          <Text className="flex-1 text-sm text-gray-300">Paid Total</Text>
-          <Text className="flex-1 flex-wrap text-right text-sm">
-            {order.payment_collections
-              .reduce(
-                (acc, collection) => acc + (collection.captured_amount ?? 0) - (collection.refunded_amount ?? 0),
-                0,
-              )
-              .toLocaleString('en-US', {
+          <View className="flex-1">
+            <Text className="text-sm text-gray-300">Paid Total</Text>
+          </View>
+          <View className="flex-1">
+            <Text className="text-right text-sm">
+              {order.payment_collections
+                .reduce(
+                  (acc, collection) => acc + (collection.captured_amount ?? 0) - (collection.refunded_amount ?? 0),
+                  0,
+                )
+                .toLocaleString('en-US', {
+                  style: 'currency',
+                  currency,
+                  currencyDisplay: 'narrowSymbol',
+                })}
+            </Text>
+          </View>
+        </View>
+        <View className="flex-row items-center justify-between gap-4">
+          <View className="flex-1">
+            <Text className="text-sm text-gray-300">Credit Lines Total</Text>
+          </View>
+          <View className="flex-1">
+            <Text className="text-right text-sm">
+              {(order.credit_lines ?? [])
+                .reduce((acc, collection) => acc + ((collection.amount as unknown as number) ?? 0), 0)
+                .toLocaleString('en-US', {
+                  style: 'currency',
+                  currency,
+                  currencyDisplay: 'narrowSymbol',
+                })}
+            </Text>
+          </View>
+        </View>
+        <View className="flex-row items-center justify-between gap-4">
+          <View className="flex-1">
+            <Text className="text-sm text-gray-300">Outstanding Amount</Text>
+          </View>
+          <View className="flex-1">
+            <Text className="text-right text-sm">
+              {(order.summary.pending_difference ?? 0).toLocaleString('en-US', {
                 style: 'currency',
                 currency,
                 currencyDisplay: 'narrowSymbol',
               })}
-          </Text>
-        </View>
-        <View className="flex-row items-center justify-between gap-4">
-          <Text className="flex-1 text-sm text-gray-300">Credit Lines Total</Text>
-          <Text className="flex-1 flex-wrap text-right text-sm">
-            {(order.credit_lines ?? [])
-              .reduce((acc, collection) => acc + ((collection.amount as unknown as number) ?? 0), 0)
-              .toLocaleString('en-US', {
-                style: 'currency',
-                currency,
-                currencyDisplay: 'narrowSymbol',
-              })}
-          </Text>
-        </View>
-        <View className="flex-row items-center justify-between gap-4">
-          <Text className="flex-1 text-sm text-gray-300">Outstanding Amount</Text>
-          <Text className="flex-1 flex-wrap text-right text-sm">
-            {(order.summary.pending_difference ?? 0).toLocaleString('en-US', {
-              style: 'currency',
-              currency,
-              currencyDisplay: 'narrowSymbol',
-            })}
-          </Text>
+            </Text>
+          </View>
         </View>
       </View>
       <View className="my-4 h-hairline w-full bg-gray-200" />
       <View className="mb-4 flex-row items-center justify-between gap-4">
-        <Text className="flex-1 text-lg">Total</Text>
-        <Text className="flex-1 flex-wrap text-right text-lg">
-          {order.total.toLocaleString('en-US', {
-            style: 'currency',
-            currency,
-            currencyDisplay: 'narrowSymbol',
-          })}
-        </Text>
+        <View className="flex-1">
+          <Text className="text-lg">Total</Text>
+        </View>
+        <View className="flex-1">
+          <Text className="text-right text-lg">
+            {order.total.toLocaleString('en-US', {
+              style: 'currency',
+              currency,
+              currencyDisplay: 'narrowSymbol',
+            })}
+          </Text>
+        </View>
       </View>
     </>
   );
