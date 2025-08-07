@@ -149,9 +149,6 @@ const OrderInformation: React.FC<{
             </View>
           </View>
         )}
-        <LoadingBanner variant="ghost" className="my-11">
-          Fetching order details...
-        </LoadingBanner>
         <View className="flex-row items-center justify-between gap-4">
           <View className="flex-1">
             <Text className="text-sm text-gray-300">Tax Total{automaticTaxesOn ? ' (included)' : ''}</Text>
