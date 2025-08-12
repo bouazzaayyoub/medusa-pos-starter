@@ -114,7 +114,7 @@ export const DateRangeFilter = ({
           setIsVisible(true);
         }}
       >
-        <View className="flex-1">
+        <View className={clx({ 'flex-1': displayValue })}>
           <Text
             className={clx({
               'text-white': displayValue,

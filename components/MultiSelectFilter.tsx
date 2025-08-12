@@ -79,7 +79,7 @@ export const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({
         <TouchableOpacity
           onPress={() => setIsVisible(true)}
           className={clx(
-            'flex-row items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-5 text-lg leading-6',
+            'h-13.5 flex-row items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-5 text-lg leading-6',
             {
               [buttonClassName]: buttonClassName,
               'bg-black': selectedOptions.length > 0 && variant === 'secondary',
@@ -108,7 +108,7 @@ export const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({
             ) : selectedOptions.length > 0 && variant === 'secondary' ? (
               <View className="flex-row items-center gap-3">
                 <Text className="text-lg leading-5 text-white">{placeholder}</Text>
-                <View className="aspect-square items-center justify-center rounded-full bg-white px-1">
+                <View className="aspect-square min-w-[1.0188rem] items-center justify-center rounded-full bg-white px-1">
                   <Text className="top-1/2 -translate-y-1/2 transform text-xs font-bold">{selectedOptions.length}</Text>
                 </View>
               </View>

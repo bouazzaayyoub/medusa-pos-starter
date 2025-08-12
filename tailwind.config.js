@@ -60,6 +60,7 @@ module.exports = {
       },
       height: {
         hairline: hairlineWidth(),
+        13.5: '3.375rem',
       },
     },
   },
