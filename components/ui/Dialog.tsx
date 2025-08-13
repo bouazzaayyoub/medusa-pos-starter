@@ -34,6 +34,7 @@ export const Dialog: React.FC<DialogProps> = ({
   containerClassName,
   contentClassName,
   headerClassName,
+  animationType = 'fade',
   onClose,
   onOverlayPress,
   onCloseIconPress,
@@ -75,7 +76,13 @@ export const Dialog: React.FC<DialogProps> = ({
   );
 
   return (
-    <Modal transparent={true} statusBarTranslucent {...modalProps} onRequestClose={onRequestClose}>
+    <Modal
+      transparent={true}
+      statusBarTranslucent
+      animationType={animationType}
+      {...modalProps}
+      onRequestClose={onRequestClose}
+    >
       <SafeAreaView className={clx('flex-1 items-center justify-center bg-black/50', className)}>
         <TouchableWithoutFeedback onPress={handleOverlayPress}>
           <View className="absolute inset-0" />
