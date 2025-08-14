@@ -141,7 +141,6 @@ export default function ProductsScreen() {
             <Text className="mt-2 text-center text-xl">No products match{'\n'}the search</Text>
           </View>
         }
-        contentContainerClassName="pb-4"
         ListFooterComponent={
           productsQuery.isFetchingNextPage ? (
             <View className="gap-6">

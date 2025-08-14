@@ -215,7 +215,7 @@ const OrderInformation: React.FC<{
         </View>
       </View>
       <View className="my-4 h-hairline w-full bg-gray-200" />
-      <View className="mb-4 flex-row items-center justify-between gap-4">
+      <View className="flex-row items-center justify-between gap-4">
         <View className="flex-1">
           <Text className="text-lg">Total</Text>
         </View>
@@ -318,7 +318,7 @@ export default function OrderDetailsScreen() {
           renderItem={renderItem}
           ItemSeparatorComponent={() => <View className="my-6 h-hairline w-full bg-gray-200" />}
           className="shrink grow-0"
-          contentContainerClassName="pt-4 grow-0 pb-safe-offset-4"
+          contentContainerClassName="pt-4 grow-0 pb-safe-offset-6"
           ListFooterComponentClassName="mt-14"
           ListFooterComponent={<OrderInformation order={orderQuery.data.order} currency={currency} />}
           showsVerticalScrollIndicator={false}

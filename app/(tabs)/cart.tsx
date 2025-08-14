@@ -458,7 +458,7 @@ export default function CartScreen() {
 
   if (!draftOrder.data?.draft_order || !draftOrder.data?.draft_order.items.length) {
     return (
-      <Layout>
+      <Layout className="pb-6">
         <Text className="text-4xl">Cart</Text>
         <View className="flex-1 items-center justify-center gap-1">
           <ShoppingCart size={24} />
@@ -504,7 +504,7 @@ export default function CartScreen() {
   ];
 
   return (
-    <Layout>
+    <Layout className="pb-6">
       <Text className="mb-6 text-4xl">Cart</Text>
       <CustomerBadge customer={draftOrder.data.draft_order.customer} />
       <FlashList
@@ -533,7 +533,7 @@ export default function CartScreen() {
         showsVerticalScrollIndicator={false}
       />
 
-      <View className="pb-2.5">
+      <View>
         {windowDimensions.width >= 768 && windowDimensions.height >= 900 && (
           <CartSummaryHeader
             onAddPromotion={(code) => addPromotion.mutate(code)}
