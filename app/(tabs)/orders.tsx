@@ -231,6 +231,7 @@ export default function OrdersScreen() {
           }
         }}
         showsVerticalScrollIndicator={false}
+        keyboardDismissMode="on-drag"
       />
     </Layout>
   );

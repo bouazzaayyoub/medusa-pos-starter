@@ -121,6 +121,7 @@ export function SelectField({
             </View>
           }
           onEndReached={onEndReached}
+          keyboardDismissMode="on-drag"
         />
       </>
     );

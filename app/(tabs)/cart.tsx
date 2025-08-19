@@ -531,6 +531,7 @@ export default function CartScreen() {
           ) : null
         }
         showsVerticalScrollIndicator={false}
+        keyboardDismissMode="on-drag"
       />
 
       <View className="pb-2.5">

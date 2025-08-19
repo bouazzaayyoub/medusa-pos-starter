@@ -207,6 +207,7 @@ const CustomersList: React.FC<{
           customersQuery.fetchNextPage();
         }
       }}
+      keyboardDismissMode="on-drag"
     />
   );
 };

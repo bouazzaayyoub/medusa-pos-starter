@@ -167,6 +167,7 @@ export default function CheckoutScreen() {
               </View>
             ) : null
           }
+          keyboardDismissMode="on-drag"
         />
 
         <View className="mb-6 gap-y-2 border-y border-gray-200 py-4">

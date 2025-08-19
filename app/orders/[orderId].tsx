@@ -322,6 +322,7 @@ export default function OrderDetailsScreen() {
           ListFooterComponentClassName="mt-14"
           ListFooterComponent={<OrderInformation order={orderQuery.data.order} currency={currency} />}
           showsVerticalScrollIndicator={false}
+          keyboardDismissMode="on-drag"
         />
       ) : (
         <View className="py-11">
