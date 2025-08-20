@@ -159,7 +159,7 @@ const ProductDetails: React.FC<{ animateOut: (callback?: () => void) => void }> 
   const price = selectedVariant?.prices?.find((price) => price.currency_code === currencyCode);
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="pb-safe-offset-4">
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="pb-safe-offset-6">
       <View className="mb-6 overflow-hidden rounded-xl bg-gray-100">
         {productQuery.data.product.images && productQuery.data.product.images.length ? (
           <ProductImagesCarousel images={productQuery.data.product.images} />
