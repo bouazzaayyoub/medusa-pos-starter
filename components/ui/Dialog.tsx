@@ -6,11 +6,11 @@ import {
   GestureResponderEvent,
   Modal,
   ModalProps,
-  SafeAreaView,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export interface DialogProps extends ModalProps {
   title?: string;
