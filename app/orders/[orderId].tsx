@@ -249,16 +249,19 @@ const OrderDetails: React.FC<{ animateOut: (callback?: () => void) => void }> = 
     settings.data?.region?.currency_code ||
     'EUR';
 
-  const handleProductPress = (product: AdminOrderLineItem) => {
-    animateOut();
-    router.push({
-      pathname: '/product-details',
-      params: {
-        productId: product.product_id,
-        productName: product.product_title,
-      },
-    });
-  };
+  const handleProductPress = React.useCallback(
+    (product: AdminOrderLineItem) => {
+      animateOut();
+      router.push({
+        pathname: '/product-details',
+        params: {
+          productId: product.product_id,
+          productName: product.product_title,
+        },
+      });
+    },
+    [animateOut],
+  );
 
   const renderItem = React.useCallback(
     ({ item }: { item: AdminOrderLineItem }) => {
@@ -289,7 +292,7 @@ const OrderDetails: React.FC<{ animateOut: (callback?: () => void) => void }> = 
         </TouchableOpacity>
       );
     },
-    [currency],
+    [currency, handleProductPress],
   );
 
   return (
