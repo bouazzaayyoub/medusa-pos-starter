@@ -1,11 +1,11 @@
 import { ChevronDown } from '@/components/icons/chevron-down';
+import { BottomSheet } from '@/components/ui/BottomSheet';
 import { Text } from '@/components/ui/Text';
 import { clx } from '@/utils/clx';
 import React, { useEffect } from 'react';
 import { FieldError, useController, useFormContext } from 'react-hook-form';
 import { TouchableOpacity, View } from 'react-native';
 import Animated, { AnimatedStyle, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { BottomSheet } from '../ui/BottomSheet';
 
 export interface SelectOption {
   label: string;

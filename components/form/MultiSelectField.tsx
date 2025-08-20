@@ -126,6 +126,7 @@ export function MultiSelectField({
               </Text>
             </View>
           }
+          keyboardDismissMode="on-drag"
         />
       </>
     );

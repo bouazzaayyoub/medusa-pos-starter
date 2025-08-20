@@ -537,6 +537,7 @@ export default function CartScreen() {
             ) : null
           }
           showsVerticalScrollIndicator={false}
+          keyboardDismissMode="on-drag"
         />
         <View>
           {windowDimensions.width >= 768 && windowDimensions.height >= 900 && (

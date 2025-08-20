@@ -174,6 +174,7 @@ export default function ProductsScreen() {
           }
         }}
         showsVerticalScrollIndicator={false}
+        keyboardDismissMode="on-drag"
       />
     </Layout>
   );
