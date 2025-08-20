@@ -151,6 +151,7 @@ export function SelectField({
           <Text
             className={clx({
               'text-gray-300': !selectedOption,
+              'text-gray-200': isDisabled,
             })}
           >
             {selectedOption ? selectedOption.label : !fp ? pl : null}

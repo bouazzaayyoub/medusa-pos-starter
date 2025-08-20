@@ -43,7 +43,6 @@ const AddNewCustomerButton: React.FC<{ onNewCustomer: (customer: AdminCustomer) 
         title="Add New Customer"
         onClose={() => setIsOpen(false)}
         dismissOnOverlayPress={true}
-        animationType="fade"
         contentClassName="flex-shrink"
       >
         <Form
@@ -227,7 +226,6 @@ export default function CustomerLookupScreen() {
       title="Customer Lookup"
       onClose={() => router.back()}
       dismissOnOverlayPress={true}
-      animationType="fade"
       contentClassName="flex-shrink"
     >
       <SearchInput
