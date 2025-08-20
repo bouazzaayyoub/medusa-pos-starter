@@ -13,6 +13,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { Stack } from 'expo-router';
 import * as React from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -110,14 +111,16 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <PersistQueryClientProvider client={queryClient} persistOptions={{ persister: asyncStoragePersister }}>
-      <AuthProvider>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <SplashScreenController />
-          <AppStatusBar />
-          <App />
-        </ThemeProvider>
-      </AuthProvider>
-    </PersistQueryClientProvider>
+    <SafeAreaProvider>
+      <PersistQueryClientProvider client={queryClient} persistOptions={{ persister: asyncStoragePersister }}>
+        <AuthProvider>
+          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <SplashScreenController />
+            <AppStatusBar />
+            <App />
+          </ThemeProvider>
+        </AuthProvider>
+      </PersistQueryClientProvider>
+    </SafeAreaProvider>
   );
 }
