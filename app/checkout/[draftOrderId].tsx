@@ -249,7 +249,6 @@ export default function CheckoutScreen() {
           event.preventDefault();
         }}
         title="Order confirmed!"
-        animationType="fade"
         contentClassName="flex-shrink"
       >
         <InfoBanner colorScheme="success" className="mb-4">

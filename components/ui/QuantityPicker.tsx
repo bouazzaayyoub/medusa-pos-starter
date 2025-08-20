@@ -127,6 +127,7 @@ export function QuantityPicker({
           className="w-8 items-center justify-center"
           onPress={handleIncrement}
           disabled={!canIncrement}
+          testID="quantity-increment"
         >
           <Plus
             size={variant === 'default' ? 16 : 24}
