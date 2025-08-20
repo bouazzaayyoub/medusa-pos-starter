@@ -81,11 +81,11 @@ export const Dialog: React.FC<DialogProps> = ({
           <View className="absolute inset-0" />
         </TouchableWithoutFeedback>
 
-        <View className="max-h-full w-full p-4">
+        <View className="max-h-full w-full items-center p-4">
           <View className={clx('max-h-full w-full overflow-hidden rounded-2xl bg-white p-4', containerClassName)}>
             {(title || showCloseButton) && (
               <View className={clx('mb-4 flex-row items-center justify-between gap-2', headerClassName)}>
-                {title && <Text>{title}</Text>}
+                {title && <Text className="text-xl">{title}</Text>}
                 {showCloseButton && (
                   <TouchableOpacity onPress={handleCloseIconPress} accessibilityLabel="Close dialog">
                     <X size={20} />
