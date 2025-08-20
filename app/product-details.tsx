@@ -8,7 +8,7 @@ import { QuantityPicker } from '@/components/ui/QuantityPicker';
 import { Text } from '@/components/ui/Text';
 import { useSettings } from '@/contexts/settings';
 import { AdminProductImage } from '@medusajs/types';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import * as React from 'react';
 import { Dimensions, Image, ScrollView, View } from 'react-native';
 import { useSharedValue } from 'react-native-reanimated';
@@ -292,13 +292,21 @@ const ProductDetails: React.FC<{ animateOut: (callback?: () => void) => void }> 
 export default function ProductDetailsScreen() {
   const [visible, setVisible] = React.useState(false);
 
-  React.useEffect(() => {
-    setTimeout(() => {
-      requestAnimationFrame(() => {
-        setVisible(true);
-      });
-    }, 100);
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      setVisible(false);
+
+      const timeoutId = setTimeout(() => {
+        requestAnimationFrame(() => {
+          setVisible(true);
+        });
+      }, 100);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    }, []),
+  );
 
   const renderContent = React.useCallback(({ animateOut }: { animateOut: (callback?: () => void) => void }) => {
     return <ProductDetails animateOut={animateOut} />;
