@@ -79,7 +79,10 @@ export default function ProductsScreen() {
           })}
         >
           <TouchableOpacity className="flex w-full gap-4" onPress={() => handleProductPress(item)} activeOpacity={0.7}>
-            <View className="aspect-square overflow-hidden rounded-lg bg-gray-200">
+            <View
+              className="aspect-square overflow-hidden rounded-lg bg-gray-200"
+              testID={`product-handle_${item.handle}_image`}
+            >
               {thumbnail && <Image source={{ uri: thumbnail }} className="h-full w-full object-cover" />}
             </View>
             <View>
