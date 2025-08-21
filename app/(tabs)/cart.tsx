@@ -65,19 +65,18 @@ const DraftOrderItem: React.FC<{ item: AdminOrderLineItem; onRemove?: (item: Adm
     <SwipeableListItem
       rightClassName="bg-white"
       rightWidth={80}
-      rightContent={(reset) => (
+      rightContent={
         <View className="h-full w-full flex-1 items-center justify-center p-2">
           <Pressable
             className="h-full w-full flex-1 items-center justify-center rounded-xl bg-error-500"
             onPress={() => {
-              reset();
               onRemove?.(item);
             }}
           >
             <Trash2 size={24} color="white" />
           </Pressable>
         </View>
-      )}
+      }
     >
       <View className="flex-row gap-4 bg-white py-6">
         <View className="h-[5.25rem] w-[5.25rem] overflow-hidden rounded-xl bg-gray-200">
@@ -144,21 +143,18 @@ const PromotionItem: React.FC<{
       rightClassName="bg-white"
       rightWidth={isAutomatic ? undefined : 80}
       rightContent={
-        isAutomatic
-          ? undefined
-          : (reset) => (
-              <View className="h-full w-full flex-1 items-center justify-center p-2">
-                <Pressable
-                  className="h-full w-full flex-1 items-center justify-center rounded-xl bg-error-500"
-                  onPress={async () => {
-                    await onRemove?.(item);
-                    reset();
-                  }}
-                >
-                  <Trash2 size={24} color="white" />
-                </Pressable>
-              </View>
-            )
+        isAutomatic ? undefined : (
+          <View className="h-full w-full flex-1 items-center justify-center p-2">
+            <Pressable
+              className="h-full w-full flex-1 items-center justify-center rounded-xl bg-error-500"
+              onPress={async () => {
+                await onRemove?.(item);
+              }}
+            >
+              <Trash2 size={24} color="white" />
+            </Pressable>
+          </View>
+        )
       }
     >
       <View className="flex-row gap-4 bg-white py-6">
@@ -202,6 +198,7 @@ const PromotionItem: React.FC<{
 
 const CustomerBadge: React.FC<{ customer: AdminDraftOrder['customer'] }> = ({ customer }) => {
   const updateDraftOrder = useUpdateDraftOrderCustomer();
+  // TODO: pull this out and make sure that default customer is fetched before we can show customer badge
   const defaultCustomer = useCustomers({ email: DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL }, 1);
 
   if (!customer || customer.email === DRAFT_ORDER_DEFAULT_CUSTOMER_EMAIL) {

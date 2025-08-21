@@ -1,6 +1,7 @@
 import { useCurrencies } from '@/api/hooks/currencies';
 import { useCreateRegion } from '@/api/hooks/regions';
 import { COUNTRIES } from '@/constants/countries';
+import { showErrorToast } from '@/utils/errors';
 import { AdminRegion } from '@medusajs/types';
 import React from 'react';
 import * as z from 'zod/v4';
@@ -64,6 +65,12 @@ const RegionCreateForm: React.FC<RegionCreateFormProps> = ({
     label: country.name,
     value: country.alpha2,
   }));
+
+  React.useEffect(() => {
+    if (currenciesQuery.isError) {
+      showErrorToast(currenciesQuery.error);
+    }
+  }, [currenciesQuery.error, currenciesQuery.isError]);
 
   return (
     <Form schema={regionSchema} onSubmit={handleCreateRegion} defaultValues={defaultValues} className="flex-1">

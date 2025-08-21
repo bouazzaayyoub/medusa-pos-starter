@@ -1,6 +1,8 @@
+import { showErrorToast } from '@/utils/errors';
 import Medusa from '@medusajs/js-sdk';
 import { DefaultError, useMutation, UseMutationOptions, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as SecureStore from 'expo-secure-store';
+import * as React from 'react';
 import { useAuthCtx } from './auth';
 
 export type SettingsStateType = {
@@ -12,7 +14,7 @@ export type SettingsStateType = {
 export const useSettings = () => {
   const { state } = useAuthCtx();
 
-  return useQuery({
+  const settingsQuery = useQuery({
     queryKey: ['settings'],
     queryFn: async () => {
       if (state.status !== 'authenticated') {
@@ -68,6 +70,14 @@ export const useSettings = () => {
     },
     enabled: state.status === 'authenticated',
   });
+
+  React.useEffect(() => {
+    if (settingsQuery.isError) {
+      showErrorToast(settingsQuery.error);
+    }
+  }, [settingsQuery.isError, settingsQuery.error]);
+
+  return settingsQuery;
 };
 
 export const useUpdateSettings = (
@@ -102,6 +112,10 @@ export const useUpdateSettings = (
         return options.onSuccess(...args);
       }
     },
+    onError(error, variables, context) {
+      showErrorToast(error);
+      return options?.onError?.(error, variables, context);
+    },
   });
 };
 
@@ -120,6 +134,9 @@ export const useClearSettings = () => {
       await client.invalidateQueries({
         queryKey: ['settings'],
       });
+    },
+    onError(error, variables, context) {
+      showErrorToast(error);
     },
   });
 };

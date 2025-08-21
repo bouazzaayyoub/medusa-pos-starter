@@ -6,6 +6,7 @@ import { Text } from '@/components/ui/Text';
 import { useSettings } from '@/contexts/settings';
 import { useBreakpointValue } from '@/hooks/useBreakpointValue';
 import { clx } from '@/utils/clx';
+import { showErrorToast } from '@/utils/errors';
 import { AdminProduct } from '@medusajs/types';
 import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
 import { router } from 'expo-router';
@@ -124,6 +125,12 @@ export default function ProductsScreen() {
 
     return productsQuery.data?.pages.flatMap((page) => page.products) || [];
   }, [productsQuery]);
+
+  React.useEffect(() => {
+    if (productsQuery.isError) {
+      showErrorToast(productsQuery.error);
+    }
+  }, [productsQuery.error, productsQuery.isError]);
 
   return (
     <Layout className="gap-6">

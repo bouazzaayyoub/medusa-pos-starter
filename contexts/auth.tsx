@@ -1,6 +1,8 @@
+import { isUnauthorizedError } from '@/utils/errors';
 import Medusa from '@medusajs/js-sdk';
 import * as SecureStore from 'expo-secure-store';
 import * as React from 'react';
+import Toast from 'react-native-toast-message';
 
 export type AuthStateType =
   | {
@@ -39,7 +41,7 @@ export const AuthContext = React.createContext<AuthContextType>({
   },
 });
 
-export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
+export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [state, setState] = React.useState<AuthStateType>({
     status: 'loading',
   });
@@ -50,58 +52,68 @@ export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
         throw new Error('User is already authenticated');
       }
 
-      const sdk = new Medusa({
-        baseUrl: medusaUrl,
-        debug: true,
-        auth: {
-          type: 'jwt',
-          jwtTokenStorageMethod: 'nostore',
-        },
-      });
+      try {
+        const sdk = new Medusa({
+          baseUrl: medusaUrl,
+          debug: true,
+          auth: {
+            type: 'jwt',
+            jwtTokenStorageMethod: 'nostore',
+          },
+        });
 
-      const loginResponse = await sdk.auth.login('user', 'emailpass', {
-        email,
-        password,
-      });
+        const loginResponse = await sdk.auth.login('user', 'emailpass', {
+          email,
+          password,
+        });
 
-      if (typeof loginResponse !== 'string') {
-        throw new Error('Handle this redirect later');
+        if (typeof loginResponse !== 'string') {
+          throw new Error('Handle this redirect later');
+        }
+
+        const apiKey = loginResponse;
+
+        const userResponse = await sdk.admin.user.me(undefined, {
+          Authorization: `Bearer ${apiKey}`,
+        });
+
+        await SecureStore.setItemAsync('medusaUrl', medusaUrl);
+        await SecureStore.setItemAsync('userEmail', email);
+        await SecureStore.setItemAsync('apiKey', apiKey);
+
+        setState({
+          status: 'authenticated',
+          user: {
+            id: userResponse.user.id,
+            name:
+              [userResponse.user.first_name, userResponse.user.last_name].filter(Boolean).join(' ') ||
+              userResponse.user.email.split('@')[0],
+            email: userResponse.user.email,
+          },
+          userEmail: email,
+          medusaUrl,
+          apiKey,
+        });
+      } catch (error) {
+        console.error('Login failed:', error);
+
+        if (isUnauthorizedError(error)) {
+          Toast.show({
+            type: 'error',
+            text1: 'Login Failed',
+            text2: 'Invalid email or password',
+            visibilityTime: 4000,
+          });
+        } else {
+          const message = error instanceof Error ? error.message : 'Login failed. Please try again.';
+          Toast.show({
+            type: 'error',
+            text1: 'Login Error',
+            text2: message,
+            visibilityTime: 4000,
+          });
+        }
       }
-
-      const userResponse = await sdk.admin.user.me(undefined, {
-        Authorization: `Bearer ${loginResponse}`,
-      });
-      // TODO: handle create api key error if user already has one
-      // const apiKeyResponse = await sdk.admin.apiKey.create(
-      //   {
-      //     type: 'secret',
-      //     title: `Agilo POS for ${userResponse.user.email}`,
-      //   },
-      //   undefined,
-      //   {
-      //     Authorization: `Bearer ${loginResponse}`,
-      //   },
-      // );
-      // const apiKey = apiKeyResponse.api_key.token;
-      const apiKey = loginResponse; // For now, use the JWT token as the API key
-
-      await SecureStore.setItemAsync('medusaUrl', medusaUrl);
-      await SecureStore.setItemAsync('userEmail', email);
-      await SecureStore.setItemAsync('apiKey', apiKey);
-
-      setState({
-        status: 'authenticated',
-        user: {
-          id: userResponse.user.id,
-          name:
-            [userResponse.user.first_name, userResponse.user.last_name].filter(Boolean).join(' ') ||
-            userResponse.user.email.split('@')[0],
-          email: userResponse.user.email,
-        },
-        userEmail: email,
-        medusaUrl,
-        apiKey,
-      });
     },
     [state.status],
   );
@@ -110,8 +122,6 @@ export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
     if (state.status !== 'authenticated') {
       throw new Error('User is not authenticated');
     }
-
-    // TODO: Revoke and delete the API key, have to store its ID first
 
     await SecureStore.deleteItemAsync('apiKey');
     setState({ status: 'unauthenticated' });
@@ -188,7 +198,23 @@ export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }
 
         await SecureStore.deleteItemAsync('apiKey');
 
-        console.error('Failed to load auth state:', error);
+        if (isUnauthorizedError(error)) {
+          Toast.show({
+            type: 'error',
+            text1: 'Session Expired',
+            text2: 'Your session has expired. Please log in again.',
+            visibilityTime: 4000,
+          });
+        } else {
+          console.error('Failed to load auth state:', error);
+          Toast.show({
+            type: 'error',
+            text1: 'Authentication Error',
+            text2: 'Failed to load authentication state. Please try again.',
+            visibilityTime: 4000,
+          });
+        }
+
         setState({ status: 'unauthenticated', medusaUrl: undefined });
       }
     };

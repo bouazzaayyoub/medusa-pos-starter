@@ -1,4 +1,5 @@
 import { useMedusaSdk } from '@/contexts/auth';
+import { showErrorToast } from '@/utils/errors';
 import { AdminProduct, AdminProductListParams, AdminProductListResponse, AdminProductVariant } from '@medusajs/types';
 import {
   InfiniteData,
@@ -105,5 +106,10 @@ export const useScanBarcode = (
       };
     },
     ...options,
+    onError: (error, variables, context) => {
+      showErrorToast(error);
+
+      return options?.onError?.(error, variables, context);
+    },
   });
 };
