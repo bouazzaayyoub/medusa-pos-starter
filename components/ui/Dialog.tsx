@@ -10,7 +10,8 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import Animated, { useAnimatedKeyboard, useAnimatedStyle } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export interface DialogProps extends ModalProps {
   title?: string;
@@ -40,6 +41,9 @@ export const Dialog: React.FC<DialogProps> = ({
   onCloseIconPress,
   ...modalProps
 }) => {
+  const safeAreaInsets = useSafeAreaInsets();
+  const animatedKeyboard = useAnimatedKeyboard();
+
   const onRequestClose = React.useCallback<Exclude<ModalProps['onRequestClose'], undefined>>(
     (event) => {
       if (modalProps.onRequestClose) {
@@ -75,6 +79,12 @@ export const Dialog: React.FC<DialogProps> = ({
     [onClose, onCloseIconPress],
   );
 
+  const overlayWrapperStyle = useAnimatedStyle(() => {
+    return {
+      paddingBottom: Math.max(animatedKeyboard.height.value, safeAreaInsets.bottom),
+    };
+  });
+
   return (
     <Modal
       transparent={true}
@@ -83,7 +93,17 @@ export const Dialog: React.FC<DialogProps> = ({
       {...modalProps}
       onRequestClose={onRequestClose}
     >
-      <SafeAreaView className={clx('flex-1 items-center justify-center bg-black/50', className)}>
+      <Animated.View
+        className={clx('flex-1 items-center justify-center bg-black/50', className)}
+        style={[
+          {
+            paddingTop: safeAreaInsets.top,
+            paddingRight: safeAreaInsets.right,
+            paddingLeft: safeAreaInsets.left,
+          },
+          overlayWrapperStyle,
+        ]}
+      >
         <TouchableWithoutFeedback onPress={handleOverlayPress}>
           <View className="absolute inset-0" />
         </TouchableWithoutFeedback>
@@ -104,7 +124,7 @@ export const Dialog: React.FC<DialogProps> = ({
             <View className={contentClassName}>{children}</View>
           </View>
         </View>
-      </SafeAreaView>
+      </Animated.View>
     </Modal>
   );
 };
