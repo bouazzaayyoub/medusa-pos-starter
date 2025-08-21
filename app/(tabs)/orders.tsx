@@ -11,6 +11,7 @@ import { Text } from '@/components/ui/Text';
 import { useBreakpointValue } from '@/hooks/useBreakpointValue';
 import { clx } from '@/utils/clx';
 import { formatDate } from '@/utils/date';
+import { showErrorToast } from '@/utils/errors';
 import { AdminOrder } from '@medusajs/types';
 import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
 import { router } from 'expo-router';
@@ -151,6 +152,12 @@ export default function OrdersScreen() {
 
     return ordersQuery.data?.pages.flatMap((page) => page.orders) || [];
   }, [ordersQuery]);
+
+  React.useEffect(() => {
+    if (ordersQuery.isError) {
+      showErrorToast(ordersQuery.error);
+    }
+  }, [ordersQuery.isError, ordersQuery.error]);
 
   return (
     <Layout>

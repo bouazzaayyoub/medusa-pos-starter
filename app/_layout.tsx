@@ -3,6 +3,7 @@ import { AppStatusBar } from '@/components/AppStatusBar';
 import '../global.css';
 
 import { SplashScreenController } from '@/components/SplashScreenController';
+import { toastConfig } from '@/config/toast';
 import { AuthProvider, useAuthCtx } from '@/contexts/auth';
 import { useSettings } from '@/contexts/settings';
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -14,6 +15,7 @@ import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client
 import { Stack } from 'expo-router';
 import * as React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -118,6 +120,7 @@ export default function RootLayout() {
             <SplashScreenController />
             <AppStatusBar />
             <App />
+            <Toast config={toastConfig} />
           </ThemeProvider>
         </AuthProvider>
       </PersistQueryClientProvider>

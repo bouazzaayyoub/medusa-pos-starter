@@ -1,4 +1,5 @@
 import { useMedusaSdk } from '@/contexts/auth';
+import { showErrorToast } from '@/utils/errors';
 import { AdminCreateStockLocation, AdminStockLocationListParams, AdminStockLocationResponse } from '@medusajs/types';
 import { useInfiniteQuery, useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query';
 
@@ -50,6 +51,10 @@ export const useCreateStockLocation = (
       });
 
       return options?.onSuccess?.(...args);
+    },
+    onError(error, variables, context) {
+      showErrorToast(error);
+      return options?.onError?.(error, variables, context);
     },
   });
 };

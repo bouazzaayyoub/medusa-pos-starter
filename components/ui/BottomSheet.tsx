@@ -1,5 +1,6 @@
 import { X } from '@/components/icons/x';
 import { Text } from '@/components/ui/Text';
+import { toastConfig } from '@/config/toast';
 import { clx } from '@/utils/clx';
 import { useKeyboard } from '@react-native-community/hooks';
 import React from 'react';
@@ -13,6 +14,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Toast from 'react-native-toast-message';
 import { useSafeAreaFrame, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export interface BottomSheetProps extends Pick<ModalProps, 'visible' | 'onRequestClose'> {
@@ -264,6 +266,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
               {typeof children === 'function' ? children({ animateOut }) : children}
             </View>
           </View>
+          <Toast config={toastConfig} />
         </Animated.View>
       </Animated.View>
     </Modal>

@@ -1,4 +1,5 @@
 import { useMedusaSdk } from '@/contexts/auth';
+import { showErrorToast } from '@/utils/errors';
 import { AdminCreateCustomer, AdminCustomerFilters, AdminCustomerListResponse } from '@medusajs/types';
 import {
   InfiniteData,
@@ -62,6 +63,9 @@ export const useCreateCustomer = () => {
         queryKey: ['customers'],
         exact: false,
       });
+    },
+    onError: (error) => {
+      showErrorToast(error);
     },
   });
 };

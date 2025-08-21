@@ -1,5 +1,6 @@
 import { useMedusaSdk } from '@/contexts/auth';
 import { useSettings } from '@/contexts/settings';
+import { showErrorToast } from '@/utils/errors';
 import {
   AdminAddDraftOrderItems,
   AdminCustomer,
@@ -180,6 +181,10 @@ export const useAddToDraftOrder = (
 
       return options?.onSettled?.(...args);
     },
+    onError: (error, variables, context) => {
+      showErrorToast(error);
+      return options?.onError?.(error, variables, context);
+    },
   });
 };
 
@@ -342,6 +347,8 @@ export const useUpdateDraftOrderItem = (
         queryClient.setQueryData(['draft-order'], context.previousDraftOrder);
       }
 
+      showErrorToast(error);
+
       return options?.onError?.(error, variables, context);
     },
     onSettled: async (...args) => {
@@ -393,6 +400,10 @@ export const useAddPromotion = (
 
       return options?.onSettled?.(...args);
     },
+    onError(error, variables, context) {
+      showErrorToast(error);
+      return options?.onError?.(error, variables, context);
+    },
   });
 };
 
@@ -431,6 +442,10 @@ export const useRemovePromotion = (
       }
 
       return options?.onSettled?.(...args);
+    },
+    onError(error, variables, context) {
+      showErrorToast(error);
+      return options?.onError?.(error, variables, context);
     },
   });
 };
@@ -490,6 +505,9 @@ export const useUpdateDraftOrderCustomer = (
           exact: false,
         });
       }
+
+      showErrorToast(error);
+
       return options?.onError?.(error, variables, context);
     },
     onSettled: async (...args) => {
@@ -576,6 +594,10 @@ export const useCompleteDraftOrder = (
       });
 
       return options?.onSettled?.(...args);
+    },
+    onError(error, variables, context) {
+      showErrorToast(error);
+      return options?.onError?.(error, variables, context);
     },
   });
 };
