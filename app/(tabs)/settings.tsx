@@ -1,46 +1,29 @@
 import { Antenna } from '@/components/icons/antenna';
 import { Button } from '@/components/ui/Button';
 import { LayoutWithScroll } from '@/components/ui/Layout';
+import { Prompt } from '@/components/ui/Prompt';
 import { Text } from '@/components/ui/Text';
 import { useAuthCtx } from '@/contexts/auth';
 import { useClearSettings, useSettings } from '@/contexts/settings';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import React from 'react';
-import { Alert, View } from 'react-native';
 
 export default function SettingsScreen() {
   const queryClient = useQueryClient();
   const auth = useAuthCtx();
   const settings = useSettings();
-  const bottomTabBarHeight = useBottomTabBarHeight();
   const clearSettings = useClearSettings();
 
-  const handleLogout = () => {
-    Alert.alert('Logout', 'Are you sure you want to logout?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Logout',
-        style: 'destructive',
-        onPress: async () => {
-          queryClient.clear();
-          router.replace('/login');
-          await auth.logout();
-        },
-      },
-    ]);
-  };
+  const [isDialogVisible, setIsDialogVisible] = React.useState(false);
 
   return (
-    <LayoutWithScroll>
-      <View style={{ paddingBottom: bottomTabBarHeight + 10 }}>
-        <Text className="text-4xl mb-6">Settings</Text>
-
-        <Text className="text-2xl mb-4">Sales Channel</Text>
-
+    <>
+      <LayoutWithScroll>
+        <Text className="mb-6 text-4xl">Settings</Text>
+        <Text className="mb-4 text-2xl">Sales Channel</Text>
         <Button
-          onPress={() => router.push('/setup-wizard')}
+          onPress={() => router.push('/settings/sales-channel')}
           variant="outline"
           icon={<Antenna size={16} />}
           iconPosition="left"
@@ -48,11 +31,9 @@ export default function SettingsScreen() {
         >
           {settings.data?.sales_channel?.name || '—'}
         </Button>
-
-        <Text className="text-2xl mb-4">Region</Text>
-
+        <Text className="mb-4 text-2xl">Region</Text>
         <Button
-          onPress={() => router.push('/setup-wizard')}
+          onPress={() => router.push('/settings/region')}
           variant="outline"
           icon={<Antenna size={16} />}
           iconPosition="left"
@@ -60,11 +41,9 @@ export default function SettingsScreen() {
         >
           {settings.data?.region?.name || '—'}
         </Button>
-
-        <Text className="text-2xl mb-4">Stock location</Text>
-
+        <Text className="mb-4 text-2xl">Stock location</Text>
         <Button
-          onPress={() => router.push('/setup-wizard')}
+          onPress={() => router.push('/settings/stock-location')}
           variant="outline"
           icon={<Antenna size={16} />}
           iconPosition="left"
@@ -72,9 +51,7 @@ export default function SettingsScreen() {
         >
           {settings.data?.stock_location?.name || '—'}
         </Button>
-
-        <Text className="text-2xl mb-4">Reset</Text>
-
+        <Text className="mb-4 text-2xl">Reset</Text>
         <Button
           variant="outline"
           onPress={() => {
@@ -84,15 +61,27 @@ export default function SettingsScreen() {
         >
           Clear Settings
         </Button>
-
-        <Text className="text-2xl mb-4">Account</Text>
-
-        <Button onPress={handleLogout} className="mb-4">
+        <Text className="mb-4 text-2xl">Account</Text>
+        <Button onPress={() => setIsDialogVisible(true)} className="mb-4">
           Log Out
         </Button>
-
         <Text className="text-gray-300">You will be signed out of your account.</Text>
-      </View>
-    </LayoutWithScroll>
+      </LayoutWithScroll>
+
+      <Prompt
+        onSubmit={async () => {
+          queryClient.clear();
+          router.replace('/login');
+          await auth.logout();
+        }}
+        onClose={() => setIsDialogVisible(false)}
+        submitText="Logout"
+        cancelText="Cancel"
+        title="Are you sure you want to logout?"
+        visible={isDialogVisible}
+        showCloseButton={false}
+        dismissOnOverlayPress={false}
+      />
+    </>
   );
 }

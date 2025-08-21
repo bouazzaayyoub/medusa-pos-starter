@@ -20,8 +20,8 @@ export const StockLocationCreationStep: React.FC<StockLocationCreationStepProps>
 
   return (
     <ScrollView contentContainerClassName="p-5" keyboardShouldPersistTaps="always">
-      <Text className="text-4xl mb-6">Setting Up</Text>
-      <Text className="text-2xl mb-2">Create a new stock location</Text>
+      <Text className="mb-6 text-4xl">Setting Up</Text>
+      <Text className="mb-2 text-2xl">Create a new stock location</Text>
       <Text className="mb-6 text-gray-300">
         Select where inventory will be sourced from, or add a new location if needed.
       </Text>

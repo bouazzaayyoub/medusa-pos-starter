@@ -6,16 +6,16 @@ import { UserRound } from '@/components/icons/user-round';
 import { MultiSelectFilter } from '@/components/MultiSelectFilter';
 import { SearchInput } from '@/components/SearchInput';
 import { Layout } from '@/components/ui/Layout';
-import { OrderStatus } from '@/components/ui/OrderStatus';
+import { OrderListStatus } from '@/components/ui/OrderStatus';
 import { Text } from '@/components/ui/Text';
 import { useBreakpointValue } from '@/hooks/useBreakpointValue';
 import { clx } from '@/utils/clx';
+import { formatDate } from '@/utils/date';
 import { AdminOrder } from '@medusajs/types';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { FlashList, ListRenderItemInfo } from '@shopify/flash-list';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Platform, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 const isPlaceholderOrder = (
   order: AdminOrder | { id: `placeholder_${string}` },
@@ -29,8 +29,32 @@ const isValidOrderStatus = (status: string): status is (typeof allowedOrderStatu
   return allowedOrderStatuses.includes(status as (typeof allowedOrderStatuses)[number]);
 };
 
+const OrderPlaceholder: React.FC<{ index: number; numColumns: number }> = ({ index, numColumns }) => {
+  return (
+    <View
+      className={clx('flex-1 px-2', {
+        'pl-0': index % numColumns === 0,
+        'pr-0': (index + 1) % numColumns === 0,
+      })}
+    >
+      <View className="w-full gap-2 rounded-2xl border border-gray-200 p-4">
+        <View className="w-full flex-row justify-between gap-2">
+          <View className="h-6 w-1/3 rounded-md bg-gray-200" />
+          <View className="h-5 w-24 rounded-md bg-gray-200" />
+        </View>
+        <View className="flex-row justify-between">
+          <View className="w-1/2 gap-2">
+            <View className="h-4 w-full rounded-md bg-gray-200" />
+            <View className="h-4 w-20 rounded-md bg-gray-200" />
+          </View>
+          <View className="mt-auto h-8 w-32 rounded-full bg-gray-200" />
+        </View>
+      </View>
+    </View>
+  );
+};
+
 export default function OrdersScreen() {
-  const bottomTabBarHeight = useBottomTabBarHeight();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
   const [dateRange, setDateRange] = useState<{ startDate: Date; endDate: Date } | null>(null);
@@ -51,15 +75,6 @@ export default function OrdersScreen() {
       : undefined,
   });
 
-  const formatDate = (dateString: string | Date) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  };
-
   const handleOrderPress = React.useCallback((order: AdminOrder) => {
     router.push({
       pathname: '/orders/[orderId]',
@@ -70,25 +85,7 @@ export default function OrdersScreen() {
   const renderOrder = React.useCallback(
     ({ item, index }: ListRenderItemInfo<AdminOrder | { id: `placeholder_${string}` }>) => {
       if (isPlaceholderOrder(item)) {
-        return (
-          <View
-            className={clx('px-2 w-full', {
-              'pl-0': index % numColumns === 0,
-              'pr-0': (index + 1) % numColumns === 0,
-            })}
-          >
-            <View className="p-4 border gap-2 border-gray-200 rounded-2xl w-full">
-              <View className="bg-gray-200 h-6 w-full rounded-md" />
-              <View className="flex-row justify-between">
-                <View className="gap-2">
-                  <View className="bg-gray-200 h-4 w-16 rounded-md" />
-                  <View className="bg-gray-200 h-4 w-16 rounded-md" />
-                </View>
-                <View className="bg-gray-200 mt-auto h-4 w-32 rounded-md" />
-              </View>
-            </View>
-          </View>
-        );
+        return <OrderPlaceholder index={index} numColumns={numColumns} />;
       }
 
       const customerName =
@@ -100,19 +97,19 @@ export default function OrdersScreen() {
 
       return (
         <View
-          className={clx('px-2 w-full', {
+          className={clx('w-full px-2', {
             'pl-0': index % numColumns === 0,
             'pr-0': (index + 1) % numColumns === 0,
           })}
         >
           <TouchableOpacity
-            className="p-4 border justify-between flex-row gap-4 border-gray-200 rounded-2xl w-full"
+            className="w-full flex-row justify-between gap-4 rounded-2xl border border-gray-200 p-4"
             onPress={() => handleOrderPress(item)}
             activeOpacity={0.7}
           >
-            <View className="gap-4 flex-1">
+            <View className="flex-1 gap-4">
               <View className="flex-1">
-                <Text textBreakStrategy="balanced" className="text-xl shrink">
+                <Text textBreakStrategy="balanced" className="shrink text-xl">
                   Order #{item.display_id || item.id.slice(-6)}
                 </Text>
               </View>
@@ -133,8 +130,10 @@ export default function OrdersScreen() {
               </Text>
             </View>
             <View className="gap-4">
-              <Text className="text-gray-300 mb-auto text-right flex-1 flex-wrap">{formatDate(item.created_at)}</Text>
-              <OrderStatus order={item} />
+              <View className="flex-1">
+                <Text className="mb-auto text-right text-gray-300">{formatDate(item.created_at)}</Text>
+              </View>
+              <OrderListStatus order={item} />
             </View>
           </TouchableOpacity>
         </View>
@@ -155,7 +154,7 @@ export default function OrdersScreen() {
 
   return (
     <Layout>
-      <Text className="text-4xl mb-6">My Orders</Text>
+      <Text className="mb-6 text-4xl">My Orders</Text>
 
       <SearchInput
         value={searchQuery}
@@ -164,7 +163,7 @@ export default function OrdersScreen() {
         className="mb-4"
       />
 
-      <View className="flex-row items-center gap-2 mb-4">
+      <View className="mb-4 flex-row items-center gap-2">
         <MultiSelectFilter
           variant="secondary"
           placeholder="Status"
@@ -193,34 +192,33 @@ export default function OrdersScreen() {
         numColumns={numColumns}
         estimatedItemSize={120}
         refreshing={ordersQuery.isRefetching}
-        ItemSeparatorComponent={() => <View className="w-full h-4" />}
+        ItemSeparatorComponent={() => <View className="h-4 w-full" />}
         automaticallyAdjustKeyboardInsets
         ListEmptyComponent={
-          <View className="flex-1 mt-32 items-center">
+          <View className="mt-32 flex-1 items-center">
             <CircleAlert size={24} />
-            <Text className="text-center text-xl mt-2">No orders match{'\n'}the search</Text>
+            <Text className="mt-2 text-center text-xl">No orders match{'\n'}the search</Text>
           </View>
         }
-        contentContainerStyle={Platform.select({
-          ios: {
-            paddingBottom: bottomTabBarHeight + 10,
-          },
-        })}
+        contentContainerClassName="pb-2"
         ListFooterComponent={
           ordersQuery.isFetchingNextPage ? (
-            <View className="gap-4 mt-4">
-              {Array.from({ length: 3 }).map((_, index) => (
-                <View key={index} className="p-4 border gap-2 border-gray-200 rounded-2xl">
-                  <View className="bg-gray-200 h-6 w-full rounded-md" />
-                  <View className="flex-row justify-between">
-                    <View className="gap-2">
-                      <View className="bg-gray-200 h-4 w-16 rounded-md" />
-                      <View className="bg-gray-200 h-4 w-16 rounded-md" />
-                    </View>
-                    <View className="bg-gray-200 mt-auto h-4 w-32 rounded-md" />
-                  </View>
-                </View>
-              ))}
+            <View className="mt-4 gap-4">
+              <View className="flex-row">
+                {Array.from({ length: numColumns }).map((_, index) => (
+                  <OrderPlaceholder key={index} index={index} numColumns={numColumns} />
+                ))}
+              </View>
+              <View className="flex-row">
+                {Array.from({ length: numColumns }).map((_, index) => (
+                  <OrderPlaceholder key={index} index={index} numColumns={numColumns} />
+                ))}
+              </View>
+              <View className="flex-row">
+                {Array.from({ length: numColumns }).map((_, index) => (
+                  <OrderPlaceholder key={index} index={index} numColumns={numColumns} />
+                ))}
+              </View>
             </View>
           ) : null
         }
@@ -233,6 +231,7 @@ export default function OrdersScreen() {
           }
         }}
         showsVerticalScrollIndicator={false}
+        keyboardDismissMode="on-drag"
       />
     </Layout>
   );

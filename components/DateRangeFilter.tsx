@@ -102,7 +102,8 @@ export const DateRangeFilter = ({
     <View className={className}>
       <TouchableOpacity
         className={clx(
-          'bg-white rounded-full gap-2 p-3 justify-center border border-gray-200 flex-row items-center',
+          'flex-row items-center justify-center gap-2 rounded-full border border-gray-200 bg-white p-3',
+          { 'bg-black': displayValue },
           buttonClassName,
         )}
         onPress={() => {
@@ -113,8 +114,17 @@ export const DateRangeFilter = ({
           setIsVisible(true);
         }}
       >
-        <Text className={displayValue ? 'flex-1 flex-wrap' : 'text-lg'}>{displayValue || placeholder}</Text>
-        <ChevronDown size={24} className="mt-1" />
+        <View className={clx({ 'flex-1': displayValue })}>
+          <Text
+            className={clx({
+              'text-white': displayValue,
+              'text-lg': !displayValue,
+            })}
+          >
+            {displayValue || placeholder}
+          </Text>
+        </View>
+        <ChevronDown size={24} className={clx('mt-1', { 'text-white': displayValue })} />
       </TouchableOpacity>
 
       <BottomSheet visible={isVisible} onClose={() => setIsVisible(false)} showCloseButton={false}>
@@ -125,7 +135,7 @@ export const DateRangeFilter = ({
           onChange={handleDateChange}
           minDate={minDate}
           maxDate={maxDate}
-          className="px-4"
+          className="pb-safe-offset-4 px-4"
           classNames={{
             days: '',
             day_cell: 'p-0.5',

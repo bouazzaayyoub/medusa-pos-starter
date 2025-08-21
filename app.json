@@ -57,6 +57,19 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "2c44b68b-5c32-4031-a160-d315e6c399d4"
+      }
+    },
+    "owner": "agilo-com",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/2c44b68b-5c32-4031-a160-d315e6c399d4"
     }
   }
 }

@@ -19,13 +19,15 @@ export const LoadingBanner = ({ variant = 'outline', className, children }: Load
     className,
   );
 
-  const textClasses = clx('flex-wrap text-gray-300', {
-    'flex-1': variant === 'outline',
+  const textClasses = clx('text-gray-300', {
+    'text-center': variant === 'ghost',
   });
 
   return (
     <View className={wrapperClasses}>
-      <Text className={textClasses}>{children}</Text>
+      <View className="flex-1">
+        <Text className={textClasses}>{children}</Text>
+      </View>
       <Loader size={16} color="#B5B5B5" className="animate-spin" />
     </View>
   );

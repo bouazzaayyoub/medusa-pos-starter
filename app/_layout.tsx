@@ -2,7 +2,6 @@
 import { AppStatusBar } from '@/components/AppStatusBar';
 import '../global.css';
 
-import { ProductDetailsHeader } from '@/components/ProductDetailsHeader';
 import { SplashScreenController } from '@/components/SplashScreenController';
 import { toastConfig } from '@/config/toast';
 import { AuthProvider, useAuthCtx } from '@/contexts/auth';
@@ -13,8 +12,9 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
-import { Stack, useRouter } from 'expo-router';
+import { Stack } from 'expo-router';
 import * as React from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 
 const queryClient = new QueryClient({
@@ -30,59 +30,33 @@ const asyncStoragePersister = createAsyncStoragePersister({
 });
 
 function App() {
-  const router = useRouter();
   const auth = useAuthCtx();
   const settings = useSettings();
 
-  React.useEffect(() => {
-    if (auth.state.status === 'unauthenticated') {
-      // If the user is not authenticated, redirect to the login screen
-      router.replace('/login');
-      return;
-    }
-
-    if (auth.state.status === 'authenticated') {
-      if (settings.isSuccess) {
-        if (!settings.data || !settings.data.sales_channel || !settings.data.region || !settings.data.stock_location) {
-          // If settings are not set, redirect to the setup wizard
-          router.replace('/setup-wizard');
-          return;
-        }
-
-        // If settings are set, redirect to the main app
-        if (settings.data.sales_channel && settings.data.region && settings.data.stock_location) {
-          router.replace('/(tabs)/products');
-          return;
-        }
-      }
-    }
-  }, [auth.state, settings.isSuccess, settings.data, router]);
+  const isSetupComplete =
+    settings.isSuccess &&
+    !!settings.data &&
+    !!settings.data.sales_channel &&
+    !!settings.data.region &&
+    !!settings.data.stock_location;
 
   return (
     <Stack>
-      <Stack.Protected
-        guard={
-          auth.state.status === 'authenticated' &&
-          settings.isSuccess &&
-          !!settings.data &&
-          !!settings.data.sales_channel &&
-          !!settings.data.region &&
-          !!settings.data.stock_location
-        }
-      >
-        {/* Main App - Tab Navigation */}
+      <Stack.Protected guard={auth.state.status === 'authenticated' && isSetupComplete}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
-        {/* Checkout Flow */}
         <Stack.Screen name="checkout/[draftOrderId]" options={{ title: 'Checkout', headerShown: false }} />
 
-        {/* Modal Dialogs */}
         <Stack.Screen
           name="product-details"
           options={{
-            presentation: 'modal',
+            presentation: 'transparentModal',
             title: 'Product Details',
-            header: () => <ProductDetailsHeader />,
+            headerShown: false,
+            animation: 'none',
+            animationDuration: 0,
+            gestureEnabled: false,
+            fullScreenGestureShadowEnabled: false,
           }}
         />
         <Stack.Screen
@@ -106,16 +80,23 @@ function App() {
             animation: 'none',
           }}
         />
-        <Stack.Screen name="+not-found" />
+
+        <Stack.Screen name="settings/stock-location" options={{ headerShown: false }} />
+
+        <Stack.Screen name="settings/create-stock-location" options={{ headerShown: false }} />
+
+        <Stack.Screen name="settings/region" options={{ headerShown: false }} />
+
+        <Stack.Screen name="settings/create-region" options={{ headerShown: false }} />
+
+        <Stack.Screen name="settings/sales-channel" options={{ headerShown: false }} />
+
+        <Stack.Screen name="settings/create-sales-channel" options={{ headerShown: false }} />
+
+        <Stack.Screen name="+not-found" options={{ headerShown: false }} />
       </Stack.Protected>
 
-      <Stack.Protected
-        guard={
-          auth.state.status === 'authenticated' &&
-          settings.isSuccess &&
-          (!settings.data || !settings.data.sales_channel || !settings.data.region || !settings.data.stock_location)
-        }
-      >
+      <Stack.Protected guard={auth.state.status === 'authenticated' && settings.isSuccess && !isSetupComplete}>
         <Stack.Screen name="setup-wizard" options={{ headerShown: false }} />
       </Stack.Protected>
 
@@ -132,15 +113,17 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <PersistQueryClientProvider client={queryClient} persistOptions={{ persister: asyncStoragePersister }}>
-      <AuthProvider>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <SplashScreenController loaded={true} />
-          <AppStatusBar />
-          <App />
-          <Toast config={toastConfig} />
-        </ThemeProvider>
-      </AuthProvider>
-    </PersistQueryClientProvider>
+    <SafeAreaProvider>
+      <PersistQueryClientProvider client={queryClient} persistOptions={{ persister: asyncStoragePersister }}>
+        <AuthProvider>
+          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <SplashScreenController />
+            <AppStatusBar />
+            <App />
+            <Toast config={toastConfig} />
+          </ThemeProvider>
+        </AuthProvider>
+      </PersistQueryClientProvider>
+    </SafeAreaProvider>
   );
 }

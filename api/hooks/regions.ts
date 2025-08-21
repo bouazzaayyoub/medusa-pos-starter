@@ -1,6 +1,6 @@
 import { useMedusaSdk } from '@/contexts/auth';
-import { AdminCreateRegion, AdminRegionFilters, FindParams } from '@medusajs/types';
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { AdminCreateRegion, AdminRegionFilters, AdminRegionResponse, FindParams } from '@medusajs/types';
+import { useInfiniteQuery, useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query';
 
 const PER_PAGE = 20;
 
@@ -28,7 +28,9 @@ export const useRegions = (query?: Omit<FindParams & AdminRegionFilters, 'offset
   });
 };
 
-export const useCreateRegion = () => {
+export const useCreateRegion = (
+  options?: Omit<UseMutationOptions<AdminRegionResponse, Error, AdminCreateRegion>, 'mutationKey' | 'mutationFn'>,
+) => {
   const sdk = useMedusaSdk();
   const queryClient = useQueryClient();
 
@@ -37,11 +39,14 @@ export const useCreateRegion = () => {
     mutationFn: async (data: AdminCreateRegion) => {
       return sdk.admin.region.create(data);
     },
-    onSuccess: async () => {
+    ...options,
+    onSuccess: async (...args) => {
       await queryClient.invalidateQueries({
         queryKey: ['regions'],
         exact: false,
       });
+
+      return options?.onSuccess?.(...args);
     },
   });
 };

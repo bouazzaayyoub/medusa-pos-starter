@@ -1,29 +1,14 @@
 import { Check } from '@/components/icons/check';
-import { ChevronDown } from '@/components/icons/chevron-down';
 import { X } from '@/components/icons/x';
 import { Text } from '@/components/ui/Text';
 import { clx } from '@/utils/clx';
-import React, { useEffect, useState } from 'react';
-import { useController, useFormContext } from 'react-hook-form';
+import React from 'react';
 import { FlatList, ListRenderItemInfo, TextInput, TouchableOpacity, View } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { BottomSheet } from '../ui/BottomSheet';
+import { BaseSelectField, BaseSelectProps, SelectOption } from './BaseSelectField';
 
 interface TMultiSelectOption {
   label: string;
   value: string;
-}
-
-interface MultiSelectFieldProps {
-  name: string;
-  placeholder?: string;
-  options: TMultiSelectOption[];
-  className?: string;
-  buttonClassName?: string;
-  errorClassName?: string;
-  searchable?: boolean;
-  floatingPlaceholder?: boolean;
-  variant?: 'primary' | 'secondary';
 }
 
 const MultiSelectOption: React.FC<{
@@ -33,7 +18,7 @@ const MultiSelectOption: React.FC<{
 }> = ({ option, isSelected, toggleOption }) => (
   <TouchableOpacity
     key={option.value}
-    className={clx('p-4 flex-row justify-between items-center bg-white')}
+    className={clx('flex-row items-center justify-between bg-white p-4')}
     onPress={() => {
       toggleOption(option.value);
     }}
@@ -58,147 +43,64 @@ export function MultiSelectField({
   errorClassName = '',
   searchable = false,
   floatingPlaceholder = false,
+  isDisabled = false,
   variant = 'primary',
-}: MultiSelectFieldProps) {
-  const { control } = useFormContext();
-  const {
-    field: { onChange, value = [] },
-    fieldState: { error },
-  } = useController({
-    name,
-    control,
-  });
-  const [isVisible, setIsVisible] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const selectedOptions = options.filter((option) => value.includes(option.value));
-
-  const filteredOptions = searchable
-    ? options.filter((option) => option.label.toLowerCase().includes(searchQuery.toLowerCase()))
-    : options;
-
-  const showFloating = floatingPlaceholder && (isVisible || selectedOptions.length > 0) && variant === 'primary';
-  const floatingPlaceholderTranslateY = useSharedValue(0);
-  const floatingPlaceholderScale = useSharedValue(1);
-
-  const floatingPlaceholderStyle = useAnimatedStyle(() => {
-    return {
-      transformOrigin: 'top left',
-      transform: [
-        {
-          translateY: floatingPlaceholderTranslateY.value,
-        },
-        {
-          scale: floatingPlaceholderScale.value,
-        },
-      ],
-    };
-  });
-
-  useEffect(() => {
-    if (showFloating) {
-      floatingPlaceholderTranslateY.value = withTiming(-12, { duration: 150 });
-      floatingPlaceholderScale.value = withTiming(0.67, { duration: 150 });
-    } else {
-      floatingPlaceholderTranslateY.value = withTiming(0, { duration: 150 });
-      floatingPlaceholderScale.value = withTiming(1, { duration: 150 });
-    }
-  }, [floatingPlaceholderScale, floatingPlaceholderTranslateY, showFloating]);
-
+}: BaseSelectProps) {
   const toggleOption = React.useCallback(
-    (optionValue: string) => {
+    (value: string[], onChange: (value: any) => void) => (optionValue: string) => {
       const newValue = value.includes(optionValue)
         ? value.filter((v: string) => v !== optionValue)
         : [...value, optionValue];
       onChange(newValue);
     },
-    [value, onChange],
+    [],
   );
 
-  const removeOption = (optionValue: string) => {
+  const removeOption = (value: string[], onChange: (value: any) => void) => (optionValue: string) => {
     const newValue = value.filter((v: string) => v !== optionValue);
     onChange(newValue);
   };
 
-  const renderOption = React.useCallback(
-    ({ item }: ListRenderItemInfo<TMultiSelectOption>) => {
-      return <MultiSelectOption option={item} isSelected={value.includes(item.value)} toggleOption={toggleOption} />;
-    },
-    [value, toggleOption],
-  );
+  const getSelectedOptions = (options: SelectOption[], value: any) => {
+    return options.filter((option) => value.includes(option.value));
+  };
 
-  return (
-    <View className={clx('w-full', className)}>
-      <View className="relative">
-        <TouchableOpacity
-          onPress={() => setIsVisible(true)}
-          className={clx(
-            'bg-white rounded-xl px-4 py-5 text-lg leading-6 border border-gray-200 flex-row justify-between items-center',
-            {
-              'border-error-500': error,
-              [buttonClassName]: buttonClassName,
-              'pt-6 pb-4': floatingPlaceholder && variant === 'primary',
-              'bg-black': selectedOptions.length > 0 && variant === 'secondary',
-              'rounded-full py-3 justify-center': variant === 'secondary',
-            },
-          )}
-        >
-          <View>
-            {selectedOptions.length > 0 && variant === 'primary' ? (
-              <View className="flex flex-row flex-wrap gap-1">
-                {selectedOptions.map((option) => (
-                  <View key={option.value} className="bg-gray-100 rounded-lg px-2 py-1 flex-row items-center mr-1 mb-1">
-                    <Text className="text-sm text-gray-700">{option.label}</Text>
-                    <TouchableOpacity
-                      onPress={(e) => {
-                        e.stopPropagation();
-                        removeOption(option.value);
-                      }}
-                      className="ml-1"
-                    >
-                      <X size={12} className="text-gray-600" />
-                    </TouchableOpacity>
-                  </View>
-                ))}
-              </View>
-            ) : selectedOptions.length > 0 && variant === 'secondary' ? (
-              <View className="flex-row gap-3 items-center">
-                <Text className="text-lg text-white">{placeholder}</Text>
-                <View className="bg-white rounded-full mt-0.5 items-center px-1 justify-center aspect-square">
-                  <Text className="text-xs font-bold">{selectedOptions.length}</Text>
-                </View>
-              </View>
-            ) : (
-              <Text
-                className={clx('text-lg', {
-                  'text-gray-300': !selectedOptions.length,
-                })}
-              >
-                {!floatingPlaceholder ? placeholder : null}
-              </Text>
-            )}
-          </View>
-        </TouchableOpacity>
-        <ChevronDown size={24} className="text-gray-300 absolute top-1/2 -translate-y-1/2 right-4" />
+  const shouldShowFloating = (
+    isVisible: boolean,
+    selectedOptions: SelectOption[],
+    floatingPlaceholder: boolean,
+    variant: 'primary' | 'secondary',
+  ) => {
+    return floatingPlaceholder && (isVisible || selectedOptions.length > 0) && variant === 'primary';
+  };
 
-        {floatingPlaceholder && (
-          <Animated.Text
-            className={clx('absolute left-4 z-10 text-lg top-5', error ? 'text-error-500' : 'text-gray-300')}
-            style={floatingPlaceholderStyle}
-            pointerEvents="none"
-          >
-            {placeholder}
-          </Animated.Text>
-        )}
-      </View>
+  const renderOptionsList = ({
+    filteredOptions,
+    value,
+    onChange,
+    searchable,
+    searchQuery,
+    setSearchQuery,
+  }: {
+    filteredOptions: SelectOption[];
+    value: any;
+    onChange: (value: any) => void;
+    searchable: boolean;
+    searchQuery: string;
+    setSearchQuery: (query: string) => void;
+  }) => {
+    const toggle = toggleOption(value, onChange);
 
-      {error && <Text className={clx('text-error-500 text-sm mt-1', errorClassName)}>{error.message}</Text>}
+    const renderItem = ({ item }: ListRenderItemInfo<TMultiSelectOption>) => {
+      return <MultiSelectOption option={item} isSelected={value.includes(item.value)} toggleOption={toggle} />;
+    };
 
-      <BottomSheet visible={isVisible} onClose={() => setIsVisible(false)} showCloseButton={false}>
+    return (
+      <>
         {searchable && (
-          <View className="p-4 border-b border-gray-200">
+          <View className="border-b border-gray-200 p-4">
             <TextInput
-              className="border border-gray-200 rounded-lg px-4 py-3"
+              className="rounded-lg border border-gray-200 px-4 py-3"
               placeholder="Search options..."
               placeholderTextColor="#9CA3AF"
               value={searchQuery}
@@ -214,17 +116,87 @@ export function MultiSelectField({
           keyExtractor={(item) => item.value}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="always"
-          renderItem={renderOption}
+          renderItem={renderItem}
           ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200" />}
+          contentContainerClassName="pb-safe-offset-4"
           ListEmptyComponent={
-            <View className="p-8 items-center">
+            <View className="items-center p-8">
               <Text className="text-gray-500">
                 {searchable && searchQuery ? 'No options found' : 'No options available'}
               </Text>
             </View>
           }
+          keyboardDismissMode="on-drag"
         />
-      </BottomSheet>
-    </View>
+      </>
+    );
+  };
+
+  return (
+    <BaseSelectField
+      name={name}
+      placeholder={placeholder}
+      options={options}
+      className={className}
+      buttonClassName={buttonClassName}
+      errorClassName={errorClassName}
+      searchable={searchable}
+      floatingPlaceholder={floatingPlaceholder}
+      variant={variant}
+      getSelectedOptions={getSelectedOptions}
+      shouldShowFloating={shouldShowFloating}
+      renderOptionsList={renderOptionsList}
+      isDisabled={isDisabled}
+    >
+      {({ selectedOptions, value, onChange, placeholder: pl, floatingPlaceholder: fp, variant }) => {
+        const removeOpt = removeOption(value, onChange);
+
+        return (
+          <View>
+            {selectedOptions.length > 0 && variant === 'primary' ? (
+              <View className="flex flex-row flex-wrap gap-1">
+                {selectedOptions.map((option) => (
+                  <View
+                    key={option.value}
+                    className={clx('mb-1 mr-1 flex-row items-center rounded-lg bg-gray-100 px-2 py-1', {
+                      'bg-gray-50': isDisabled,
+                    })}
+                  >
+                    <Text className={clx('text-sm text-gray-700', { 'text-gray-200': isDisabled })}>
+                      {option.label}
+                    </Text>
+                    <TouchableOpacity
+                      disabled={isDisabled}
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        removeOpt(option.value);
+                      }}
+                      className="ml-1"
+                    >
+                      <X size={12} className={clx('text-gray-600', { 'text-gray-200': isDisabled })} />
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </View>
+            ) : selectedOptions.length > 0 && variant === 'secondary' ? (
+              <View className="flex-row items-center gap-3">
+                <Text className="text-lg text-white">{pl}</Text>
+                <View className="mt-0.5 aspect-square items-center justify-center rounded-full bg-white px-1">
+                  <Text className="text-xs font-bold">{selectedOptions.length}</Text>
+                </View>
+              </View>
+            ) : (
+              <Text
+                className={clx('text-lg', {
+                  'text-gray-300': !selectedOptions.length,
+                })}
+              >
+                {!fp ? pl : null}
+              </Text>
+            )}
+          </View>
+        );
+      }}
+    </BaseSelectField>
   );
 }

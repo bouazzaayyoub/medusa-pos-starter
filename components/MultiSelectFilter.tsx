@@ -59,7 +59,7 @@ export const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({
   const defaultRenderOption = (option: MultiSelectOption, isSelected: boolean) => (
     <TouchableOpacity
       key={option.value}
-      className={clx('p-4 flex-row justify-between items-center bg-white')}
+      className={clx('flex-row items-center justify-between bg-white p-4')}
       onPress={() => toggleOption(option.value)}
     >
       <Text
@@ -79,11 +79,11 @@ export const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({
         <TouchableOpacity
           onPress={() => setIsVisible(true)}
           className={clx(
-            'bg-white rounded-xl px-4 py-5 text-lg leading-6 border border-gray-200 flex-row justify-between items-center',
+            'h-13.5 flex-row items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-5 text-lg leading-6',
             {
               [buttonClassName]: buttonClassName,
               'bg-black': selectedOptions.length > 0 && variant === 'secondary',
-              'rounded-full py-3 justify-center': variant === 'secondary',
+              'justify-center rounded-full py-3': variant === 'secondary',
             },
           )}
         >
@@ -91,7 +91,7 @@ export const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({
             {selectedOptions.length > 0 && variant === 'primary' ? (
               <View className="flex flex-row flex-wrap gap-1">
                 {selectedOptions.map((option) => (
-                  <View key={option.value} className="bg-gray-100 rounded-lg px-2 py-1 flex-row items-center mr-1 mb-1">
+                  <View key={option.value} className="mb-1 mr-1 flex-row items-center rounded-lg bg-gray-100 px-2 py-1">
                     <Text className="text-sm text-gray-700">{option.label}</Text>
                     <TouchableOpacity
                       onPress={(e) => {
@@ -106,10 +106,10 @@ export const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({
                 ))}
               </View>
             ) : selectedOptions.length > 0 && variant === 'secondary' ? (
-              <View className="flex-row gap-3 items-center">
-                <Text className="text-lg text-white leading-5">{placeholder}</Text>
-                <View className="bg-white rounded-full items-center px-1 justify-center aspect-square">
-                  <Text className="text-xs font-bold transform -translate-y-1/2 top-1/2">{selectedOptions.length}</Text>
+              <View className="flex-row items-center gap-3">
+                <Text className="text-lg leading-5 text-white">{placeholder}</Text>
+                <View className="aspect-square min-w-[1.0188rem] items-center justify-center rounded-full bg-white px-1">
+                  <Text className="top-1/2 -translate-y-1/2 transform text-xs font-bold">{selectedOptions.length}</Text>
                 </View>
               </View>
             ) : (
@@ -127,15 +127,15 @@ export const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({
           </View>
         </TouchableOpacity>
         {variant === 'primary' && (
-          <ChevronDown size={24} className="text-gray-300 absolute top-1/2 -translate-y-1/2 right-4" />
+          <ChevronDown size={24} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300" />
         )}
       </View>
 
       <BottomSheet visible={isVisible} onClose={() => setIsVisible(false)} showCloseButton={false}>
         {searchable && (
-          <View className="p-4 border-b border-gray-200">
+          <View className="border-b border-gray-200 p-4">
             <TextInput
-              className="border border-gray-200 rounded-lg px-4 py-3"
+              className="rounded-lg border border-gray-200 px-4 py-3"
               placeholder="Search options..."
               placeholderTextColor="#9CA3AF"
               value={searchQuery}
@@ -154,14 +154,16 @@ export const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({
             const isSelected = value.includes(item.value);
             return defaultRenderOption(item, isSelected);
           }}
+          contentContainerClassName="pb-safe-offset-4"
           ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200" />}
           ListEmptyComponent={
-            <View className="p-8 items-center">
+            <View className="items-center p-8">
               <Text className="text-gray-500">
                 {searchable && searchQuery ? 'No options found' : 'No options available'}
               </Text>
             </View>
           }
+          keyboardDismissMode="on-drag"
         />
       </BottomSheet>
     </View>
