@@ -81,9 +81,6 @@ export const Dialog: React.FC<DialogProps> = ({
 
   const overlayWrapperStyle = useAnimatedStyle(() => {
     return {
-      paddingTop: safeAreaInsets.top,
-      paddingRight: safeAreaInsets.right,
-      paddingLeft: safeAreaInsets.left,
       paddingBottom: Math.max(animatedKeyboard.height.value, safeAreaInsets.bottom),
     };
   });
@@ -98,7 +95,14 @@ export const Dialog: React.FC<DialogProps> = ({
     >
       <Animated.View
         className={clx('flex-1 items-center justify-center bg-black/50', className)}
-        style={overlayWrapperStyle}
+        style={[
+          {
+            paddingTop: safeAreaInsets.top,
+            paddingRight: safeAreaInsets.right,
+            paddingLeft: safeAreaInsets.left,
+          },
+          overlayWrapperStyle,
+        ]}
       >
         <TouchableWithoutFeedback onPress={handleOverlayPress}>
           <View className="absolute inset-0" />
