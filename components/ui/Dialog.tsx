@@ -1,16 +1,17 @@
 import { X } from '@/components/icons/x';
 import { Text } from '@/components/ui/Text';
 import { clx } from '@/utils/clx';
+import { useKeyboard } from '@react-native-community/hooks';
 import React from 'react';
 import {
   GestureResponderEvent,
   Modal,
   ModalProps,
+  Platform,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import Animated, { useAnimatedKeyboard, useAnimatedStyle } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export interface DialogProps extends ModalProps {
@@ -42,7 +43,7 @@ export const Dialog: React.FC<DialogProps> = ({
   ...modalProps
 }) => {
   const safeAreaInsets = useSafeAreaInsets();
-  const animatedKeyboard = useAnimatedKeyboard();
+  const keyboard = useKeyboard();
 
   const onRequestClose = React.useCallback<Exclude<ModalProps['onRequestClose'], undefined>>(
     (event) => {
@@ -79,12 +80,6 @@ export const Dialog: React.FC<DialogProps> = ({
     [onClose, onCloseIconPress],
   );
 
-  const overlayWrapperStyle = useAnimatedStyle(() => {
-    return {
-      paddingBottom: Math.max(animatedKeyboard.height.value, safeAreaInsets.bottom),
-    };
-  });
-
   return (
     <Modal
       transparent={true}
@@ -93,16 +88,16 @@ export const Dialog: React.FC<DialogProps> = ({
       {...modalProps}
       onRequestClose={onRequestClose}
     >
-      <Animated.View
+      <View
         className={clx('flex-1 items-center justify-center bg-black/50', className)}
-        style={[
-          {
-            paddingTop: safeAreaInsets.top,
-            paddingRight: safeAreaInsets.right,
-            paddingLeft: safeAreaInsets.left,
-          },
-          overlayWrapperStyle,
-        ]}
+        style={{
+          paddingTop: safeAreaInsets.top,
+          paddingRight: safeAreaInsets.right,
+          paddingLeft: safeAreaInsets.left,
+          paddingBottom: keyboard.keyboardShown
+            ? keyboard.keyboardHeight + (Platform.OS === 'android' ? safeAreaInsets.bottom : 0)
+            : safeAreaInsets.bottom,
+        }}
       >
         <TouchableWithoutFeedback onPress={handleOverlayPress}>
           <View className="absolute inset-0" />
@@ -124,7 +119,7 @@ export const Dialog: React.FC<DialogProps> = ({
             <View className={contentClassName}>{children}</View>
           </View>
         </View>
-      </Animated.View>
+      </View>
     </Modal>
   );
 };
