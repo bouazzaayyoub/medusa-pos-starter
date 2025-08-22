@@ -30,7 +30,7 @@ import { Text } from '@/components/ui/Text';
 import { useSettings } from '@/contexts/settings';
 import { AdminDraftOrder, AdminOrderLineItem, AdminPromotion } from '@medusajs/types';
 import type { FlashListProps, FlashList as FlashListType } from '@shopify/flash-list';
-import { AnimatedFlashList as FlashList, ListRenderItem } from '@shopify/flash-list';
+import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import { useIsMutating } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import * as React from 'react';
@@ -48,9 +48,16 @@ const addPromotionFormSchema = z.object({
   promotionCode: z.string().min(1, 'Promotion code is required'),
 });
 
-const ItemCell: FlashListProps<AdminOrderLineItem>['CellRendererComponent'] = (props) => {
+type LineItemType =
+  | { id: string; __type__: 'footer' }
+  | (AdminOrderLineItem & { __type__: 'draft_order_item' })
+  | TPromotionItem;
+
+const ItemCell: FlashListProps<LineItemType>['CellRendererComponent'] = (props) => {
   return <Animated.View {...props} layout={SequencedTransition} exiting={SlideOutLeft} />;
 };
+
+const AnimatedFlashList = Animated.createAnimatedComponent<FlashListProps<LineItemType>>(FlashList);
 
 const DraftOrderItem: React.FC<{ item: AdminOrderLineItem; onRemove?: (item: AdminOrderLineItem) => void }> = ({
   item,
@@ -307,6 +314,8 @@ const PromotionBadge: React.FC<PromotionBadgeProps> = ({ onAddPromotion, isAddin
   );
 };
 
+const ItemSeparatorComponent = () => <View className="h-hairline bg-gray-200" />;
+
 const CartSummaryHeader: React.FC<
   PromotionBadgeProps & {
     isLoading?: boolean;
@@ -386,7 +395,7 @@ export default function CartScreen() {
   const cancelDraftOrder = useCancelDraftOrder();
   const updateDraftOrderItem = useUpdateDraftOrderItem();
   const isUpdatingDraftOrder = useIsMutating({ mutationKey: ['draft-order'], exact: false });
-  const itemsListRef = React.useRef<FlashListType<AdminOrderLineItem>>(null);
+  const itemsListRef = React.useRef<FlashListType<LineItemType>>(null);
 
   const [isDialogVisible, setIsDialogVisible] = React.useState(false);
 
@@ -408,26 +417,49 @@ export default function CartScreen() {
     [removePromotion],
   );
 
-  const renderItem = React.useCallback<
-    ListRenderItem<(AdminOrderLineItem & { __type__: 'draft_order_item' }) | TPromotionItem>
-  >(
+  const cartSummary = React.useMemo(
+    () => (
+      <CartSummaryHeader
+        onAddPromotion={(code) => addPromotion.mutate(code)}
+        isAddingPromotion={addPromotion.isPending}
+        isLoading={draftOrder.isFetching || isUpdatingDraftOrder > 0}
+        taxTotal={draftOrder.data!.draft_order.tax_total}
+        subtotal={draftOrder.data!.draft_order.subtotal}
+        discountTotal={draftOrder.data!.draft_order.discount_total}
+        currencyCode={draftOrder.data!.draft_order.region?.currency_code || settings.data?.region?.currency_code}
+      />
+    ),
+    [addPromotion, draftOrder.data, draftOrder.isFetching, isUpdatingDraftOrder, settings.data?.region?.currency_code],
+  );
+
+  const renderItem = React.useCallback<ListRenderItem<LineItemType>>(
     ({ item }) =>
       item.__type__ === 'draft_order_item' ? (
         <DraftOrderItem item={item} onRemove={onItemRemove} />
-      ) : (
+      ) : item.__type__ === 'promotion' ? (
         <PromotionItem
           item={item}
           onRemove={onPromotionRemove}
           currencyCode={draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code}
         />
-      ),
+      ) : item.__type__ === 'footer' ? (
+        <Animated.View layout={SequencedTransition}>
+          {draftOrder.data && (windowDimensions.width < 768 || windowDimensions.height < 900) ? cartSummary : null}
+        </Animated.View>
+      ) : null,
     [
-      draftOrder.data?.draft_order.region?.currency_code,
+      cartSummary,
+      draftOrder.data,
       onItemRemove,
       onPromotionRemove,
       settings.data?.region?.currency_code,
+      windowDimensions.height,
+      windowDimensions.width,
     ],
   );
+
+  const keyExtractor = React.useCallback((item: LineItemType) => item.id, []);
+  const getItemType = React.useCallback((item: LineItemType) => item.__type__, []);
 
   if (draftOrder.isLoading || settings.isLoading) {
     return <CartSkeleton />;
@@ -501,53 +533,29 @@ export default function CartScreen() {
               .reduce((acc, adj) => acc + (adj?.amount || 0), 0) || 0,
         }) satisfies TPromotionItem,
     ),
-  ];
+    { id: 'footer', __type__: 'footer' as const },
+  ] satisfies LineItemType[];
 
   return (
     <>
       <Layout className="pb-6">
         <Text className="mb-6 text-4xl">Cart</Text>
         <CustomerBadge customer={draftOrder.data.draft_order.customer} />
-        <FlashList
+        <AnimatedFlashList
           ref={itemsListRef}
           data={items}
-          keyExtractor={(item) => item.id}
+          keyExtractor={keyExtractor}
           estimatedItemSize={132}
           renderItem={renderItem}
-          getItemType={(item) => item.__type__}
-          ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200" />}
+          getItemType={getItemType}
+          ItemSeparatorComponent={ItemSeparatorComponent}
           CellRendererComponent={ItemCell}
           disableAutoLayout
-          ListFooterComponent={() =>
-            draftOrder.data && (windowDimensions.width < 768 || windowDimensions.height < 900) ? (
-              <CartSummaryHeader
-                onAddPromotion={(code) => addPromotion.mutate(code)}
-                isAddingPromotion={addPromotion.isPending}
-                isLoading={draftOrder.isFetching || isUpdatingDraftOrder > 0}
-                taxTotal={draftOrder.data.draft_order.tax_total}
-                subtotal={draftOrder.data.draft_order.subtotal}
-                discountTotal={draftOrder.data.draft_order.discount_total}
-                currencyCode={
-                  draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code
-                }
-              />
-            ) : null
-          }
           showsVerticalScrollIndicator={false}
           keyboardDismissMode="on-drag"
         />
         <View>
-          {windowDimensions.width >= 768 && windowDimensions.height >= 900 && (
-            <CartSummaryHeader
-              onAddPromotion={(code) => addPromotion.mutate(code)}
-              isAddingPromotion={addPromotion.isPending}
-              isLoading={draftOrder.isFetching || isUpdatingDraftOrder > 0}
-              taxTotal={draftOrder.data.draft_order.tax_total}
-              subtotal={draftOrder.data.draft_order.subtotal}
-              discountTotal={draftOrder.data.draft_order.discount_total}
-              currencyCode={draftOrder.data?.draft_order.region?.currency_code || settings.data?.region?.currency_code}
-            />
-          )}
+          {windowDimensions.width >= 768 && windowDimensions.height >= 900 && cartSummary}
           <View className="mb-4 h-hairline bg-gray-200" />
           <View className="mb-6 flex-row justify-between">
             <Text className="text-lg">Total</Text>
