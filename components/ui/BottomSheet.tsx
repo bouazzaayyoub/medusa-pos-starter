@@ -14,8 +14,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Toast from 'react-native-toast-message';
 import { useSafeAreaFrame, useSafeAreaInsets } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 
 export interface BottomSheetProps extends Pick<ModalProps, 'visible' | 'onRequestClose'> {
   title?: string;
