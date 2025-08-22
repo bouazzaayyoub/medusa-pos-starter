@@ -10,27 +10,20 @@ import { useSettings } from '@/contexts/settings';
 import { AdminProductImage } from '@medusajs/types';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import * as React from 'react';
-import { Dimensions, Image, ScrollView, View } from 'react-native';
+import { Image, ScrollView, View } from 'react-native';
 import { useSharedValue } from 'react-native-reanimated';
 import Carousel, { CarouselRenderItem, ICarouselInstance, Pagination } from 'react-native-reanimated-carousel';
-
-const windowWidth = Dimensions.get('window').width;
+import { useSafeAreaFrame } from 'react-native-safe-area-context';
 
 const ProductImagesCarousel: React.FC<{ images: AdminProductImage[] }> = ({ images }) => {
-  const targetRef = React.useRef<View>(null);
+  const windowDimensions = useSafeAreaFrame();
   const carouselRef = React.useRef<ICarouselInstance>(null);
   const progress = useSharedValue<number>(0);
   const scrollOffsetValue = useSharedValue<number>(0);
-  const [width, setWidth] = React.useState<number>(windowWidth);
+  const [width, setWidth] = React.useState<number>(windowDimensions.width);
 
   // Calculate height based on width with 4:3 aspect ratio
   const height = Math.round(width * 0.75);
-
-  React.useLayoutEffect(() => {
-    targetRef.current?.measure((x, y, width) => {
-      setWidth(width);
-    });
-  }, []);
 
   const renderItem = React.useCallback<CarouselRenderItem<AdminProductImage>>(({ item }) => {
     return <Image source={{ uri: item.url }} className="h-full w-full object-cover" />;
@@ -47,7 +40,13 @@ const ProductImagesCarousel: React.FC<{ images: AdminProductImage[] }> = ({ imag
   );
 
   return (
-    <View ref={targetRef}>
+    <View
+      onLayout={(event) => {
+        event.target.measure((x, y, width) => {
+          setWidth(width);
+        });
+      }}
+    >
       <Carousel
         ref={carouselRef}
         loop={true}
