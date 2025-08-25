@@ -117,7 +117,7 @@ export function BaseSelectField({
       floatingPlaceholderTranslateY.value = withTiming(8, { duration: 150 });
       floatingPlaceholderScale.value = withTiming(0.67, { duration: 150 });
     } else {
-      floatingPlaceholderTranslateY.value = withTiming(15, { duration: 150 });
+      floatingPlaceholderTranslateY.value = withTiming(17, { duration: 150 });
       floatingPlaceholderScale.value = withTiming(1, { duration: 150 });
     }
   }, [floatingPlaceholderScale, floatingPlaceholderTranslateY, showFloating]);
@@ -177,7 +177,7 @@ export function BaseSelectField({
 
         <ChevronDown
           size={24}
-          className={clx('absolute right-4 top-1/2 -translate-y-1/2 text-gray-300', {
+          className={clx('absolute right-4 top-1/2 -translate-y-[50%] text-gray-300', {
             'text-gray-200': isDisabled && variant === 'primary',
           })}
         />
