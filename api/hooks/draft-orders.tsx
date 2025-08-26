@@ -132,8 +132,8 @@ export const useCancelDraftOrder = (options?: Omit<UseMutationOptions<void>, 'mu
         throw new Error('Draft order ID not found');
       }
 
-      await sdk.admin.draftOrder.delete(draftOrderId);
       await SecureStore.deleteItemAsync(DRAFT_ORDER_ID_STORAGE_KEY);
+      await sdk.admin.draftOrder.delete(draftOrderId);
     },
     ...options,
     onSettled: async (...args) => {
