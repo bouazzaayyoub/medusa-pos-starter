@@ -418,17 +418,18 @@ export default function CartScreen() {
   );
 
   const cartSummary = React.useMemo(
-    () => (
-      <CartSummaryHeader
-        onAddPromotion={(code) => addPromotion.mutate(code)}
-        isAddingPromotion={addPromotion.isPending}
-        isLoading={draftOrder.isFetching || isUpdatingDraftOrder > 0}
-        taxTotal={draftOrder.data!.draft_order.tax_total}
-        subtotal={draftOrder.data!.draft_order.subtotal}
-        discountTotal={draftOrder.data!.draft_order.discount_total}
-        currencyCode={draftOrder.data!.draft_order.region?.currency_code || settings.data?.region?.currency_code}
-      />
-    ),
+    () =>
+      draftOrder.data ? (
+        <CartSummaryHeader
+          onAddPromotion={(code) => addPromotion.mutate(code)}
+          isAddingPromotion={addPromotion.isPending}
+          isLoading={draftOrder.isFetching || isUpdatingDraftOrder > 0}
+          taxTotal={draftOrder.data.draft_order.tax_total}
+          subtotal={draftOrder.data.draft_order.subtotal}
+          discountTotal={draftOrder.data.draft_order.discount_total}
+          currencyCode={draftOrder.data.draft_order.region?.currency_code || settings.data?.region?.currency_code}
+        />
+      ) : null,
     [addPromotion, draftOrder.data, draftOrder.isFetching, isUpdatingDraftOrder, settings.data?.region?.currency_code],
   );
 
