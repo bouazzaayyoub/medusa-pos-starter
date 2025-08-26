@@ -13,7 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ScanScreen() {
   const pathname = usePathname();
-  const isScanningRef = React.useRef(false);
+  const scannedBarcodeRef = React.useRef<false | string>(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [enableTorch, setEnableTorch] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -61,14 +61,18 @@ export default function ScanScreen() {
       }
 
       // Prevent multiple scans
-      if (isScanningRef.current) {
+      if (scannedBarcodeRef.current === data) {
         return;
       }
-      isScanningRef.current = true;
+      scannedBarcodeRef.current = data;
 
       scanBarcodeMutation.mutate(data, {
-        onSettled: () => {
-          isScanningRef.current = false;
+        onSuccess: (res) => {
+          if (res) {
+            setTimeout(() => {
+              scannedBarcodeRef.current = false;
+            }, 1000);
+          }
         },
       });
     },
