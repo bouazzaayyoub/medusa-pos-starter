@@ -128,6 +128,7 @@ export const useClearSettings = () => {
       await SecureStore.deleteItemAsync('sales_channel_id');
       await SecureStore.deleteItemAsync('stock_location_id');
       await SecureStore.deleteItemAsync('region_id');
+      await SecureStore.deleteItemAsync('draft_order_id');
       return null;
     },
     onSuccess: async () => {
