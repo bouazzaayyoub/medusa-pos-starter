@@ -141,7 +141,6 @@ export default function ProductsScreen() {
         numColumns={numColumns}
         renderItem={renderProduct}
         keyExtractor={(item) => item.id}
-        estimatedItemSize={70}
         refreshing={productsQuery.isRefetching}
         ItemSeparatorComponent={() => <View className="h-6 w-full" />}
         automaticallyAdjustKeyboardInsets

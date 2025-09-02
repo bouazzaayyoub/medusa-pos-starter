@@ -197,7 +197,6 @@ export default function OrdersScreen() {
         renderItem={renderOrder}
         keyExtractor={(item) => item.id}
         numColumns={numColumns}
-        estimatedItemSize={120}
         refreshing={ordersQuery.isRefetching}
         ItemSeparatorComponent={() => <View className="h-4 w-full" />}
         automaticallyAdjustKeyboardInsets

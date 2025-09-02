@@ -134,7 +134,6 @@ export default function CheckoutScreen() {
         <FlashList
           data={items}
           renderItem={renderItem}
-          estimatedItemSize={132}
           ItemSeparatorComponent={() => <View className="h-hairline bg-gray-200" />}
           ListHeaderComponent={() => <Text className="text-2xl">Cart Items</Text>}
           ListFooterComponent={() =>

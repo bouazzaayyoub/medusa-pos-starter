@@ -29,7 +29,7 @@ import { QuantityPicker } from '@/components/ui/QuantityPicker';
 import { Text } from '@/components/ui/Text';
 import { useSettings } from '@/contexts/settings';
 import { AdminDraftOrder, AdminOrderLineItem, AdminPromotion } from '@medusajs/types';
-import type { FlashListProps, FlashList as FlashListType } from '@shopify/flash-list';
+import type { FlashListProps, FlashListRef } from '@shopify/flash-list';
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import { useIsMutating } from '@tanstack/react-query';
 import { router } from 'expo-router';
@@ -57,7 +57,9 @@ const ItemCell: FlashListProps<LineItemType>['CellRendererComponent'] = (props) 
   return <Animated.View {...props} layout={SequencedTransition} exiting={SlideOutLeft} />;
 };
 
-const AnimatedFlashList = Animated.createAnimatedComponent<FlashListProps<LineItemType>>(FlashList);
+const AnimatedFlashList = Animated.createAnimatedComponent<
+  FlashListProps<LineItemType> & { ref?: React.Ref<FlashListRef<LineItemType>> }
+>(FlashList);
 
 const DraftOrderItem: React.FC<{ item: AdminOrderLineItem; onRemove?: (item: AdminOrderLineItem) => void }> = ({
   item,
@@ -395,7 +397,7 @@ export default function CartScreen() {
   const cancelDraftOrder = useCancelDraftOrder();
   const updateDraftOrderItem = useUpdateDraftOrderItem();
   const isUpdatingDraftOrder = useIsMutating({ mutationKey: ['draft-order'], exact: false });
-  const itemsListRef = React.useRef<FlashListType<LineItemType>>(null);
+  const itemsListRef = React.useRef<FlashListRef<LineItemType>>(null);
 
   const [isDialogVisible, setIsDialogVisible] = React.useState(false);
 
@@ -546,12 +548,10 @@ export default function CartScreen() {
           ref={itemsListRef}
           data={items}
           keyExtractor={keyExtractor}
-          estimatedItemSize={132}
           renderItem={renderItem}
           getItemType={getItemType}
           ItemSeparatorComponent={ItemSeparatorComponent}
           CellRendererComponent={ItemCell}
-          disableAutoLayout
           showsVerticalScrollIndicator={false}
           keyboardDismissMode="on-drag"
         />
