@@ -601,7 +601,13 @@ export default function CartScreen() {
       </Layout>
 
       <Prompt
-        onSubmit={() => cancelDraftOrder.mutate()}
+        onSubmit={() => {
+          cancelDraftOrder.mutate(undefined, {
+            onSettled: () => {
+              setIsDialogVisible(false);
+            },
+          });
+        }}
         onClose={() => setIsDialogVisible(false)}
         title="Are you sure you want to cancel the cart?"
         visible={isDialogVisible}

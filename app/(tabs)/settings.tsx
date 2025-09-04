@@ -70,6 +70,7 @@ export default function SettingsScreen() {
 
       <Prompt
         onSubmit={async () => {
+          setIsDialogVisible(false);
           queryClient.clear();
           router.replace('/login');
           await auth.logout();
