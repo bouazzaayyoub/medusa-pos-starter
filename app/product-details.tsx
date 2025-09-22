@@ -11,6 +11,7 @@ import { AdminProductImage } from '@medusajs/types';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import * as React from 'react';
 import { Image, ScrollView, View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSharedValue } from 'react-native-reanimated';
 import Carousel, { CarouselRenderItem, ICarouselInstance, Pagination } from 'react-native-reanimated-carousel';
 import { useSafeAreaFrame } from 'react-native-safe-area-context';
@@ -41,6 +42,7 @@ const ProductImagesCarousel: React.FC<{ images: AdminProductImage[] }> = ({ imag
 
   return (
     <View
+      className="w-full"
       onLayout={(event) => {
         event.target.measure((x, y, width) => {
           setWidth(width);
@@ -159,130 +161,140 @@ const ProductDetails: React.FC<{ animateOut: (callback?: () => void) => void }> 
 
   return (
     <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="pb-safe-offset-6">
-      <View className="mb-6 overflow-hidden rounded-xl bg-gray-100">
-        {productQuery.data.product.images && productQuery.data.product.images.length ? (
-          <ProductImagesCarousel images={productQuery.data.product.images} />
-        ) : (
-          <View className="flex-1 items-center justify-center bg-gray-300">
-            <Text className="text-gray-500">No Image</Text>
-          </View>
-        )}
-      </View>
-
-      <View className="mb-4 flex-row items-center justify-between">
-        <Text className="text-xl">{productName}</Text>
-        {price && (
-          <View className="flex-row">
-            {/* TODO: show discounted price */}
-            {/* <Text className="text-[#888] line-through mt-1.5">€50</Text> */}
-            <View className="items-end">
-              <Text className="text-xl">
-                {price.amount.toLocaleString(undefined, {
-                  style: 'currency',
-                  currency: price.currency_code,
-                  currencyDisplay: 'narrowSymbol',
-                })}
-              </Text>
-              {/* TODO: show taxes if needed */}
-              {/* <Text className="text-xs text-gray-400 font-light">
-                  Taxes: €0.99
-                </Text> */}
+      {/* Responsive layout: single column on mobile, two columns on tablet */}
+      <View className="md:flex-row md:gap-6">
+        {/* Image carousel - full width on mobile, half width on tablet */}
+        <View className="mb-6 w-full max-w-xl overflow-hidden rounded-xl bg-gray-100 md:flex-1">
+          {productQuery.data.product.images && productQuery.data.product.images.length ? (
+            <ProductImagesCarousel images={productQuery.data.product.images} />
+          ) : (
+            <View className="flex-1 items-center justify-center bg-gray-300">
+              <Text className="text-gray-500">No Image</Text>
             </View>
-          </View>
-        )}
-      </View>
-
-      <Text className="mb-6 text-sm text-gray-400">{productQuery.data.product.description}</Text>
-
-      {productQuery.data.product.options && (
-        <View className="mb-4 gap-6">
-          {productQuery.data.product.options.map((option) => (
-            <OptionPicker
-              key={option.id}
-              label={option.title}
-              values={(option.values ?? []).map((value) => ({
-                id: value.id,
-                value: value.value,
-                className: productQuery.data.product.variants?.some((variant) => {
-                  const newSelectedOptions = {
-                    ...selectedOptions,
-                    [option.id]: value.value,
-                  };
-
-                  return Object.entries(newSelectedOptions).every(([optionId, optionValue]) =>
-                    variant.options?.some(
-                      (variantOption) => variantOption.option_id === optionId && variantOption.value === optionValue,
-                    ),
-                  );
-                })
-                  ? undefined
-                  : 'opacity-50',
-              }))}
-              onValueChange={(value) => {
-                setSelectedOptions((prev) => ({
-                  ...prev,
-                  [option.id]: value.value,
-                }));
-              }}
-              selectedValue={selectedOptions[option.id]}
-            />
-          ))}
+          )}
         </View>
-      )}
 
-      {/* TODO: add support for fashion starter colors */}
-      {/* <ColorPicker
-          selectedColor={selectedColor}
-          onColorChange={setSelectedColor}
-          colors={[
-            { name: 'Black', value: '#000000' },
-            { name: 'White', value: '#FFFFFF' },
-            { name: 'Navy', value: '#1E3A8A' },
-            { name: 'Gray', value: '#6B7280' },
-            { name: 'Red', value: '#DC2626' },
-          ]}
-          className="mb-6"
-        />
+        {/* Product info - full width on mobile, half width on tablet */}
+        <View className="md:flex-1">
+          <View className="mb-4 flex-row items-center justify-between">
+            <Text className="text-xl">{productName}</Text>
+            {price && (
+              <View className="flex-row">
+                {/* TODO: show discounted price */}
+                {/* <Text className="text-[#888] line-through mt-1.5">€50</Text> */}
+                <View className="items-end">
+                  <Text className="text-xl">
+                    {price.amount.toLocaleString(undefined, {
+                      style: 'currency',
+                      currency: price.currency_code,
+                      currencyDisplay: 'narrowSymbol',
+                    })}
+                  </Text>
+                  {/* TODO: show taxes if needed */}
+                  {/* <Text className="text-xs text-gray-400 font-light">
+                      Taxes: €0.99
+                    </Text> */}
+                </View>
+              </View>
+            )}
+          </View>
 
-        <SizePicker
-          selectedSize={selectedSize}
-          onSizeChange={setSelectedSize}
-          sizes={['XS', 'S', 'M', 'L', 'XL']}
-          className="mb-4"
-        /> */}
+          <Text className="mb-6 text-sm text-gray-400">{productQuery.data.product.description}</Text>
 
-      <View className="flex-row items-center gap-4">
-        <QuantityPicker quantity={quantity} onQuantityChange={setQuantity} min={1} variant="ghost" />
+          {/* Product options - moved to second column on tablet */}
+          {productQuery.data.product.options && (
+            <View className="mb-4 gap-6">
+              {productQuery.data.product.options.map((option) => (
+                <OptionPicker
+                  key={option.id}
+                  label={option.title}
+                  values={(option.values ?? []).map((value) => ({
+                    id: value.id,
+                    value: value.value,
+                    className: productQuery.data.product.variants?.some((variant) => {
+                      const newSelectedOptions = {
+                        ...selectedOptions,
+                        [option.id]: value.value,
+                      };
 
-        <Button
-          className="flex-1"
-          disabled={!selectedVariant}
-          isPending={addToDraftOrder.isPending}
-          onPress={() => {
-            if (!selectedVariant) {
-              return;
-            }
+                      return Object.entries(newSelectedOptions).every(([optionId, optionValue]) =>
+                        variant.options?.some(
+                          (variantOption) =>
+                            variantOption.option_id === optionId && variantOption.value === optionValue,
+                        ),
+                      );
+                    })
+                      ? undefined
+                      : 'opacity-50',
+                  }))}
+                  onValueChange={(value) => {
+                    setSelectedOptions((prev) => ({
+                      ...prev,
+                      [option.id]: value.value,
+                    }));
+                  }}
+                  selectedValue={selectedOptions[option.id]}
+                />
+              ))}
+            </View>
+          )}
 
-            addToDraftOrder.mutate(
-              {
-                items: [
+          {/* TODO: add support for fashion starter colors */}
+          {/* <ColorPicker
+              selectedColor={selectedColor}
+              onColorChange={setSelectedColor}
+              colors={[
+                { name: 'Black', value: '#000000' },
+                { name: 'White', value: '#FFFFFF' },
+                { name: 'Navy', value: '#1E3A8A' },
+                { name: 'Gray', value: '#6B7280' },
+                { name: 'Red', value: '#DC2626' },
+              ]}
+              className="mb-6"
+            />
+
+            <SizePicker
+              selectedSize={selectedSize}
+              onSizeChange={setSelectedSize}
+              sizes={['XS', 'S', 'M', 'L', 'XL']}
+              className="mb-4"
+            /> */}
+
+          {/* Quantity and Add to Cart - moved to second column on tablet */}
+          <View className="flex-row items-center gap-4">
+            <QuantityPicker quantity={quantity} onQuantityChange={setQuantity} min={1} variant="ghost" />
+
+            <Button
+              className="flex-1"
+              disabled={!selectedVariant}
+              isPending={addToDraftOrder.isPending}
+              onPress={() => {
+                if (!selectedVariant) {
+                  return;
+                }
+
+                addToDraftOrder.mutate(
                   {
-                    quantity,
-                    variant_id: selectedVariant.id,
+                    items: [
+                      {
+                        quantity,
+                        variant_id: selectedVariant.id,
+                      },
+                    ],
                   },
-                ],
-              },
-              {
-                onSuccess: () => {
-                  animateOut();
-                  router.dismissTo('/(tabs)/cart');
-                },
-              },
-            );
-          }}
-        >
-          Add to cart
-        </Button>
+                  {
+                    onSuccess: () => {
+                      animateOut();
+                      router.dismissTo('/(tabs)/cart');
+                    },
+                  },
+                );
+              }}
+            >
+              Add to cart
+            </Button>
+          </View>
+        </View>
       </View>
     </ScrollView>
   );
@@ -312,8 +324,10 @@ export default function ProductDetailsScreen() {
   }, []);
 
   return (
-    <BottomSheet visible={visible} onClose={() => router.back()} showCloseButton={false} dismissOnOverlayPress>
-      {renderContent}
-    </BottomSheet>
+    <GestureHandlerRootView>
+      <BottomSheet visible={visible} onClose={() => router.back()} showCloseButton={false} dismissOnOverlayPress>
+        {renderContent}
+      </BottomSheet>
+    </GestureHandlerRootView>
   );
 }

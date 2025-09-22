@@ -1,5 +1,5 @@
 import { ToastMessage } from '@/components/ToastMessage';
-import { ToastData } from 'react-native-toast-message';
+import { ToastConfig, ToastData } from 'react-native-toast-message';
 
 export const toastConfig = {
   success: ({ text1, text2 }: ToastData) => (
@@ -11,4 +11,4 @@ export const toastConfig = {
   info: ({ text1, text2 }: ToastData) => (
     <ToastMessage heading={text1} text={text2} variant="outline" colorScheme="warning" />
   ),
-};
+} satisfies ToastConfig;

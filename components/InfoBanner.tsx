@@ -5,7 +5,7 @@ import { Text } from '@/components/ui/Text';
 import { clx } from '@/utils/clx';
 import { View } from 'react-native';
 
-type InfoBannerProps = {
+export type InfoBannerProps = {
   /**
    * The variant of the banner, either 'ghost' or 'solid'.
    * 'ghost' variant will have a more subtle appearance.

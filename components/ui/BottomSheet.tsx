@@ -4,18 +4,12 @@ import { toastConfig } from '@/config/toast';
 import { clx } from '@/utils/clx';
 import { useKeyboard } from '@react-native-community/hooks';
 import React from 'react';
-import {
-  Animated,
-  GestureResponderEvent,
-  Modal,
-  ModalProps,
-  PanResponder,
-  PanResponderGestureState,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { GestureResponderEvent, Modal, ModalProps, TouchableOpacity, View } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Animated, { useAnimatedStyle, useSharedValue, withDecay, withSpring, withTiming } from 'react-native-reanimated';
 import { useSafeAreaFrame, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
+import { scheduleOnRN } from 'react-native-worklets';
 
 export interface BottomSheetProps extends Pick<ModalProps, 'visible' | 'onRequestClose'> {
   title?: string;
@@ -26,7 +20,7 @@ export interface BottomSheetProps extends Pick<ModalProps, 'visible' | 'onReques
   contentClassName?: string;
   headerClassName?: string;
   onClose?: () => void;
-  onOverlayPress?: (event: PanResponderGestureState) => void;
+  onOverlayPress?: () => void;
   onCloseIconPress?: (event: GestureResponderEvent) => void;
   children: React.ReactNode | ((props: { animateOut: (callback?: () => void) => void }) => React.ReactNode);
 }
@@ -49,134 +43,92 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
   const windowDimensions = useSafeAreaFrame();
   const keyboard = useKeyboard();
 
-  const translateY = React.useRef(new Animated.Value(300)).current;
-  const overlayOpacity = React.useRef(new Animated.Value(0)).current;
-  const isDragging = React.useRef(false);
-  const isAnimatingOut = React.useRef(false);
-  const isAnimatingIn = React.useRef(false);
+  const translateY = useSharedValue(300);
+  const overlayOpacity = useSharedValue(0);
+
+  const handleClose = React.useCallback(() => {
+    onClose?.();
+  }, [onClose]);
 
   const animateIn = React.useCallback(() => {
-    if (isAnimatingIn.current) return;
-
-    translateY.setValue(300);
-    overlayOpacity.setValue(0);
-    isAnimatingIn.current = true;
-
-    requestAnimationFrame(() => {
-      Animated.parallel([
-        Animated.timing(translateY, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(overlayOpacity, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
-        isAnimatingIn.current = false;
-      });
-    });
-  }, [translateY, overlayOpacity]);
+    translateY.value = withTiming(0, { duration: 300 });
+    overlayOpacity.value = withTiming(1, { duration: 300 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const animateOut = React.useCallback(
     (callback?: () => void) => {
-      if (isAnimatingOut.current) return;
-
-      isAnimatingOut.current = true;
-      Animated.parallel([
-        Animated.timing(translateY, {
-          toValue: 300,
-          duration: 250,
-          useNativeDriver: true,
-        }),
-        Animated.timing(overlayOpacity, {
-          toValue: 0,
-          duration: 250,
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
-        isAnimatingOut.current = false;
-        callback?.();
-      });
-    },
-    [translateY, overlayOpacity],
-  );
-
-  const animateSpringBack = React.useCallback(() => {
-    Animated.parallel([
-      Animated.spring(translateY, {
-        toValue: 0,
-        useNativeDriver: true,
-        tension: 100,
-        friction: 8,
-      }),
-      Animated.spring(overlayOpacity, {
-        toValue: 1,
-        useNativeDriver: true,
-        tension: 100,
-        friction: 8,
-      }),
-    ]).start();
-  }, [translateY, overlayOpacity]);
-
-  const handleOverlayPress = React.useCallback(
-    (event: PanResponderGestureState) => {
-      if (dismissOnOverlayPress) {
-        if (onOverlayPress) {
-          return onOverlayPress(event);
+      translateY.value = withTiming(300, { duration: 250 });
+      overlayOpacity.value = withTiming(0, { duration: 250 }, (finished) => {
+        if (finished && callback) {
+          scheduleOnRN(callback);
         }
-
-        animateOut(() => onClose?.());
-      }
-    },
-    [dismissOnOverlayPress, onOverlayPress, onClose, animateOut],
-  );
-
-  const createPanResponder = React.useCallback(
-    (isOverlay = false) => {
-      return PanResponder.create({
-        onStartShouldSetPanResponder: () => true,
-        onMoveShouldSetPanResponder: (_, gestureState) => {
-          return Math.abs(gestureState.dy) > 5;
-        },
-        onPanResponderGrant: () => {
-          translateY.stopAnimation();
-          overlayOpacity.stopAnimation();
-          isDragging.current = false;
-        },
-        onPanResponderMove: (_, gestureState) => {
-          if (gestureState.dy > 0) {
-            isDragging.current = true;
-            translateY.setValue(gestureState.dy);
-
-            const fadeOpacity = Math.max(0.3, 1 - gestureState.dy / 200);
-            overlayOpacity.setValue(fadeOpacity);
-          }
-        },
-        onPanResponderRelease: (_, gestureState) => {
-          if (!isDragging.current && isOverlay) {
-            handleOverlayPress(gestureState);
-            return;
-          }
-
-          const shouldClose = gestureState.dy > 100;
-
-          if (shouldClose) {
-            animateOut(() => onClose?.());
-          } else {
-            animateSpringBack();
-          }
-        },
       });
     },
-    [translateY, overlayOpacity, handleOverlayPress, animateOut, onClose, animateSpringBack],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
 
-  const panResponder = React.useRef(createPanResponder()).current;
-  const overlayPanResponder = React.useRef(createPanResponder(true)).current;
+  const panGesture = Gesture.Pan()
+    .onChange((event) => {
+      if (event.translationY > 0) {
+        translateY.value = event.translationY;
+        const fadeOpacity = Math.max(0.3, 1 - event.translationY / 200);
+        overlayOpacity.value = fadeOpacity;
+      }
+    })
+    .onFinalize((event) => {
+      const shouldClose = event.translationY > 100 || event.velocityY > 500;
 
+      if (shouldClose) {
+        if (Math.abs(event.velocityY) > 500) {
+          translateY.value = withDecay({
+            velocity: event.velocityY,
+            clamp: [0, 300],
+          });
+          overlayOpacity.value = withTiming(0, { duration: 250 }, (finished) => {
+            if (finished) {
+              scheduleOnRN(handleClose);
+            }
+          });
+        } else {
+          translateY.value = withTiming(300, { duration: 250 });
+          overlayOpacity.value = withTiming(0, { duration: 250 }, (finished) => {
+            if (finished) {
+              scheduleOnRN(handleClose);
+            }
+          });
+        }
+      } else {
+        translateY.value = withSpring(0, { stiffness: 100, damping: 8 });
+        overlayOpacity.value = withSpring(1, { stiffness: 100, damping: 8 });
+      }
+    });
+
+  const overlayTapGesture = Gesture.Tap().onEnd(() => {
+    if (dismissOnOverlayPress) {
+      if (onOverlayPress) {
+        return onOverlayPress();
+      }
+      translateY.value = withTiming(300, { duration: 250 });
+      overlayOpacity.value = withTiming(0, { duration: 250 }, (finished) => {
+        if (finished) {
+          scheduleOnRN(handleClose);
+        }
+      });
+    }
+  });
+
+  // Animated styles
+  const overlayStyle = useAnimatedStyle(() => ({
+    opacity: overlayOpacity.value,
+  }));
+
+  const sheetStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
+
+  // Trigger animation when modal becomes visible
   React.useEffect(() => {
     if (modalProps.visible) {
       animateIn();
@@ -188,7 +140,6 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
       if (modalProps.onRequestClose) {
         return modalProps.onRequestClose(event);
       }
-
       onClose?.();
     },
     [modalProps, onClose],
@@ -199,7 +150,6 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
       if (onCloseIconPress) {
         return onCloseIconPress(event);
       }
-
       animateOut(() => onClose?.());
     },
     [onClose, onCloseIconPress, animateOut],
@@ -215,13 +165,17 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
     >
       <Animated.View
         className={clx('flex-1 items-center justify-end bg-black/50', className)}
-        style={{
-          paddingLeft: safeAreaInsets.left,
-          paddingRight: safeAreaInsets.right,
-          opacity: overlayOpacity,
-        }}
+        style={[
+          {
+            paddingLeft: safeAreaInsets.left,
+            paddingRight: safeAreaInsets.right,
+          },
+          overlayStyle,
+        ]}
       >
-        <View className="absolute inset-0" {...overlayPanResponder.panHandlers} />
+        <GestureDetector gesture={overlayTapGesture}>
+          <View className="absolute inset-0" />
+        </GestureDetector>
 
         <View
           className="w-full flex-1"
@@ -235,10 +189,12 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
 
         <Animated.View
           className="w-full shrink grow-0"
-          style={{
-            maxHeight: windowDimensions.height - safeAreaInsets.bottom - safeAreaInsets.top - 16,
-            transform: [{ translateY }],
-          }}
+          style={[
+            {
+              maxHeight: windowDimensions.height - safeAreaInsets.bottom - safeAreaInsets.top - 16,
+            },
+            sheetStyle,
+          ]}
         >
           <View
             className={clx('w-full shrink grow-0 overflow-hidden rounded-t-2xl bg-white', containerClassName)}
@@ -246,9 +202,12 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
               paddingBottom: keyboard.keyboardShown ? keyboard.keyboardHeight : 0,
             }}
           >
-            <View className="w-full shrink-0 grow-0 items-center py-2" {...panResponder.panHandlers}>
-              <View className="h-1 w-10 rounded-full bg-gray-200" />
-            </View>
+            <GestureDetector gesture={panGesture}>
+              <View className="w-full shrink-0 grow-0 items-center py-2">
+                <View className="h-1 w-10 rounded-full bg-gray-200" />
+              </View>
+            </GestureDetector>
+
             {(title || showCloseButton) && (
               <View className={clx('shrink-0 grow-0 flex-row items-center justify-between gap-2 p-4', headerClassName)}>
                 <View className="flex-1">{title && <Text>{title}</Text>}</View>
@@ -260,7 +219,11 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
               </View>
             )}
 
-            {!title && !showCloseButton && <View {...panResponder.panHandlers} className="h-8 shrink-0 grow-0" />}
+            {!title && !showCloseButton && (
+              <GestureDetector gesture={panGesture}>
+                <View className="h-8 shrink-0 grow-0" />
+              </GestureDetector>
+            )}
 
             <View className={clx('shrink grow-0 px-4', contentClassName)}>
               {typeof children === 'function' ? children({ animateOut }) : children}

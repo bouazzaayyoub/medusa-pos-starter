@@ -14,6 +14,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { Stack } from 'expo-router';
 import * as React from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 
@@ -119,8 +120,10 @@ export default function RootLayout() {
           <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
             <SplashScreenController />
             <AppStatusBar />
-            <App />
-            <Toast config={toastConfig} />
+            <GestureHandlerRootView>
+              <App />
+            </GestureHandlerRootView>
+            <Toast config={toastConfig} position="bottom" />
           </ThemeProvider>
         </AuthProvider>
       </PersistQueryClientProvider>

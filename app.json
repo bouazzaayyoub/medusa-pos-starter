@@ -18,7 +18,8 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "softwareKeyboardLayoutMode": "pan"
+      "softwareKeyboardLayoutMode": "pan",
+      "package": "com.agilo.pos"
     },
     "web": {
       "bundler": "metro",
@@ -53,7 +54,8 @@
             "node_modules/@expo-google-fonts/noto-sans/700Bold_Italic/NotoSans_700Bold_Italic.ttf"
           ]
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true
@@ -65,9 +67,7 @@
       }
     },
     "owner": "agilo-com",
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
+    "runtimeVersion": "1.0.0",
     "updates": {
       "url": "https://u.expo.dev/2c44b68b-5c32-4031-a160-d315e6c399d4"
     }

@@ -10,6 +10,7 @@ import { Store } from '@/components/icons/store';
 
 export const unstable_settings = {
   initialRouteName: 'products',
+  detachInactiveScreens: false,
 };
 
 export default function TabLayout() {
@@ -17,6 +18,7 @@ export default function TabLayout() {
 
   return (
     <Tabs
+      detachInactiveScreens={false}
       screenOptions={{
         tabBarActiveTintColor: '#282828',
         tabBarInactiveTintColor: '#B5B5B5',

@@ -29,7 +29,7 @@ import { QuantityPicker } from '@/components/ui/QuantityPicker';
 import { Text } from '@/components/ui/Text';
 import { useSettings } from '@/contexts/settings';
 import { AdminDraftOrder, AdminOrderLineItem, AdminPromotion } from '@medusajs/types';
-import type { FlashListProps, FlashListRef } from '@shopify/flash-list';
+import type { FlashListRef } from '@shopify/flash-list';
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import { useIsMutating } from '@tanstack/react-query';
 import { router } from 'expo-router';
@@ -53,13 +53,10 @@ type LineItemType =
   | (AdminOrderLineItem & { __type__: 'draft_order_item' })
   | TPromotionItem;
 
-const ItemCell: FlashListProps<LineItemType>['CellRendererComponent'] = (props) => {
-  return <Animated.View {...props} layout={SequencedTransition} exiting={SlideOutLeft} />;
-};
-
-const AnimatedFlashList = Animated.createAnimatedComponent<
-  FlashListProps<LineItemType> & { ref?: React.Ref<FlashListRef<LineItemType>> }
->(FlashList);
+const ItemCell = React.forwardRef<Animated.View>((props, ref) => {
+  return <Animated.View {...props} layout={SequencedTransition} exiting={SlideOutLeft} ref={ref} />;
+});
+ItemCell.displayName = 'ItemCell';
 
 const DraftOrderItem: React.FC<{ item: AdminOrderLineItem; onRemove?: (item: AdminOrderLineItem) => void }> = ({
   item,
@@ -316,7 +313,10 @@ const PromotionBadge: React.FC<PromotionBadgeProps> = ({ onAddPromotion, isAddin
   );
 };
 
-const ItemSeparatorComponent = () => <View className="h-hairline bg-gray-200" />;
+const ItemSeparatorComponent = React.forwardRef<Animated.View>((props, ref) => (
+  <Animated.View className="h-hairline bg-gray-200" ref={ref} />
+));
+ItemSeparatorComponent.displayName = 'ItemSeparatorComponent';
 
 const CartSummaryHeader: React.FC<
   PromotionBadgeProps & {
@@ -328,7 +328,7 @@ const CartSummaryHeader: React.FC<
   }
 > = ({ onAddPromotion, isAddingPromotion, isLoading, taxTotal, subtotal, discountTotal, currencyCode }) => {
   return (
-    <View className="pb-4 pt-6">
+    <Animated.View className="pb-4 pt-6">
       <PromotionBadge onAddPromotion={onAddPromotion} isAddingPromotion={isAddingPromotion} />
       <View className="gap-2">
         <View className="flex-row justify-between">
@@ -376,7 +376,7 @@ const CartSummaryHeader: React.FC<
           </View>
         )}
       </View>
-    </View>
+    </Animated.View>
   );
 };
 
@@ -544,7 +544,7 @@ export default function CartScreen() {
       <Layout className="pb-6">
         <Text className="mb-6 text-4xl">Cart</Text>
         <CustomerBadge customer={draftOrder.data.draft_order.customer} />
-        <AnimatedFlashList
+        <FlashList
           ref={itemsListRef}
           data={items}
           keyExtractor={keyExtractor}
