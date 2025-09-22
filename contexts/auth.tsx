@@ -55,7 +55,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
       try {
         const sdk = new Medusa({
           baseUrl: medusaUrl,
-          debug: true,
+          debug: false,
           auth: {
             type: 'jwt',
             jwtTokenStorageMethod: 'nostore',
@@ -143,7 +143,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
         if (medusaUrl && apiKey) {
           const sdk = new Medusa({
             baseUrl: medusaUrl,
-            debug: true,
+            debug: false,
             auth: {
               type: 'jwt',
               jwtTokenStorageMethod: 'custom',
@@ -258,7 +258,7 @@ export const useMedusaSdk = () => {
     () =>
       new Medusa({
         baseUrl: state.medusaUrl,
-        debug: true,
+        debug: false,
         auth: {
           type: 'jwt',
           jwtTokenStorageMethod: 'custom',

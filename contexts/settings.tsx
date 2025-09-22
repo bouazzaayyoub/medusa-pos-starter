@@ -23,7 +23,7 @@ export const useSettings = () => {
 
       const sdk = new Medusa({
         baseUrl: state.medusaUrl,
-        debug: true,
+        debug: false,
         auth: {
           type: 'jwt',
           jwtTokenStorageMethod: 'custom',
