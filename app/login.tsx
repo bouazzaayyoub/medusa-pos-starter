@@ -99,56 +99,58 @@ export default function LoginScreen() {
 
   return (
     <LayoutWithKeyboardAvoidingScroll>
-      <View className="gap-6">
-        <Text className="text-4xl">Login</Text>
-        {error && <InfoBanner colorScheme="error">{error}</InfoBanner>}
-        <Form
-          key={auth.state.status === 'loading' ? 'loading' : 'form'}
-          schema={loginSchema}
-          onSubmit={handleLogin}
-          defaultValues={defaultValues}
-          className="gap-6"
-        >
-          <TextField
-            name="medusaUrl"
-            floatingPlaceholder
-            placeholder="Shop URL"
-            keyboardType="url"
-            autoCapitalize="none"
-            autoCorrect={false}
-            readOnly={auth.state.status === 'loading'}
-            textContentType="URL"
-            autoComplete="url"
-            testID="loginShopUrl"
-          />
+      <View className="items-center">
+        <View className="w-full max-w-xl gap-6">
+          <Text className="text-4xl">Login</Text>
+          {error && <InfoBanner colorScheme="error">{error}</InfoBanner>}
+          <Form
+            key={auth.state.status === 'loading' ? 'loading' : 'form'}
+            schema={loginSchema}
+            onSubmit={handleLogin}
+            defaultValues={defaultValues}
+            className="gap-6"
+          >
+            <TextField
+              name="medusaUrl"
+              floatingPlaceholder
+              placeholder="Shop URL"
+              keyboardType="url"
+              autoCapitalize="none"
+              autoCorrect={false}
+              readOnly={auth.state.status === 'loading'}
+              textContentType="URL"
+              autoComplete="url"
+              testID="loginShopUrl"
+            />
 
-          <TextField
-            name="email"
-            floatingPlaceholder
-            placeholder="Email Address"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoCorrect={false}
-            readOnly={auth.state.status === 'loading'}
-            textContentType="emailAddress"
-            autoComplete="email"
-            testID="loginEmail"
-          />
+            <TextField
+              name="email"
+              floatingPlaceholder
+              placeholder="Email Address"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+              readOnly={auth.state.status === 'loading'}
+              textContentType="emailAddress"
+              autoComplete="email"
+              testID="loginEmail"
+            />
 
-          <TextField
-            name="password"
-            floatingPlaceholder
-            placeholder="Password"
-            secureTextEntry
-            autoCapitalize="none"
-            readOnly={auth.state.status === 'loading'}
-            textContentType="password"
-            autoComplete="password"
-            testID="loginPassword"
-          />
+            <TextField
+              name="password"
+              floatingPlaceholder
+              placeholder="Password"
+              secureTextEntry
+              autoCapitalize="none"
+              readOnly={auth.state.status === 'loading'}
+              textContentType="password"
+              autoComplete="password"
+              testID="loginPassword"
+            />
 
-          <FormButton isPending={auth.state.status === 'loading'}>Sign In</FormButton>
-        </Form>
+            <FormButton isPending={auth.state.status === 'loading'}>Sign In</FormButton>
+          </Form>
+        </View>
       </View>
     </LayoutWithKeyboardAvoidingScroll>
   );
