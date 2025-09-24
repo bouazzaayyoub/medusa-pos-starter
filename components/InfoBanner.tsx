@@ -64,7 +64,6 @@ export const getInfoBannerTextClasses = (
   textClassName?: string,
 ): string => {
   return clx(
-    'flex-1 flex-wrap',
     {
       'text-error-500': colorScheme === 'error',
       'text-warning-500': colorScheme === 'warning',

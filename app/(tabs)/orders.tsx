@@ -130,7 +130,7 @@ export default function OrdersScreen() {
                 })}
               </Text>
             </View>
-            <View className="gap-4">
+            <View className="items-end gap-4">
               <View className="flex-1">
                 <Text className="mb-auto text-right text-gray-300">{formatDate(item.created_at)}</Text>
               </View>

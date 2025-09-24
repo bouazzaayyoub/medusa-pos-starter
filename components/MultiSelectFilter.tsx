@@ -109,9 +109,7 @@ export const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({
               <View className="flex-row items-center gap-3">
                 <Text className="text-lg leading-5 text-white">{placeholder}</Text>
                 <View className="aspect-square min-w-[1.0188rem] items-center justify-center rounded-full bg-white px-1">
-                  <Text className="top-1/2 -translate-y-[50%] transform text-xs font-bold">
-                    {selectedOptions.length}
-                  </Text>
+                  <Text className="top-1/2 -translate-y-1/2 transform text-xs font-bold">{selectedOptions.length}</Text>
                 </View>
               </View>
             ) : (
