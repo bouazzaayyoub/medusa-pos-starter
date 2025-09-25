@@ -12,7 +12,7 @@ Scan the QR code below with Expo Go to try the Medusa POS app on your device:
 
 <div style="max-width: 200px;">
 
-![Demo QR Code](https://qr.expo.dev/eas-update?slug=exp&projectId=2c44b68b-5c32-4031-a160-d315e6c399d4&groupId=34fab0e7-655c-4033-9f1a-b1d2393c8c4e&host=u.expo.dev)
+![Demo QR Code](https://qr.expo.dev/eas-update?slug=exp&projectId=2c44b68b-5c32-4031-a160-d315e6c399d4&groupId=b27ba8a2-f3a3-4184-9c71-abd939e165ee&host=u.expo.dev)
 
 </div>
 
