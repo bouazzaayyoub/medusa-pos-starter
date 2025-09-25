@@ -1,50 +1,147 @@
-# Welcome to your Expo app 👋
+# Medusa POS Starter
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A lightweight, open-source Point-of-Sale (POS) mobile application for Medusa v2. Built with Expo and React Native, it connects directly to your Medusa Admin REST API for seamless in-store sales.
 
-## Get started
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Medusa v2](https://img.shields.io/badge/Medusa-v2-blue.svg)](https://docs.medusajs.com/)
+[![Expo SDK Version](https://img.shields.io/badge/expo%20sdk-54-blue.svg)](https://expo.dev/)
 
-1. Install dependencies
+## Try the Demo
 
+Scan the QR code below with Expo Go to try the Medusa POS app on your device:
+
+<div style="max-width: 200px;">
+
+![Demo QR Code](https://qr.expo.dev/eas-update?slug=exp&projectId=2c44b68b-5c32-4031-a160-d315e6c399d4&groupId=34fab0e7-655c-4033-9f1a-b1d2393c8c4e&host=u.expo.dev)
+
+</div>
+
+## Screenshots
+
+<div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+  <img src=".github/screenshots/1-login.png" alt="Secure login screen to access your Medusa admin account" width="150">
+  <img src=".github/screenshots/2-create-a-region.png" alt="Set up a new region for your store during the initial wizard" width="150">
+  <img src=".github/screenshots/3-choose-a-region.png" alt="Select an existing region or create a new one" width="150">
+  <img src=".github/screenshots/4-products.png" alt="Browse and search products with a clean grid layout" width="150">
+  <img src=".github/screenshots/11-orders.png" alt="Browse past orders with key details" width="150">
+  <img src=".github/screenshots/10-orders-date-filter.png" alt="Filter orders by date for easy history access" width="150">
+  <img src=".github/screenshots/5-product-details.png" alt="View detailed product info, variants, and add to cart" width="150">
+  <img src=".github/screenshots/6-customer-lookup.png" alt="Search for existing customers or add new ones quickly" width="150">
+  <img src=".github/screenshots/7-cart.png" alt="Manage your cart with item quantities and discounts" width="150">
+  <img src=".github/screenshots/8-checkout.png" alt="Complete the order with customer details and summary" width="150">
+  <img src=".github/screenshots/12-order-confirmation.png" alt="Confirmation screen after a successful order" width="150">
+  <img src=".github/screenshots/9-order.png" alt="View order details after completion" width="150">
+</div>
+
+## Overview
+
+Medusa POS brings retail operations to your mobile device without backend changes. Store clerks can scan products, manage carts, attach customers, and complete orders. All of this is powered by your existing Medusa setup.
+
+Perfect for fast-paced retail environments, this starter helps you extend headless commerce into physical stores with minimal setup.
+
+## Features
+
+- **Secure Authentication**: Log in with Medusa admin credentials.
+- **Setup Wizard**: Configure regions, sales channels, and stock locations on first launch.
+- **Product Discovery**: Search products by name or scan barcodes using device camera.
+- **Cart Management**: Create draft orders, add items, apply discounts, and attach customers.
+- **Checkout Flow**: Complete orders directly from the app.
+- **Order History**: View past orders with filtering and details.
+- **Settings**: Change sales channel, region, and stock location; log out from the app.
+- **Responsive Design**: Optimized for tablets and smartphones running iOS 15+ or Android 11+.
+
+## Prerequisites
+
+- Node.js 18+
+- npm
+- A Medusa v2 backend with Admin REST API accessible via HTTPS
+- At least one Admin user account
+- Device with rear-facing camera for barcode scanning
+
+## Quickstart
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Agilo/medusa-pos-starter.git
+   cd medusa-pos-starter
+   ```
+
+2. **Install dependencies**:
    ```bash
    npm install
    ```
 
-2. Start the app
-
+3. **Start the development server**:
    ```bash
-   npx expo start
+   npm start
    ```
 
-In the output, you'll find options to open the app in a
+For detailed setup, see the [Expo documentation](https://docs.expo.dev/).
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Contributing
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+We welcome contributions from the community to help improve Medusa POS! Whether you're fixing bugs, adding features, or improving documentation, your input is valuable.
 
-## Get a fresh project
+### How to Contribute
 
-When you're ready, run:
+1. **Fork the repository** and create a feature branch from `master`.
+2. **Open an issue** ([GitHub Issues](https://github.com/Agilo/medusa-pos-starter/issues)) first to discuss your idea or report a bug.
+3. **Submit a pull request** ([Pull Requests](https://github.com/Agilo/medusa-pos-starter/pulls)) with a clear description of changes.
+4. Ensure your code follows our style guidelines and includes tests where applicable.
 
-```bash
-npm run reset-project
-```
+### Guidelines
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+- We only merge PRs that benefit the general use of the POS. Specific customizations for individual needs will not be merged to maintain codebase integrity.
+- Follow the existing code style and conventions.
+- Write clear, concise commit messages.
+- Test your changes thoroughly.
 
-## Learn more
+## FAQ
 
-To learn more about developing your project with Expo, look at the following resources:
+### Can I use this with my existing Medusa store?
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Absolutely! Medusa POS is designed to work with any standard Medusa v2 store without backend modifications. Just connect via the Admin API.
 
-## Join the community
+### What is the minimum Medusa version required?
 
-Join our community of developers creating universal apps.
+Medusa POS requires Medusa v2. It integrates directly with the Medusa Admin REST API, so ensure your backend is running Medusa v2 or later.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### Why can't I use an HTTP Medusa URL?
+
+For security reasons, Medusa POS requires a secure HTTPS connection to your Medusa backend. HTTP connections are not supported to ensure data protection and compliance with modern security standards.
+
+### How is payment handled?
+
+Medusa POS currently focuses on order management without integrated payment processing in the MVP. We're developing a payment screen that will support cash payments using Medusa's manual payment plugin. Additionally, we're working on plugins and integrations with Stripe and Adyen payment terminals for seamless POS transactions.
+
+### Is offline mode supported?
+
+Full offline mode is not supported in the current version. The app requires a network connection to create new orders or sync data. However, we cache Medusa responses locally, allowing you to browse previously loaded products and orders even without an internet connection.
+
+### How do I distribute the app?
+
+We'll soon publish Medusa POS to the App Store and Google Play Store for easy access. If you have special distribution needs or require a customized app, Agilo offers professional services to help. We've already deployed several POS apps in production. Reach out to us for tailored solutions.
+
+### Can I customize the app?
+
+Yes, you're free to fork the repository and make your own customizations. Additionally, Agilo provides professional customization services for Medusa POS, including UI/UX adjustments, integrations with hardware (like barcode scanners or printers), and connections to other systems (ERPs, inventory management, etc.). For specific customizations, contact us at [Agilo](https://www.agilo.com/contact/) to discuss your needs.
+
+### What PRs will be merged?
+
+We welcome contributions that benefit the general use of Medusa POS, such as bug fixes, performance improvements, or new features applicable to most users. Pull requests for specific customizations or client-specific changes will not be merged to keep the core codebase maintainable.
+
+### How do I report bugs or request features?
+
+Open an issue on our [GitHub repository](https://github.com/Agilo/medusa-pos-starter/issues) with details about the bug or feature request. For urgent matters, contact us directly.
+
+### Can I contribute to the project?
+
+Yes! Check our Contributing section above for guidelines. We appreciate code contributions, documentation improvements, and community feedback.
+
+## License
+
+Licensed under the [MIT License](https://github.com/Agilo/medusa-pos-starter/blob/master/LICENSE).
+
+---
+
+Built with ❤️ by [Agilo](https://www.agilo.com/) for the Medusa community.
