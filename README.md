@@ -8,7 +8,11 @@ A lightweight, open-source Point-of-Sale (POS) mobile application for Medusa v2.
 
 ## Try the Demo
 
-Scan the QR code below with Expo Go to try the Medusa POS app on your device:
+1. Install the Expo Go app on your phone or tablet from the [App Store](https://apps.apple.com/app/expo-go/id982107779) (iOS) or [Google Play Store](https://play.google.com/store/apps/details?id=host.exp.exponent).
+
+2. Scan the QR code below using your device's camera app. This will open the Medusa POS app in Expo Go.
+
+**Note:** To fully experience the app, you'll need a live Medusa instance. If you don't have one, you can set up a new one using [Medusa Cloud](https://medusajs.com/pricing/?utm_source=agilo&utm_medium=referral&utm_campaign=medusa-pos).
 
 <div style="max-width: 200px;">
 
