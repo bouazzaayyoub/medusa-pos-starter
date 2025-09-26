@@ -15,6 +15,7 @@ import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client
 import { Stack } from 'expo-router';
 import * as React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 
@@ -121,7 +122,9 @@ export default function RootLayout() {
             <SplashScreenController />
             <AppStatusBar />
             <GestureHandlerRootView>
-              <App />
+              <KeyboardProvider>
+                <App />
+              </KeyboardProvider>
             </GestureHandlerRootView>
             <Toast config={toastConfig} position="bottom" />
           </ThemeProvider>
