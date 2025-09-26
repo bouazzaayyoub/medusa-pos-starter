@@ -16,7 +16,7 @@ A lightweight, open-source Point-of-Sale (POS) mobile application for Medusa v2.
 
 <div style="max-width: 200px;">
 
-![Demo QR Code](https://qr.expo.dev/eas-update?slug=exp&projectId=2c44b68b-5c32-4031-a160-d315e6c399d4&groupId=b27ba8a2-f3a3-4184-9c71-abd939e165ee&host=u.expo.dev)
+![Demo QR Code](https://qr.expo.dev/eas-update?slug=exp&projectId=2c44b68b-5c32-4031-a160-d315e6c399d4&groupId=0d381504-b20d-4a81-a228-316078c94983&host=u.expo.dev)
 
 </div>
 
